@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0452DC"
-    android:backgroundTint="#CECECE"
+    android:backgroundTint="#D5D5D5"
     tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
