@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#03A9F4">
+    android:background="@color/white">
 
     <Button
         android:id="@+id/btndriver"
         android:layout_width="268dp"
         android:layout_height="66dp"
         android:layout_marginBottom="150dp"
+        android:backgroundTint="#004ED4"
         android:text="Driver"
         android:textSize="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,10 +22,12 @@
         android:id="@+id/btncustomer"
         android:layout_width="268dp"
         android:layout_height="66dp"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="292dp"
+        android:backgroundTint="#004ED4"
         android:text="Customer"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -32,11 +35,26 @@
         android:id="@+id/btnowner"
         android:layout_width="268dp"
         android:layout_height="66dp"
+        android:backgroundTint="#004ED4"
         android:text="Owner"
         android:textSize="20dp"
         app:layout_constraintBottom_toTopOf="@+id/btndriver"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btncustomer"
-        app:layout_constraintVertical_bias="0.497" />
+        app:layout_constraintVertical_bias="0.494" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="240dp"
+        android:layout_height="66dp"
+        android:layout_marginTop="104dp"
+        android:text="Who Are You ?"
+        android:textColor="#004ED4"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
