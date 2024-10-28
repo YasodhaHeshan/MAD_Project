@@ -16,8 +16,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.registercus);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.regcus), (v, insets) -> {
+        setContentView(R.layout.activity_dashboard);
+        /*ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.constraintLayout), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Button registerbtn = findViewById(R.id.btnregister);
 
-        /*registerbtn.setOnClickListener(v -> {
+        registerbtn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ChooseActivity.class);
             startActivity(intent);
         });*/
