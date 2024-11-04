@@ -151,16 +151,17 @@
             android:id="@+id/btnCustomer"
             android:layout_width="130dp"
             android:layout_height="51dp"
-            android:layout_marginTop="135dp"
+            android:layout_marginStart="30dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginBottom="34dp"
+            android:layout_marginBottom="410dp"
             android:backgroundTint="#D9D9D9"
             android:fontFamily="@font/akaya_telivigala"
             android:text="Customer"
             android:textColor="#131313"
-            android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@+id/editTextText2"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnOwner"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
