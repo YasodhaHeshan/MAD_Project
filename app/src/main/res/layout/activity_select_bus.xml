@@ -51,8 +51,8 @@
             android:hint="From"
             android:minHeight="48dp"
             android:padding="12dp"
-            android:textColor="@color/white">
-        </EditText>
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
 
         <ImageButton
             android:id="@+id/swapButton"
@@ -73,8 +73,9 @@
             android:hint="To"
             android:minHeight="48dp"
             android:padding="12dp"
-            android:textColor="@color/white">
-        </EditText>
+            android:textColor="@color/white"
+            android:textColorHint="@color/white" />
+
     </LinearLayout>
 
     <!-- Date and Passenger Selection -->
