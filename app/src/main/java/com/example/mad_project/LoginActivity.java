@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class Login extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,12 +20,12 @@ public class Login extends AppCompatActivity {
         Button loginButton = findViewById(R.id.btnLogin);
 
         regbutton.setOnClickListener(v -> {
-            Intent intent = new Intent(Login.this, RegisterActivity.class);
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
         });
 
         loginButton.setOnClickListener(v -> {
-            Intent intent = new Intent(Login.this, DashboardActivity.class);
+            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
             startActivity(intent);
         });
     }

@@ -19,7 +19,7 @@ public class RegisterActivity extends AppCompatActivity {
         Button owner = findViewById(R.id.btnCustomer);
 
         login.setOnClickListener(v -> {
-            Intent intent = new Intent(RegisterActivity.this, Login.class);
+            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
         });
     }
