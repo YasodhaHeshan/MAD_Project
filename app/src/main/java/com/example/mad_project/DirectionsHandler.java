@@ -146,7 +146,6 @@ public class DirectionsHandler {
                 LatLng p = new LatLng((lat / 1E5), (lng / 1E5));
                 poly.add(p);
             }
-
             return poly;
         }
     }
