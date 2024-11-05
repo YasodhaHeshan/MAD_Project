@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MAD_Project"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -25,10 +26,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".Login"></activity>
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".Login" />
         <activity android:name=".DashboardActivity" />
-        <activity android:name=".MapActivity"/>
+        <activity android:name=".SelectBusActivity" />
+        <activity android:name=".MapActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
