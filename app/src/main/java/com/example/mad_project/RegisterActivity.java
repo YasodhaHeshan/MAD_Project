@@ -17,15 +17,16 @@ public class RegisterActivity extends AppCompatActivity {
         Button customer = findViewById(R.id.btnCustomer);
         Button driver = findViewById(R.id.btnDriver);
         Button owner = findViewById(R.id.btnCustomer);
+        Button Signup = findViewById(R.id.btnSignup);
 
         login.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
         });
+
+        Signup.setOnClickListener(v -> {
+            Intent intent = new Intent(RegisterActivity.this, PaymentActivity.class);
+            startActivity(intent);
+        });
     }
-
-
-
-
-
 }
