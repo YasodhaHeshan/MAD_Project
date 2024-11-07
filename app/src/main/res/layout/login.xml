@@ -26,7 +26,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
-        android:id="@+id/editTextUsername"
+        android:id="@+id/editTextEmail"
         android:layout_width="300dp"
         android:layout_height="42dp"
         android:layout_marginStart="55dp"
@@ -35,7 +35,7 @@
         android:background="@drawable/edit_text_border"
         android:ems="10"
         android:fontFamily="@font/akaya_telivigala"
-        android:hint="Username"
+        android:hint="Email"
         android:inputType="text"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
@@ -70,7 +70,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextUsername"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmail"
         app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
