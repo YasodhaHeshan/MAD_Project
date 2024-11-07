@@ -2,18 +2,47 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#131313"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#000000"
     android:orientation="vertical"
     android:padding="20dp">
+
+    <!-- Back Button Section -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Back"
+            android:padding="8dp"
+            android:src="@drawable/baseline_arrow_back_24"
+            app:tint="@color/colorWhite" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Back"
+            android:textColor="#d9d9d9"
+            android:textSize="16sp" />
+    </LinearLayout>
 
     <!-- Trip Summary Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/rounded_corners"
         android:orientation="vertical"
-        android:padding="20dp"
-        android:layout_marginBottom="16dp">
+        android:padding="20dp">
 
         <TextView
             android:id="@+id/trip_summary_label"
@@ -35,15 +64,119 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <!-- Promo Code Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_corners"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/promo_code_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#2b2b2b"
+            android:hint="Enter Promo Code"
+            android:padding="12dp"
+            android:textColor="#d9d9d9"
+            android:textColorHint="#757575" />
+
+        <Button
+            android:id="@+id/apply_promo_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="#c7de99"
+            android:padding="12dp"
+            android:text="Apply"
+            android:textColor="#131313" />
+    </LinearLayout>
+
+    <!-- Tip Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_corners"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="Add a Tip"
+            android:textColor="#d9d9d9"
+            android:textSize="16sp" />
+
+        <EditText
+            android:id="@+id/tip_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#2b2b2b"
+            android:hint="LKR 0.00"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:textColor="#d9d9d9" />
+    </LinearLayout>
+
+    <!-- Billing Summary Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/rounded_corners"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Billing Summary"
+            android:textColor="#d9d9d9"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Subtotal: LKR 1800"
+            android:textColor="#d9d9d9"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Service Fee: LKR 200"
+            android:textColor="#d9d9d9"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total: LKR 2000"
+            android:textColor="#d9d9d9"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
     <!-- Payment Method Section -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Payment Method"
         android:textColor="#d9d9d9"
         android:textSize="18sp"
-        android:layout_marginBottom="8dp" />
+        android:textStyle="bold" />
 
+    <!-- Payment Method Radio Group -->
     <RadioGroup
         android:id="@+id/payment_method_group"
         android:layout_width="match_parent"
@@ -52,101 +185,71 @@
         android:padding="8dp">
 
         <!-- Credit/Debit Card Option -->
+
         <LinearLayout
+            android:id="@+id/credit_card_option"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:padding="16dp"
+
+            android:layout_marginBottom="10dp"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:orientation="horizontal"
+            android:padding="16dp">
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_credit_card"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="16dp"
                 android:contentDescription="Credit Card Icon"
-                android:layout_marginEnd="12dp" />
+                android:src="@drawable/ic_credit_card" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Credit/Debit Card"
+                    android:textColor="#d9d9d9"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pay securely with your credit or debit card."
+                    android:textColor="#a8a8a8"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <RadioButton
                 android:id="@+id/payment_credit_card"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Credit/Debit Card"
-                android:textColor="#d9d9d9"
-                android:textSize="16sp"
                 android:button="@null"
+                android:checked="false"
                 android:drawablePadding="12dp" />
         </LinearLayout>
 
-        <!-- Mobile Wallet Option -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+        <!-- Additional Payment Options -->
+        <!-- Use similar layout for each payment method -->
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="12dp"
-                android:background="#090909"
-                android:backgroundTint="#000000"
-                android:contentDescription="Mobile Wallet Icon"
-                android:src="@drawable/ic_mobile_wallet" />
-
-            <RadioButton
-                android:id="@+id/payment_mobile_wallet"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Mobile Wallet"
-                android:textColor="#d9d9d9"
-                android:textSize="16sp"
-                android:button="@null"
-                android:drawablePadding="12dp" />
-        </LinearLayout>
-
-        <!-- Cash on Delivery Option -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:orientation="horizontal"
-            android:padding="16dp"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_cash"
-                android:contentDescription="Cash Icon"
-                android:layout_marginEnd="12dp" />
-
-            <RadioButton
-                android:id="@+id/payment_cash"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cash on Delivery"
-                android:textColor="#d9d9d9"
-                android:textSize="16sp"
-                android:button="@null"
-                android:drawablePadding="12dp" />
-        </LinearLayout>
     </RadioGroup>
 
-    <!-- Confirm Payment Button -->
     <Button
-        android:id="@+id/confirm_payment_button"
+        android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="#c7de99"
+        android:backgroundTint="#C7DE99"
         android:text="Confirm Payment"
-        android:textColor="#131313"
-        android:padding="16dp"
-        android:textSize="18sp" />
+        android:textColor="#000000" />
+
+    <!-- Confirm Payment Button with Ripple Effect -->
+
+
 </LinearLayout>
