@@ -15,23 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_dashboard);
-
-        EditText from = findViewById(R.id.fromField);
-        EditText to = findViewById(R.id.toField);
-        Button searchButton = findViewById(R.id.btnSearch);
-
-        searchButton.setOnClickListener(v -> {
-            String origin = from.getText().toString();
-            String destination = to.getText().toString();
-
-            Toast.makeText(this, "Searching for buses from " + origin + " to " + destination, Toast.LENGTH_SHORT).show();
-
-            Intent intent = new Intent(this, MapActivity.class);
-            intent.putExtra("origin", origin);
-            intent.putExtra("destination", destination);
-            startActivity(intent);
-        });
+        setContentView(R.layout.activity_main);
 
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.map), (v, insets) -> {
 //            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -49,11 +33,11 @@ public class MainActivity extends AppCompatActivity {
 //            return insets;
 //        });
 //
-//           Button registerbtn = findViewById(R.id.btnStart);
-//
-//        registerbtn.setOnClickListener(v -> {
-//            Intent intent = new Intent(MainActivity.this, MapActivity.class);
-//            startActivity(intent);
-//        });
+       Button registerbtn = findViewById(R.id.btnStart);
+
+        registerbtn.setOnClickListener(v -> {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+          startActivity(intent);
+      });
     }
 }
