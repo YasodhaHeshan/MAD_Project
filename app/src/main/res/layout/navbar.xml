@@ -8,23 +8,20 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <!-- Bottom navigation bar for easy app navigation with labeled icons -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorSecondaryBackground"
         android:contentDescription="Bottom navigation"
-        app:itemIconTint="#c7de99"
-        app:itemTextColor="@color/colorWhite"
+        app:itemIconTint="@color/nav_item_color"
+        app:itemTextColor="#C7DE99"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu" />
 
-
-    <!-- Main content area, filling space above the navigation bar -->
     <FrameLayout
         android:id="@+id/contentFrame"
         android:layout_width="match_parent"
