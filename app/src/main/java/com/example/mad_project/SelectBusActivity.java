@@ -42,9 +42,7 @@ public class SelectBusActivity extends AppCompatActivity {
             .setTitleText("Select Date")
             .build();
 
-        datePicker.addOnPositiveButtonClickListener(selection -> {
-            dateField.setText(datePicker.getHeaderText());
-        });
+        datePicker.addOnPositiveButtonClickListener(selection -> dateField.setText(datePicker.getHeaderText()));
 
         datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
     }
