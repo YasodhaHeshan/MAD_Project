@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Styles (in res/values/styles.xml) -->
+    <style name="SeatButton">
+        <item name="android:layout_width">60dp</item>
+        <item name="android:layout_height">60dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:background">@drawable/carseat</item>
+        <item name="android:textColor">#131313</item>
+        <item name="android:backgroundTint">#C7DE99</item>
+    </style>
+
+</resources>

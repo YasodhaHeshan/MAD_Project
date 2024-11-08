@@ -32,6 +32,7 @@
         <activity android:name=".SelectBusActivity" />
         <activity android:name=".MapActivity" />
         <activity android:name=".PaymentActivity" />
+        <activity android:name=".BookSeat" />
 
         <meta-data
             android:name="preloaded_fonts"
