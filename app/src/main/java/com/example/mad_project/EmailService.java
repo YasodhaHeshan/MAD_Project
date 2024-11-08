@@ -49,7 +49,7 @@ public class EmailService extends AsyncTask<Void, Void, Boolean> {
             message.setFrom(new InternetAddress(senderEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
             message.setSubject(subject);
-            message.setText(messageBody);
+            message.setContent(messageBody,"text/html; charset=utf-8");
 
             // Send the message
             Transport.send(message);

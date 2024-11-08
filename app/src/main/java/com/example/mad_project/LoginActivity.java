@@ -38,12 +38,12 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
             startActivity(intent);
             String useremail = username.getText().toString();
-            //replace senderemail with your email and app password
-            // with your google account app password.
-            new EmailService(useremail,"The Test Email",
-                    "This is a test email from the MAD project",
-                    "senderemail",
-                    "password").execute();
+            String emailContent = EmailContentGenerator.generateBusTicketEmail(
+                    "User Name", "12345", "Bus123", "City A",
+                    "City B", "2023-10-10", "10:00 AM", "12A"
+            );
+            new EmailService(useremail, "Bus Ticket Confirmation", emailContent,
+                    "senith2002n@gmail.com", "sdkoosopqkskjzce").execute();
 
             Toast.makeText(this, "Email Sent", Toast.LENGTH_SHORT).show();
 
