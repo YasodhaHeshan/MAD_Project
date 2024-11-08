@@ -17,10 +17,10 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        Button registerbtn = findViewById(R.id.btnStart);
+        Button getStartedBtn = findViewById(R.id.btnStart);
 
-        registerbtn.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, BookSeat.class);
+        getStartedBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);
         });
     }

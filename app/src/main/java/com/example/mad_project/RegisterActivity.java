@@ -2,14 +2,16 @@ package com.example.mad_project;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.room.Room;
 
-import com.example.mad_project.data.DatabaseHelper;
+import com.example.mad_project.controller.AppDatabase;
+import com.example.mad_project.data.User;
+import com.example.mad_project.data.UserDao;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -44,28 +46,19 @@ public class RegisterActivity extends AppCompatActivity {
         Button signup = findViewById(R.id.btnSignup);
 
         // Set onClickListeners for the buttons
-        customerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateHints("Customer First Name", "Customer Last Name", "Customer Email", "Customer Mobile", "Customer Password", "Confirm Customer Password");
-                updateButtonColors(customerButton, ownerButton, driverButton);
-            }
+        customerButton.setOnClickListener(v -> {
+            updateHints("Customer First Name", "Customer Last Name", "Customer Email", "Customer Mobile", "Customer Password", "Confirm Customer Password");
+            updateButtonColors(customerButton, ownerButton, driverButton);
         });
 
-        ownerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateHints("Owner First Name", "Owner Last Name", "Owner Email", "Owner Mobile", "Owner Password", "Confirm Owner Password");
-                updateButtonColors(ownerButton, customerButton, driverButton);
-            }
+        ownerButton.setOnClickListener(v -> {
+            updateHints("Owner First Name", "Owner Last Name", "Owner Email", "Owner Mobile", "Owner Password", "Confirm Owner Password");
+            updateButtonColors(ownerButton, customerButton, driverButton);
         });
 
-        driverButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateHints("Driver First Name", "Driver Last Name", "Driver Email", "Driver Mobile", "Driver Password", "Confirm Driver Password");
-                updateButtonColors(driverButton, customerButton, ownerButton);
-            }
+        driverButton.setOnClickListener(v -> {
+            updateHints("Driver First Name", "Driver Last Name", "Driver Email", "Driver Mobile", "Driver Password", "Confirm Driver Password");
+            updateButtonColors(driverButton, customerButton, ownerButton);
         });
 
         login.setOnClickListener(v -> {
@@ -80,8 +73,18 @@ public class RegisterActivity extends AppCompatActivity {
             String passwordStr = passwordEditText.getText().toString();
             String mobileStr = mobileEditText.getText().toString();
 
-            DatabaseHelper dbHelper = new DatabaseHelper(this);
-            dbHelper.addUser(firstNameStr, lastNameStr, emailStr, passwordStr, mobileStr);
+            AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
+
+            new Thread(() -> {
+                UserDao userDao = db.userDao();
+                User newUser = new User(0, firstNameStr, lastNameStr, emailStr, mobileStr, passwordStr);
+                userDao.insert(newUser);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, PaymentActivity.class);
+                    startActivity(intent);
+                });
+            }).start();
 
             Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(RegisterActivity.this, PaymentActivity.class);
@@ -99,11 +102,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void updateButtonColors(Button selectedButton, Button button1, Button button2) {
-        selectedButton.setBackgroundColor(getResources().getColor(android.R.color.white));
-        selectedButton.setTextColor(getResources().getColor(android.R.color.black));
-        button1.setBackgroundColor(getResources().getColor(android.R.color.black));
-        button1.setTextColor(getResources().getColor(android.R.color.white));
-        button2.setBackgroundColor(getResources().getColor(android.R.color.black));
-        button2.setTextColor(getResources().getColor(android.R.color.white));
+        selectedButton.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.white));
+        selectedButton.setTextColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.black));
+        button1.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.black));
+        button1.setTextColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.white));
+        button2.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.black));
+        button2.setTextColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.white));
     }
 }
