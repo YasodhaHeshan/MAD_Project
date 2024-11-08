@@ -2,6 +2,7 @@ package com.example.mad_project;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,6 +13,9 @@ import androidx.room.Room;
 import com.example.mad_project.controller.AppDatabase;
 import com.example.mad_project.data.User;
 import com.example.mad_project.data.UserDao;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -76,19 +80,26 @@ public class RegisterActivity extends AppCompatActivity {
             AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
 
             new Thread(() -> {
-                UserDao userDao = db.userDao();
-                User newUser = new User(0, firstNameStr, lastNameStr, emailStr, mobileStr, passwordStr);
-                userDao.insert(newUser);
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegisterActivity.this, PaymentActivity.class);
-                    startActivity(intent);
-                });
-            }).start();
+                try {
+                    UserDao userDao = db.userDao();
 
-            Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(RegisterActivity.this, PaymentActivity.class);
-            startActivity(intent);
+                    String passwordHash = hashPassword(emailStr, passwordStr);
+
+                    User newUser = new User(0, firstNameStr, lastNameStr, emailStr, mobileStr, passwordHash);
+                    userDao.insert(newUser);
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish(); // Optional: to close the RegisterActivity
+                    });
+                } catch (Exception e) {
+                    Log.e("RegisterActivity", "Failed to register user", e);
+                    runOnUiThread(() -> Toast.makeText(this, "Failed to register user: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                } finally {
+                    db.close();
+                }
+            }).start();
         });
     }
 
@@ -108,5 +119,16 @@ public class RegisterActivity extends AppCompatActivity {
         button1.setTextColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.white));
         button2.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.black));
         button2.setTextColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.white));
+    }
+
+    private String hashPassword(String email, String password) throws NoSuchAlgorithmException {
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        String input = email + password + System.currentTimeMillis();
+        byte[] hash = md.digest(input.getBytes());
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hash) {
+            hexString.append(Integer.toHexString(0xFF & b));
+        }
+        return hexString.toString();
     }
 }
