@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
         Button registerbtn = findViewById(R.id.btnStart);
 
         registerbtn.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            Intent intent = new Intent(MainActivity.this, BookSeat.class);
             startActivity(intent);
         });
     }
