@@ -53,7 +53,7 @@
             android:minHeight="48dp"
             android:padding="12dp"
             android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:textColorHint="@color/gray" />
 
         <ImageButton
             android:id="@+id/swapButton"
@@ -75,7 +75,7 @@
             android:minHeight="48dp"
             android:padding="12dp"
             android:textColor="@color/white"
-            android:textColorHint="@color/white" />
+            android:textColorHint="@color/gray" />
 
     </LinearLayout>
 
