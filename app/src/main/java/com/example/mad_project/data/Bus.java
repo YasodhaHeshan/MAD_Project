@@ -4,8 +4,6 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
-import androidx.room.Relation;
-import java.util.List;
 
 @Entity(tableName = "buses",
         foreignKeys = {
@@ -16,7 +14,7 @@ import java.util.List;
                 @ForeignKey(entity = BusDriver.class,
                             parentColumns = "id",
                             childColumns = "bus_driver_id",
-                            onDelete = ForeignKey.CASCADE)
+                            onDelete = ForeignKey.CASCADE),
         })
 public class Bus {
     @PrimaryKey(autoGenerate = true)
@@ -43,11 +41,11 @@ public class Bus {
     @ColumnInfo(name = "bus_driver_id")
     private int busDriverId;
 
-    @Relation(parentColumn = "id", entityColumn = "bus_id")
-    private List<Customer> passengers;
+    @ColumnInfo(name = "ticket_price")
+    private int ticketPrice;
 
     // Constructor, getters, and setters
-    public Bus(int id, String departureLocation, String arrivalLocation, String departureTime, String arrivalTime, int availableSeats, int busOwnerId, int busDriverId, List<Customer> passengers) {
+    public Bus(int id, String departureLocation, String arrivalLocation, String departureTime, String arrivalTime, int availableSeats, int busOwnerId, int busDriverId, int ticketPrice) {
         this.id = id;
         this.departureLocation = departureLocation;
         this.arrivalLocation = arrivalLocation;
@@ -56,7 +54,7 @@ public class Bus {
         this.availableSeats = availableSeats;
         this.busOwnerId = busOwnerId;
         this.busDriverId = busDriverId;
-        this.passengers = passengers;
+        this.ticketPrice = ticketPrice;
     }
 
     public int getId() {
@@ -123,11 +121,11 @@ public class Bus {
         this.busDriverId = busDriverId;
     }
 
-    public List<Customer> getPassengers() {
-        return passengers;
+    public int getTicketPrice() {
+        return ticketPrice;
     }
 
-    public void setPassengers(List<Customer> passengers) {
-        this.passengers = passengers;
+    public void setTicketPrice(int ticketPrice) {
+        this.ticketPrice = ticketPrice;
     }
 }

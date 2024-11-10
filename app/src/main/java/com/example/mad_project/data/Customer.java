@@ -2,11 +2,12 @@ package com.example.mad_project.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+
 import java.util.List;
 
 @Entity(tableName = "customers")
 public class Customer extends User {
+
     @ColumnInfo(name = "address")
     private String address;
 
@@ -22,13 +23,17 @@ public class Customer extends User {
     @ColumnInfo(name = "preferred_seat_type")
     private String preferredSeatType;
 
-    public Customer(int id, String firstName, String lastName, String email, String phoneNumber, String password, String address, String paymentMethod, int loyaltyPoints, List<String> bookingHistory, String preferredSeatType) {
+    @ColumnInfo(name = "bus_id")
+    private int busId;
+
+    public Customer(int id, String firstName, String lastName, String email, String phoneNumber, String password, String address, String paymentMethod, int loyaltyPoints, List<String> bookingHistory, String preferredSeatType, int busId) {
         super(id, firstName, lastName, email, phoneNumber, password);
         this.address = address;
         this.paymentMethod = paymentMethod;
         this.loyaltyPoints = loyaltyPoints;
         this.bookingHistory = bookingHistory;
         this.preferredSeatType = preferredSeatType;
+        this.busId = busId;
     }
 
     public String getAddress() {
@@ -69,5 +74,13 @@ public class Customer extends User {
 
     public void setPreferredSeatType(String preferredSeatType) {
         this.preferredSeatType = preferredSeatType;
+    }
+
+    public int getBusId() {
+        return busId;
+    }
+
+    public void setBusId(int busId) {
+        this.busId = busId;
     }
 }

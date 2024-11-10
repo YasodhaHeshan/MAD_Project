@@ -1,4 +1,4 @@
-package com.example.mad_project;
+package com.example.mad_project.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.room.Room;
 
+import com.example.mad_project.R;
 import com.example.mad_project.controller.AppDatabase;
 import com.example.mad_project.data.User;
 import com.example.mad_project.data.UserDao;
@@ -32,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.registercus);
+        setContentView(R.layout.activity_register);
 
         // Initialize the EditText fields
         firstNameEditText = findViewById(R.id.editTextText2);
@@ -56,8 +57,10 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         ownerButton.setOnClickListener(v -> {
-            updateHints("Owner First Name", "Owner Last Name", "Owner Email", "Owner Mobile", "Owner Password", "Confirm Owner Password");
-            updateButtonColors(ownerButton, customerButton, driverButton);
+            runOnUiThread(() -> {
+                Intent intent = new Intent(RegisterActivity.this, RegisterOwnerActivity.class);
+                startActivity(intent);
+            });
         });
 
         driverButton.setOnClickListener(v -> {

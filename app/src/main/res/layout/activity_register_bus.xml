@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextDepartureLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Departure Location"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextArrivalLocation"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Arrival Location"
+        app:layout_constraintTop_toBottomOf="@id/editTextDepartureLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextDepartureTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Departure Time"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrivalLocation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextArrivalTime"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Arrival Time"
+        app:layout_constraintTop_toBottomOf="@id/editTextDepartureTime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextAvailableSeats"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Available Seats"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/editTextArrivalTime"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextBusOwnerId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Bus Owner ID"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/editTextAvailableSeats"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextBusDriverId"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Bus Driver ID"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/editTextBusOwnerId"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/editTextTicketPrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Ticket Price"
+        android:inputType="number"
+        app:layout_constraintTop_toBottomOf="@id/editTextBusDriverId"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/buttonRegisterBus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register Bus"
+        app:layout_constraintTop_toBottomOf="@id/editTextTicketPrice"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

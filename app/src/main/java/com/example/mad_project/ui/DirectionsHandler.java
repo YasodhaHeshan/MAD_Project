@@ -1,4 +1,4 @@
-package com.example.mad_project;
+package com.example.mad_project.ui;
 
 import android.os.AsyncTask;
 import android.util.Log;
