@@ -26,12 +26,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".DashboardActivity" />
-        <activity android:name=".SelectBusActivity" />
-        <activity android:name=".MapActivity" />
-        <activity android:name=".PaymentActivity" />
+        <activity android:name=".ui.RegisterActivity" />
+        <activity android:name=".ui.LoginActivity" />
+        <activity android:name=".ui.DashboardActivity" />
+        <activity android:name=".ui.SelectBusActivity" />
+        <activity android:name=".ui.MapActivity" />
+        <activity android:name=".ui.PaymentActivity" />
+        <activity android:name=".ui.BookSeat" />
+        <activity android:name=".ui.RegisterOwnerActivity" />
+        <activity android:name=".ui.RegisterBusActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
@@ -40,8 +43,6 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/Map_Api_Key" />
-
-
 
     </application>
 

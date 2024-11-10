@@ -1,8 +1,10 @@
-package com.example.mad_project;
+package com.example.mad_project.ui;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mad_project.R;
 
 public class PaymentActivity extends AppCompatActivity {
 
