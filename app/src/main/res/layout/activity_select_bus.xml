@@ -121,7 +121,7 @@
 
     <!-- Bus List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/busListRecyclerView"
+        android:id="@+id/busRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
@@ -141,6 +141,6 @@
         android:text="Search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/busListRecyclerView" />
+        app:layout_constraintTop_toBottomOf="@+id/busRecyclerView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

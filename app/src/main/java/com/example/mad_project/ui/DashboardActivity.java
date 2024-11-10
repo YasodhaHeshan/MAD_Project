@@ -1,10 +1,12 @@
-package com.example.mad_project;
+package com.example.mad_project.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.mad_project.R;
 
 public class DashboardActivity extends AppCompatActivity {
 
