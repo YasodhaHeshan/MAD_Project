@@ -1,5 +1,6 @@
 package com.example.mad_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +31,7 @@ public class BookSeat extends AppCompatActivity {
         bookedSeats.add("H2");
 
         txtSelected = findViewById(R.id.txtselected);
+        Button btnBook = findViewById(R.id.doneButton);
 
         // List of all seat IDs
         String[] seatIds = {
@@ -82,6 +84,10 @@ public class BookSeat extends AppCompatActivity {
                 }
             }
         }
+        btnBook.setOnClickListener(v -> {
+            Intent intent = new Intent(this,SwapSeat.class);
+            startActivity(intent);
+        });
 
         ImageButton backButton = findViewById(R.id.back_button);
         backButton.setOnClickListener(v -> finish());
