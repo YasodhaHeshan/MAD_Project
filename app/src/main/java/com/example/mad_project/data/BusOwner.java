@@ -8,6 +8,9 @@ public class BusOwner extends User {
     @ColumnInfo(name = "company_name")
     private String companyName;
 
+    @ColumnInfo(name = "license_number")
+    private String licenseNumber;
+
     @ColumnInfo(name = "fleet_size")
     private int fleetSize;
 
@@ -17,12 +20,13 @@ public class BusOwner extends User {
     @ColumnInfo(name = "rating")
     private double rating;
 
-    public BusOwner(int id, String firstName, String lastName, String email, String phoneNumber, String password, String companyName, int fleetSize, int yearsInBusiness, double rating) {
+    public BusOwner(int id, String firstName, String lastName, String email, String phoneNumber, String password, String companyName, int fleetSize, int yearsInBusiness, double rating, String licenseNumber) {
         super(id, firstName, lastName, email, phoneNumber, password);
         this.companyName = companyName;
         this.fleetSize = fleetSize;
         this.yearsInBusiness = yearsInBusiness;
         this.rating = rating;
+        this.licenseNumber = licenseNumber;
     }
 
     public String getCompanyName() {
@@ -55,5 +59,13 @@ public class BusOwner extends User {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public String getLicenseNumber() {
+        return licenseNumber;
+    }
+
+    public void setLicenseNumber(String licenseNumber) {
+        this.licenseNumber = licenseNumber;
     }
 }
