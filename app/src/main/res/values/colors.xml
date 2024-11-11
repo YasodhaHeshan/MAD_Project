@@ -10,4 +10,5 @@
     <color name="seat_reserved_color">#C7DE99</color>
     <color name="seat_selected_color">#A4C639</color>
     <color name="seat_default_color">#ff6750a4</color>
+    <color name="seat_booked_color">#E4080A</color>
 </resources>

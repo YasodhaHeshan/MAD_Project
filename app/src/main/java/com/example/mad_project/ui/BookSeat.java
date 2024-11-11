@@ -1,10 +1,12 @@
 package com.example.mad_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,81 +19,80 @@ import java.util.Set;
 public class BookSeat extends AppCompatActivity {
     private Set<String> selectedSeats = new HashSet<>();
     private TextView txtSelected;
+    private Set<String> bookedSeats = new HashSet<>();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.acitivity_book_seats);
 
+        // Add booked seats
+        bookedSeats.add("I1");
+        bookedSeats.add("I2");
+        bookedSeats.add("H2");
+
         txtSelected = findViewById(R.id.txtselected);
-        // Add click listeners to all seat buttons
-        addSeatClickListener(R.id.I1);
-        addSeatClickListener(R.id.I2);
-        addSeatClickListener(R.id.I3);
-        addSeatClickListener(R.id.I4);
-        addSeatClickListener(R.id.I5);
-        addSeatClickListener(R.id.H1);
-        addSeatClickListener(R.id.H2);
-        addSeatClickListener(R.id.H3);
-        addSeatClickListener(R.id.H4);
-        addSeatClickListener(R.id.G1);
-        addSeatClickListener(R.id.G2);
-        addSeatClickListener(R.id.G3);
-        addSeatClickListener(R.id.G4);
-        addSeatClickListener(R.id.F1);
-        addSeatClickListener(R.id.F2);
-        addSeatClickListener(R.id.F3);
-        addSeatClickListener(R.id.F4);
-        addSeatClickListener(R.id.E1);
-        addSeatClickListener(R.id.E2);
-        addSeatClickListener(R.id.E3);
-        addSeatClickListener(R.id.E4);
-        addSeatClickListener(R.id.D1);
-        addSeatClickListener(R.id.D2);
-        addSeatClickListener(R.id.D3);
-        addSeatClickListener(R.id.D4);
-        addSeatClickListener(R.id.C1);
-        addSeatClickListener(R.id.C2);
-        addSeatClickListener(R.id.C3);
-        addSeatClickListener(R.id.C4);
-        addSeatClickListener(R.id.B1);
-        addSeatClickListener(R.id.B2);
-        addSeatClickListener(R.id.B3);
-        addSeatClickListener(R.id.B4);
-        addSeatClickListener(R.id.A1);
-        addSeatClickListener(R.id.A2);
-        addSeatClickListener(R.id.A3);
-        addSeatClickListener(R.id.A4);
+        Button btnBook = findViewById(R.id.doneButton);
 
-        ImageButton backbutton = findViewById(R.id.back_button);
-        backbutton.setOnClickListener(v -> {
-            finish();
-        });
-    }
+        // List of all seat IDs
+        String[] seatIds = {
+                "I1", "I2", "I3", "I4", "I5",
+                "H1", "H2", "H3", "H4",
+                "G1", "G2", "G3", "G4",
+                "F1", "F2", "F3", "F4",
+                "E1", "E2", "E3", "E4",
+                "D1", "D2", "D3", "D4",
+                "C1", "C2", "C3", "C4",
+                "B1", "B2", "B3", "B4",
+                "A1", "A2", "A3", "A4"
+        };
 
-    private void addSeatClickListener(int buttonId) {
-        Button seatButton = findViewById(buttonId);
-        String seatId = getResources().getResourceEntryName(buttonId);
+        // Loop through all seats and set up their properties
+        for (String seatId : seatIds) {
+            int resId = getResources().getIdentifier(seatId, "id", getPackageName());
+            Button seatButton = findViewById(resId);
 
-        seatButton.setOnClickListener(new View.OnClickListener() {
-            private boolean isSelected = true;
-
-            @Override
-            public void onClick(View v) {
-                if (isSelected) {
-                    seatButton.setBackgroundTintList(getColorStateList(R.color.seat_selected_color));
-                    selectedSeats.add(seatId);
-                    seatButton.setTextColor(getResources().getColor(R.color.colorWhite));
+            if (seatButton != null) {
+                // Check if the seat is booked
+                if (bookedSeats.contains(seatId)) {
+                    seatButton.setBackgroundTintList(getColorStateList(R.color.seat_booked_color));
+                    seatButton.setOnClickListener(v ->
+                            Toast.makeText(BookSeat.this, "Seat " + seatId + " is already booked", Toast.LENGTH_SHORT).show()
+                    );
+                    //seatButton.setEnabled(false); // Disable booked seats
                 } else {
-                    seatButton.setBackgroundTintList(getColorStateList(R.color.seat_default_color));
-                    selectedSeats.remove(seatId);
-                    seatButton.setTextColor(getResources().getColor(R.color.seat_default_color));
+                    // Set up listener for available seats
+                    seatButton.setOnClickListener(new View.OnClickListener() {
+                        private boolean isSelected = false;
+
+                        @Override
+                        public void onClick(View v) {
+                            if (isSelected) {
+                                // Deselect seat
+                                seatButton.setBackgroundTintList(getColorStateList(R.color.seat_default_color));
+                                selectedSeats.remove(seatId);
+                                seatButton.setTextColor(getResources().getColor(R.color.seat_default_color));
+                            } else {
+                                // Select seat
+                                seatButton.setBackgroundTintList(getColorStateList(R.color.seat_selected_color));
+                                selectedSeats.add(seatId);
+                                seatButton.setTextColor(getResources().getColor(R.color.colorWhite));
+                            }
+                            isSelected = !isSelected;
+                            updateSelectedSeatsText();
+                        }
+                    });
                 }
-                isSelected = !isSelected;
-                updateSelectedSeatsText();
             }
+        }
+        btnBook.setOnClickListener(v -> {
+            Intent intent = new Intent(this,SwapSeat.class);
+            startActivity(intent);
         });
 
+        ImageButton backButton = findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> finish());
     }
+
     private void updateSelectedSeatsText() {
         txtSelected.setText("Selected Seats: " + String.join(", ", selectedSeats));
     }
