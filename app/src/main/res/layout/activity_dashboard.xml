@@ -6,10 +6,65 @@
     android:layout_height="match_parent"
     android:background="#131313">
 
+    <!-- Non-scrollable part -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/txtHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginBottom="22dp"
+            android:text="Home"
+            android:textColor="#D9D9D9"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="232dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="33dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
+            app:layout_constraintStart_toEndOf="@+id/txtHome"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bell" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginEnd="26dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/settings" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Scrollable part -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout"
         app:layout_constraintBottom_toTopOf="@id/includeNavbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -19,94 +74,39 @@
             android:layout_height="wrap_content">
 
             <!-- Your existing content here -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
-                android:layout_width="match_parent"
-                android:layout_height="75dp"
-                android:layout_marginTop="32dp"
-                app:layout_constraintBottom_toTopOf="@+id/layoutmini3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/txtHome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="21dp"
-                    android:layout_marginBottom="22dp"
-                    android:text="Home"
-                    android:textColor="#D9D9D9"
-                    android:textSize="24sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/imageView"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="232dp"
-                    android:layout_marginTop="22dp"
-                    android:layout_marginBottom="33dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/imageView2"
-                    app:layout_constraintStart_toEndOf="@+id/txtHome"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/bell" />
-
-                <ImageView
-                    android:id="@+id/imageView2"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="23dp"
-                    android:layout_marginEnd="26dp"
-                    android:layout_marginBottom="32dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/imageView"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/settings" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <Button
                 android:id="@+id/btnSearch"
                 android:layout_width="225dp"
                 android:layout_height="60dp"
-                android:layout_marginBottom="60dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="28dp"
                 android:backgroundTint="#C7DE99"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="Search Bus"
                 android:textColor="#131313"
                 android:textSize="25dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/txtRecent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.505"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-                app:layout_constraintVertical_bias="0.557" />
+                app:layout_constraintTop_toBottomOf="@+id/btnSearch2" />
 
             <Button
                 android:id="@+id/btnSearch2"
                 android:layout_width="168dp"
                 android:layout_height="40dp"
+                android:layout_marginTop="6dp"
                 android:layout_marginEnd="10dp"
-                android:layout_marginBottom="60dp"
                 android:backgroundTint="#D9D9D9"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="View Route"
                 android:textColor="#131313"
                 android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btnSearch"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.924"
+                app:layout_constraintHorizontal_bias="0.935"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-                app:layout_constraintVertical_bias="0.423" />
+                app:layout_constraintTop_toBottomOf="@+id/layoutmini3" />
 
             <TextView
                 android:id="@+id/txtRecent"
@@ -129,14 +129,14 @@
                 android:id="@+id/layoutmini1"
                 android:layout_width="380dp"
                 android:layout_height="100dp"
-                android:layout_marginTop="56dp"
+                android:layout_marginTop="200dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/border"
                 app:layout_constraintBottom_toTopOf="@+id/layoutmini2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.483"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnSearch">
+                app:layout_constraintTop_toBottomOf="@+id/layoutmini3">
 
                 <TextView
                     android:id="@+id/txtDate1"
@@ -250,14 +250,16 @@
                 android:layout_width="361dp"
                 android:layout_height="174dp"
                 android:layout_marginStart="25dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="30dp"
                 android:layout_marginEnd="25dp"
                 android:layout_marginBottom="6dp"
                 android:background="@drawable/border"
                 app:layout_constraintBottom_toTopOf="@+id/btnSearch2"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.191">
 
                 <EditText
                     android:id="@+id/editTextText10"
