@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
+import androidx.room.Index;
 
 @Entity(tableName = "buses",
         foreignKeys = {
@@ -15,6 +16,10 @@ import androidx.room.PrimaryKey;
                             parentColumns = "id",
                             childColumns = "bus_driver_id",
                             onDelete = ForeignKey.CASCADE),
+        },
+        indices = {
+                @Index(value = "bus_owner_id"),
+                @Index(value = "bus_driver_id")
         })
 public class Bus {
     @PrimaryKey(autoGenerate = true)
