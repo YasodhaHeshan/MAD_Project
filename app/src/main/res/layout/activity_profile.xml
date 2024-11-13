@@ -125,7 +125,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/txtRecent" />
 
             <Button
-                android:id="@+id/btnSearch2"
+                android:id="@+id/btnUpdate"
                 android:layout_width="168dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="136dp"
@@ -157,7 +157,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnSearch2" />
+                app:layout_constraintTop_toBottomOf="@+id/btnUpdate" />
 
             <com.example.mad_project.ui.CircularImageView
                 android:id="@+id/profileImg"

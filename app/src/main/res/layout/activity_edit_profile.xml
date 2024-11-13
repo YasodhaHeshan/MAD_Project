@@ -238,6 +238,18 @@
                 app:layout_constraintStart_toEndOf="@+id/textView15"
                 app:layout_constraintTop_toBottomOf="@+id/email" />
 
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="94dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="220dp"
+                android:layout_marginEnd="33dp"
+                android:backgroundTint="#D9D9D9"
+                android:text="Save"
+                android:textColor="#131313"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
