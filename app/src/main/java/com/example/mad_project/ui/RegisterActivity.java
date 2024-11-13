@@ -126,7 +126,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private String hashPassword(String email, String password) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");
-        String input = email + password + System.currentTimeMillis();
+        String input = email + password;
         byte[] hash = md.digest(input.getBytes());
         StringBuilder hexString = new StringBuilder();
         for (byte b : hash) {
