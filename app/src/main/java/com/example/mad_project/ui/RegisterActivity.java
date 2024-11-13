@@ -79,30 +79,44 @@ public class RegisterActivity extends AppCompatActivity {
             String emailStr = emailEditText.getText().toString();
             String passwordStr = passwordEditText.getText().toString();
             String mobileStr = mobileEditText.getText().toString();
+            String confirmPasswordStr = confirmPasswordEditText.getText().toString();
 
             AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
 
-            new Thread(() -> {
-                try {
-                    UserDao userDao = db.userDao();
+            if (!passwordStr.equals(confirmPasswordStr)) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            } else if (firstNameStr.isEmpty() || lastNameStr.isEmpty() || emailStr.isEmpty() || passwordStr.isEmpty() || mobileStr.isEmpty() || confirmPasswordStr.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
 
-                    String passwordHash = hashPassword(emailStr, passwordStr);
+            }else if (passwordStr.length() < 8) {
+                Toast.makeText(this, "Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else {
+                new Thread(() -> {
+                    try {
+                        UserDao userDao = db.userDao();
 
-                    User newUser = new User(0, firstNameStr, lastNameStr, emailStr, mobileStr, passwordHash);
-                    userDao.insert(newUser);
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish(); // Optional: to close the RegisterActivity
-                    });
-                } catch (Exception e) {
-                    Log.e("RegisterActivity", "Failed to register user", e);
-                    runOnUiThread(() -> Toast.makeText(this, "Failed to register user: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                } finally {
-                    db.close();
-                }
-            }).start();
+                        String passwordHash = hashPassword(emailStr, passwordStr);
+
+                        User newUser = new User(0, firstNameStr, lastNameStr, emailStr, mobileStr, passwordHash);
+                        userDao.insert(newUser);
+                        runOnUiThread(() -> {
+                            Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish(); // Optional: to close the RegisterActivity
+                        });
+                    } catch (Exception e) {
+                        Log.e("RegisterActivity", "Failed to register user", e);
+                        runOnUiThread(() -> Toast.makeText(this, "Failed to register user: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                    } finally {
+                        db.close();
+                    }
+                }).start();
+            }
         });
     }
 
