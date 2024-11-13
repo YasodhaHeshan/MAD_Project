@@ -343,6 +343,7 @@
     </ScrollView>
 
     <!-- Include the bottom navigation bar -->
+
     <include
         android:id="@+id/includeNavbar"
         layout="@layout/navbar"

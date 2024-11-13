@@ -46,7 +46,7 @@ public class RegisterOwnerActivity extends AppCompatActivity {
         String email = ownerEmail.getText().toString();
         String phone = ownerPhone.getText().toString();
 
-        BusOwner owner = new BusOwner(0, name, email, phone, "password", "company", "busnayaka corp", 0, 1, 0);
+        BusOwner owner = new BusOwner(0, name, email, phone, "password", "company", "busnayaka corp", 0, 1, 0, "2982");
 
         AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
         ExecutorService executor = Executors.newSingleThreadExecutor();

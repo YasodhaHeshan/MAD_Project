@@ -17,12 +17,20 @@ public class BusDriver extends User {
     @ColumnInfo(name = "bus_assigned")
     private String busAssigned;
 
-    public BusDriver(int id, String firstName, String lastName, String email, String phoneNumber, String password, String licenseNumber, String routeAssigned, int experienceYears, String busAssigned) {
+    @ColumnInfo(name = "rating")
+    private double rating;
+
+    @ColumnInfo(name = "nic")
+    private String nic;
+
+    public BusDriver(int id, String firstName, String lastName, String email, String phoneNumber, String password, String licenseNumber, String routeAssigned, int experienceYears, String busAssigned, double rating, String nic) {
         super(id, firstName, lastName, email, phoneNumber, password);
         this.licenseNumber = licenseNumber;
         this.routeAssigned = routeAssigned;
         this.experienceYears = experienceYears;
         this.busAssigned = busAssigned;
+        this.rating = rating;
+        this.nic = nic;
     }
 
     public String getLicenseNumber() {
@@ -55,5 +63,21 @@ public class BusDriver extends User {
 
     public void setBusAssigned(String busAssigned) {
         this.busAssigned = busAssigned;
+    }
+
+    public double getRating() {
+        return rating;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public String getNic() {
+        return nic;
+    }
+
+    public void setNic(String nic) {
+        this.nic = nic;
     }
 }
