@@ -36,8 +36,8 @@
         <activity android:name=".ui.RegisterOwnerActivity" />
         <activity android:name=".ui.RegisterBusActivity" />
         <activity android:name=".ui.SwapSeat" />
-        <activity android:name=".ui.TestMainUI" />
-        <activity android:name=".ui.BusList" />
+        <activity android:name=".ui.ProfileActivity" />
+        <activity android:name=".ui.EditProfileActivity"/>
 
         <meta-data
             android:name="preloaded_fonts"
