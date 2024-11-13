@@ -12,9 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:layout_marginTop="32dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/txtHome"
@@ -38,11 +39,11 @@
             android:layout_marginStart="232dp"
             android:layout_marginTop="22dp"
             android:layout_marginBottom="33dp"
+            android:src="@drawable/bell"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView2"
             app:layout_constraintStart_toEndOf="@+id/txtHome"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/bell" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView2"
@@ -52,22 +53,23 @@
             android:layout_marginTop="23dp"
             android:layout_marginEnd="26dp"
             android:layout_marginBottom="32dp"
+            android:src="@drawable/settings"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/settings" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Scrollable part -->
     <ScrollView
+        android:id="@+id/scrollView3"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/constraintLayout"
         app:layout_constraintBottom_toTopOf="@id/includeNavbar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -77,39 +79,53 @@
                 android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="68dp"
+                android:layout_marginEnd="184dp"
+                android:layout_marginBottom="20dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="Colombo"
                 android:textColor="#D9D9D9"
                 android:textSize="15sp"
-                tools:layout_editor_absoluteX="176dp"
-                tools:layout_editor_absoluteY="353dp" />
+                app:layout_constraintBottom_toTopOf="@+id/email"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView16"
+                app:layout_constraintTop_toBottomOf="@+id/name" />
 
             <TextView
                 android:id="@+id/textView16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="57dp"
+                android:layout_marginBottom="18dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="Address"
                 android:textColor="#D9D9D9"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:layout_editor_absoluteX="57dp"
-                tools:layout_editor_absoluteY="353dp" />
+                app:layout_constraintBottom_toTopOf="@+id/textView14"
+                app:layout_constraintEnd_toStartOf="@+id/address"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="57dp"
+                android:layout_marginEnd="82dp"
+                android:layout_marginBottom="25dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="Name"
                 android:textColor="#D9D9D9"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:layout_editor_absoluteX="57dp"
-                tools:layout_editor_absoluteY="302dp" />
+                app:layout_constraintBottom_toTopOf="@+id/textView16"
+                app:layout_constraintEnd_toStartOf="@+id/name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtRecent" />
 
             <Button
-                android:id="@+id/btnSearch2"
+                android:id="@+id/btnUpdate"
                 android:layout_width="168dp"
                 android:layout_height="40dp"
                 android:layout_marginTop="136dp"
@@ -132,14 +148,16 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="44dp"
                 android:layout_marginEnd="193dp"
+                android:layout_marginBottom="47dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="Your Info"
                 android:textColor="#D9D9D9"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/textView13"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btnSearch2" />
+                app:layout_constraintTop_toBottomOf="@+id/btnUpdate" />
 
             <com.example.mad_project.ui.CircularImageView
                 android:id="@+id/profileImg"
@@ -148,66 +166,92 @@
                 android:layout_gravity="center"
                 android:background="@drawable/circular_border"
                 android:scaleType="centerCrop"
-                app:srcCompat="@drawable/user_image"
-                tools:layout_editor_absoluteX="26dp"
-                tools:layout_editor_absoluteY="28dp" />
+                app:layout_constraintBottom_toTopOf="@+id/txtRecent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.11"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.373"
+                app:srcCompat="@drawable/user_image" />
 
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="47dp"
+                android:layout_marginEnd="192dp"
+                android:layout_marginBottom="24dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="Shaggy"
                 android:textColor="#D9D9D9"
                 android:textSize="15sp"
-                tools:layout_editor_absoluteX="176dp"
-                tools:layout_editor_absoluteY="302dp" />
+                app:layout_constraintBottom_toTopOf="@+id/address"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView13"
+                app:layout_constraintTop_toBottomOf="@+id/txtRecent" />
 
             <TextView
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="78dp"
+                android:layout_marginEnd="121dp"
+                android:layout_marginBottom="18dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="shaggy@gmail.com"
                 android:textColor="#D9D9D9"
                 android:textSize="15sp"
-                tools:layout_editor_absoluteX="176dp"
-                tools:layout_editor_absoluteY="400dp" />
+                app:layout_constraintBottom_toTopOf="@+id/mobile"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView14"
+                app:layout_constraintTop_toBottomOf="@+id/address" />
 
             <TextView
                 android:id="@+id/textView14"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="57dp"
+                android:layout_marginBottom="16dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="E-mail"
                 android:textColor="#D9D9D9"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:layout_editor_absoluteX="57dp"
-                tools:layout_editor_absoluteY="400dp" />
+                app:layout_constraintBottom_toTopOf="@+id/textView15"
+                app:layout_constraintEnd_toStartOf="@+id/email"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
             <TextView
                 android:id="@+id/textView15"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="57dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="Mobile"
                 android:textColor="#D9D9D9"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:layout_editor_absoluteX="57dp"
-                tools:layout_editor_absoluteY="445dp" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/mobile"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
             <TextView
                 android:id="@+id/mobile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="77dp"
+                android:layout_marginEnd="166dp"
+                android:layout_marginBottom="2dp"
                 android:fontFamily="@font/akaya_telivigala"
                 android:text="0777555222"
                 android:textColor="#D9D9D9"
                 android:textSize="15sp"
-                tools:layout_editor_absoluteX="176dp"
-                tools:layout_editor_absoluteY="445dp" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView15"
+                app:layout_constraintTop_toBottomOf="@+id/email" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
