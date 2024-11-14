@@ -38,6 +38,9 @@
         <activity android:name=".ui.SwapSeat" />
         <activity android:name=".ui.ProfileActivity" />
         <activity android:name=".ui.EditProfileActivity"/>
+        <activity android:name=".ui.DriverDashboardActivity"/>
+        <activity android:name=".ui.DriverFindBusActivity"/>
+
 
         <meta-data
             android:name="preloaded_fonts"
