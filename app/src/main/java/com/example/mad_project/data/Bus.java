@@ -18,7 +18,7 @@ import androidx.room.Index;
                             onDelete = ForeignKey.CASCADE),
                 @ForeignKey(entity = Ticket.class,
                             parentColumns = "id",
-                            childColumns = "id",
+                            childColumns = "ticket_id",
                             onDelete = ForeignKey.CASCADE),
                 @ForeignKey(entity = Route.class,
                             parentColumns = "id",
@@ -28,7 +28,7 @@ import androidx.room.Index;
         indices = {
                 @Index(value = "bus_owner_id"),
                 @Index(value = "bus_driver_id"),
-                @Index(value = "id"),
+                @Index(value = "ticket_id"),
                 @Index(value = "route_id")
         })
 public class Bus {

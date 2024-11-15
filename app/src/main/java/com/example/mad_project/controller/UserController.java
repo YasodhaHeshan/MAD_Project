@@ -1,5 +1,7 @@
 package com.example.mad_project.controller;
 
+import static com.example.mad_project.controller.HashPassword.hashPassword;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +14,7 @@ import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.User;
 import com.example.mad_project.data.UserDao;
 import com.example.mad_project.ui.DashboardActivity;
+import com.example.mad_project.ui.LoginActivity;
 import com.example.mad_project.utils.EmailSender;
 
 import java.security.MessageDigest;
@@ -47,10 +50,10 @@ public class UserController {
                     String accessToken = "your_access_token";
                     EmailSender.sendEmail(context, email, subject, message, accessToken);
 
-                    // Redirect to dashboard
+                    // Redirect to Login
                     ((Activity) context).runOnUiThread(() -> {
                         Toast.makeText(context, "User registered successfully", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(context, DashboardActivity.class);
+                        Intent intent = new Intent(context, LoginActivity.class);
                         context.startActivity(intent);
                     });
                 } catch (Exception e) {
@@ -66,12 +69,12 @@ public class UserController {
     public void login(String email, String password, Context context) {
         new Thread(() -> {
             try {
-                String passwordHash = hashPassword(email, password);
-                User user = userDao.getUserByEmail(email);
-                if (user == null) {
+                if (email.isEmpty() || password.isEmpty()) {
+                    ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Fields cannot be empty", Toast.LENGTH_SHORT).show());
+                } else if (userDao.getUserByEmail(email) == null) {
                     ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show());
-                } else if (!user.getPassword().equals(passwordHash)) {
-                    ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show());
+                } else if (!userDao.getUserByEmail(email).getPassword().equals(hashPassword(email, password))) {
+                    ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Incorrect username or password", Toast.LENGTH_SHORT).show());
                 } else {
                     ((Activity) context).runOnUiThread(() -> {
                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show();
@@ -86,16 +89,5 @@ public class UserController {
                 db.close();
             }
         }).start();
-    }
-
-    private String hashPassword(String email, String password) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        String input = email + password;
-        byte[] hash = md.digest(input.getBytes());
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : hash) {
-            hexString.append(Integer.toHexString(0xFF & b));
-        }
-        return hexString.toString();
     }
 }

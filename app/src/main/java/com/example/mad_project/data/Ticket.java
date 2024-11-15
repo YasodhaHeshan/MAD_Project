@@ -43,8 +43,7 @@ public class Ticket {
     @ColumnInfo(name = "expiry_date")
     public String expiryDate;
 
-    public Ticket(int id, int userId, int busId, int ticketPrice, String ticketNumber, String issueDate, String expiryDate) {
-        this.id = id;
+    public Ticket(int userId, int busId, int ticketPrice, String ticketNumber, String issueDate, String expiryDate) {
         this.userId = userId;
         this.busId = busId;
         this.ticketPrice = ticketPrice;

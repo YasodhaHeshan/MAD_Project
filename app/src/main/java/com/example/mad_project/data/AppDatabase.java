@@ -6,6 +6,8 @@ import androidx.room.TypeConverters;
 
 import com.example.mad_project.controller.Converters;
 
+import java.util.List;
+
 @Database(entities = {User.class, Customer.class, BusOwner.class, BusDriver.class, Bus.class, Payment.class, Feedback.class, Ticket.class, Route.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {

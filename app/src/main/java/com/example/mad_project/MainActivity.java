@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mad_project.ui.FillDatabaseActivity;
 import com.example.mad_project.ui.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,9 +21,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button getStartedBtn = findViewById(R.id.btnStart);
+        Button fillDatabaseBtn = findViewById(R.id.btn_fill_database);
 
         getStartedBtn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
+
+        fillDatabaseBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, FillDatabaseActivity.class);
             startActivity(intent);
         });
     }
