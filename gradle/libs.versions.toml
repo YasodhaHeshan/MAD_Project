@@ -34,7 +34,7 @@ cardview = { group = "androidx.cardview", name = "cardview", version.ref = "card
 room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomRuntimeVersion" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompilerVersion" }
-androidx-work-runtime = { group = "androidx.work", name = "work-runtime", version = "2.7.0" }
+androidx-work-runtime = { group = "androidx.work", name = "work-runtime", version = "2.10.0" }
 androidx-datastore-core-android = { group = "androidx.datastore", name = "datastore-core-android", version.ref = "datastoreCoreAndroid" }
 androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "legacySupportV4" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
