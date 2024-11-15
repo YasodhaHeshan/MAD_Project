@@ -2,21 +2,13 @@ package com.example.mad_project.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.room.Room;
 
 import com.example.mad_project.R;
-import com.example.mad_project.controller.AppDatabase;
-import com.example.mad_project.data.User;
-import com.example.mad_project.data.UserDao;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.example.mad_project.controller.UserController;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -47,8 +39,8 @@ public class RegisterActivity extends AppCompatActivity {
         customerButton = findViewById(R.id.btnCustomer);
         ownerButton = findViewById(R.id.btnOwner);
         driverButton = findViewById(R.id.btnDriver);
-        Button login = findViewById(R.id.btnLogin);
-        Button signup = findViewById(R.id.btnSignup);
+        Button loginButton = findViewById(R.id.btnLogin);
+        Button signupButton = findViewById(R.id.btnSignup);
 
         // Set onClickListeners for the buttons
         customerButton.setOnClickListener(v -> {
@@ -56,67 +48,32 @@ public class RegisterActivity extends AppCompatActivity {
             updateButtonColors(customerButton, ownerButton, driverButton);
         });
 
-        ownerButton.setOnClickListener(v -> {
-            runOnUiThread(() -> {
-                Intent intent = new Intent(RegisterActivity.this, RegisterOwnerActivity.class);
-                startActivity(intent);
-            });
-        });
+        ownerButton.setOnClickListener(v -> runOnUiThread(() -> {
+            Intent intent = new Intent(RegisterActivity.this, RegisterOwnerActivity.class);
+            startActivity(intent);
+        }));
 
         driverButton.setOnClickListener(v -> {
             updateHints("Driver First Name", "Driver Last Name", "Driver Email", "Driver Mobile", "Driver Password", "Confirm Driver Password");
             updateButtonColors(driverButton, customerButton, ownerButton);
         });
 
-        login.setOnClickListener(v -> {
+        loginButton.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
         });
 
-        signup.setOnClickListener(v -> {
-            String firstNameStr = firstNameEditText.getText().toString();
-            String lastNameStr = lastNameEditText.getText().toString();
-            String emailStr = emailEditText.getText().toString();
-            String passwordStr = passwordEditText.getText().toString();
-            String mobileStr = mobileEditText.getText().toString();
-            String confirmPasswordStr = confirmPasswordEditText.getText().toString();
+        signupButton.setOnClickListener(v -> {
+            String firstName = firstNameEditText.getText().toString();
+            String lastName = lastNameEditText.getText().toString();
+            String email = emailEditText.getText().toString();
+            String mobile = mobileEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            String confirmPassword = confirmPasswordEditText.getText().toString();
 
-            AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
-
-            if (!passwordStr.equals(confirmPasswordStr)) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-                return;
-            } else if (firstNameStr.isEmpty() || lastNameStr.isEmpty() || emailStr.isEmpty() || passwordStr.isEmpty() || mobileStr.isEmpty() || confirmPasswordStr.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-                return;
-
-            }else if (passwordStr.length() < 8) {
-                Toast.makeText(this, "Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            else {
-                new Thread(() -> {
-                    try {
-                        UserDao userDao = db.userDao();
-
-                        String passwordHash = hashPassword(emailStr, passwordStr);
-
-                        User newUser = new User(0, firstNameStr, lastNameStr, emailStr, mobileStr, passwordHash);
-                        userDao.insert(newUser);
-                        runOnUiThread(() -> {
-                            Toast.makeText(this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish(); // Optional: to close the RegisterActivity
-                        });
-                    } catch (Exception e) {
-                        Log.e("RegisterActivity", "Failed to register user", e);
-                        runOnUiThread(() -> Toast.makeText(this, "Failed to register user: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                    } finally {
-                        db.close();
-                    }
-                }).start();
-            }
+            // Register the user
+            UserController userController = new UserController(this);
+            userController.register(firstName, lastName, email, mobile, password, confirmPassword, this);
         });
     }
 
@@ -136,16 +93,5 @@ public class RegisterActivity extends AppCompatActivity {
         button1.setTextColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.white));
         button2.setBackgroundColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.black));
         button2.setTextColor(ContextCompat.getColor(RegisterActivity.this, android.R.color.white));
-    }
-
-    private String hashPassword(String email, String password) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
-        String input = email + password;
-        byte[] hash = md.digest(input.getBytes());
-        StringBuilder hexString = new StringBuilder();
-        for (byte b : hash) {
-            hexString.append(Integer.toHexString(0xFF & b));
-        }
-        return hexString.toString();
     }
 }

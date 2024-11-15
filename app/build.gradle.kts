@@ -27,13 +27,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding = true
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += setOf("META-INF/NOTICE.md", "META-INF/LICENSE.md")
         }
@@ -50,11 +50,16 @@ dependencies {
     implementation(libs.cardview)
     implementation(libs.room.common)
     implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.datastore.core.android)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.sun.mail:android-mail:1.6.7")
-    implementation("com.sun.mail:android-activation:1.6.7")
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
     annotationProcessor(libs.androidx.room.compiler)
 
 }
