@@ -10,6 +10,9 @@ public interface TicketDao {
     @Query("SELECT * FROM tickets")
     List<Ticket> getAllTickets();
 
-    @Query("SELECT ticket_price FROM tickets WHERE customer_id = :customerId")
-    int getTicketPriceByCustomerId(int customerId);
+    @Query("SELECT * FROM tickets WHERE user_id = :userId")
+    int getTicketPriceByUserId(int userId);
+
+    @Query("SELECT * FROM tickets WHERE bus_id = :busId")
+    int getTicketPriceByBusId(int busId);
 }

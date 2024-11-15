@@ -2,4 +2,6 @@
     <string name="app_name">MAD_Project</string>
     <string name="Map_Api_Key">AIzaSyAxdiBmFJTWxBqgR-IhvIN4cfB0CB5_3OQ</string>
     <string name="Direction_Api">AIzaSyAxdiBmFJTWxBqgR-IhvIN4cfB0CB5_3OQ</string>
+    <string name="tickets_bus_adapter"> tickets</string>
+    <string name="ticket_price"> Rs</string>
 </resources>
