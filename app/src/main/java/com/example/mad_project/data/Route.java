@@ -2,27 +2,37 @@ package com.example.mad_project.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "routes")
+@Entity(tableName = "routes",
+        foreignKeys = @ForeignKey(entity = Bus.class,
+                parentColumns = "id",
+                childColumns = "bus_id",
+                onDelete = ForeignKey.CASCADE),
+        indices = @Index(value = "bus_id"))
 public class Route {
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    private int id;
+
+    @ColumnInfo(name = "bus_id")
+    private int busId;
 
     @ColumnInfo(name = "start_location")
-    public String startLocation;
+    private String startLocation;
 
     @ColumnInfo(name = "end_location")
-    public String endLocation;
+    private String endLocation;
 
     @ColumnInfo(name = "departure_time")
-    public String departureTime;
+    private String departureTime;
 
     @ColumnInfo(name = "arrival_time")
-    public String arrivalTime;
+    private String arrivalTime;
 
-    public Route(int id, String startLocation, String endLocation, String departureTime, String arrivalTime) {
-        this.id = id;
+    public Route(int busId, String startLocation, String endLocation, String departureTime, String arrivalTime) {
+        this.busId = busId;
         this.startLocation = startLocation;
         this.endLocation = endLocation;
         this.departureTime = departureTime;
@@ -37,11 +47,19 @@ public class Route {
         this.id = id;
     }
 
+    public int getBusId() {
+        return busId;
+    }
+
+    public void setBusId(int busId) {
+        this.busId = busId;
+    }
+
     public String getStartLocation() {
         return startLocation;
     }
 
-    public void setStartLocation(String startLocation) {
+    public void setStartLocation( String startLocation) {
         this.startLocation = startLocation;
     }
 
@@ -49,7 +67,7 @@ public class Route {
         return endLocation;
     }
 
-    public void setEndLocation(String endLocation) {
+    public void setEndLocation( String endLocation) {
         this.endLocation = endLocation;
     }
 
@@ -57,7 +75,7 @@ public class Route {
         return departureTime;
     }
 
-    public void setDepartureTime(String departureTime) {
+    public void setDepartureTime( String departureTime) {
         this.departureTime = departureTime;
     }
 
@@ -65,7 +83,7 @@ public class Route {
         return arrivalTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime( String arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 }

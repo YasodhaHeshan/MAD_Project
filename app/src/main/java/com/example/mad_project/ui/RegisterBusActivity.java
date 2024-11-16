@@ -9,65 +9,61 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
 import com.example.mad_project.R;
+import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDao;
-import com.example.mad_project.data.AppDatabase;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class RegisterBusActivity extends AppCompatActivity {
 
-    private EditText departureLocation, arrivalLocation, departureTime, arrivalTime, availableSeats, busOwnerId, busDriverId, ticketPrice;
+    private EditText editTextBusNumber, editTextBusOwnerId, editTextBusDriverId, editTextTicketId, editTextRouteId, editTextSeats;
+    private Button buttonRegisterBus;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_bus);
 
-        departureLocation = findViewById(R.id.editTextDepartureLocation);
-        arrivalLocation = findViewById(R.id.editTextArrivalLocation);
-        departureTime = findViewById(R.id.editTextDepartureTime);
-        arrivalTime = findViewById(R.id.editTextArrivalTime);
-        availableSeats = findViewById(R.id.editTextAvailableSeats);
-        busOwnerId = findViewById(R.id.editTextBusOwnerId);
-        busDriverId = findViewById(R.id.editTextBusDriverId);
-        ticketPrice = findViewById(R.id.editTextTicketPrice);
-        Button registerBusButton = findViewById(R.id.buttonRegisterBus);
+        initializeViews();
+        setupDatabase();
 
-        registerBusButton.setOnClickListener(v -> registerBus());
+        buttonRegisterBus.setOnClickListener(v -> registerBus());
+    }
+
+    private void initializeViews() {
+        editTextBusNumber = findViewById(R.id.editTextBusNumber);
+        editTextBusOwnerId = findViewById(R.id.editTextBusOwnerId);
+        editTextBusDriverId = findViewById(R.id.editTextBusDriverId);
+        editTextTicketId = findViewById(R.id.editTextTicketId);
+        editTextRouteId = findViewById(R.id.editTextRouteId);
+        editTextSeats = findViewById(R.id.editTextSeats);
+        buttonRegisterBus = findViewById(R.id.buttonRegisterBus);
+    }
+
+    private void setupDatabase() {
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db")
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
     private void registerBus() {
-        String departureLoc = departureLocation.getText().toString();
-        String arrivalLoc = arrivalLocation.getText().toString();
-        String departureT = departureTime.getText().toString();
-        String arrivalT = arrivalTime.getText().toString();
-        int availableS, busOwner, busDriver, ticketP;
-        try {
-            availableS = Integer.parseInt(availableSeats.getText().toString());
-            busOwner = Integer.parseInt(busOwnerId.getText().toString());
-            busDriver = Integer.parseInt(busDriverId.getText().toString());
-            ticketP = Integer.parseInt(ticketPrice.getText().toString());
-        } catch (NumberFormatException e) {
-            Toast.makeText(this, "Please enter valid numbers", Toast.LENGTH_LONG).show();
-            return;
-        }
+        String busNumber = editTextBusNumber.getText().toString();
+        int busOwnerId = Integer.parseInt(editTextBusOwnerId.getText().toString());
+        int busDriverId = Integer.parseInt(editTextBusDriverId.getText().toString());
+        int ticketId = Integer.parseInt(editTextTicketId.getText().toString());
+        int routeId = Integer.parseInt(editTextRouteId.getText().toString());
+        int seats = Integer.parseInt(editTextSeats.getText().toString());
 
-        Bus bus = new Bus("", busOwner, busDriver, 0, 0, departureLoc, arrivalLoc, departureT, arrivalT, availableS);
+        Bus bus = new Bus(busNumber, "Start Location", "End Location", "Departure Time", "Arrival Time", seats);
 
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
+        new Thread(() -> {
             try {
                 BusDao busDao = db.busDao();
                 busDao.insert(bus);
                 runOnUiThread(() -> Toast.makeText(this, "Bus registered successfully", Toast.LENGTH_SHORT).show());
             } catch (Exception e) {
                 runOnUiThread(() -> Toast.makeText(this, "Error registering bus: " + e.getMessage(), Toast.LENGTH_LONG).show());
-            } finally {
-                db.close();
             }
-        });
+        }).start();
     }
 }
