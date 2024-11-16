@@ -2,14 +2,32 @@ package com.example.mad_project.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
+import androidx.room.ForeignKey;
 
-@Entity(tableName = "bus_owners")
-public class BusOwner extends User {
+@Entity(tableName = "bus_owners",
+        foreignKeys = @ForeignKey(entity = User.class,
+                parentColumns = "id",
+                childColumns = "user_id",
+                onDelete = ForeignKey.CASCADE),
+        indices = @Index(value = "user_id"))
+
+public class BusOwner {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    @ColumnInfo(name = "user_id")
+    private int userId;
+
     @ColumnInfo(name = "company_name")
     private String companyName;
 
     @ColumnInfo(name = "license_number")
     private String licenseNumber;
+
+    @ColumnInfo(name = "nic")
+    private String nic;
 
     @ColumnInfo(name = "fleet_size")
     private int fleetSize;
@@ -20,13 +38,27 @@ public class BusOwner extends User {
     @ColumnInfo(name = "rating")
     private double rating;
 
-    public BusOwner(int id, String firstName, String lastName, String email, String phoneNumber, String password, String companyName, int fleetSize, int yearsInBusiness, double rating, String licenseNumber) {
-        super(id, firstName, lastName, email, phoneNumber, password);
+    public BusOwner(int userId, String companyName,  String licenseNumber, String nic) {
+        this.userId = userId;
         this.companyName = companyName;
-        this.fleetSize = fleetSize;
-        this.yearsInBusiness = yearsInBusiness;
-        this.rating = rating;
         this.licenseNumber = licenseNumber;
+        this.nic = nic;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getCompanyName() {
@@ -67,5 +99,13 @@ public class BusOwner extends User {
 
     public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
+    }
+
+    public String getNic() {
+        return nic;
+    }
+
+    public void setNic(String nic) {
+        this.nic = nic;
     }
 }
