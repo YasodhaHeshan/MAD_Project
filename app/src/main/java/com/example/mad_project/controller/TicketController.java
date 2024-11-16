@@ -20,12 +20,12 @@ public class TicketController {
 
     public void getTicketPriceByBusId(int busId, TicketPriceCallback callback) {
         executorService.execute(() -> {
-            int ticketPrice = ticketDao.getTicketPriceByBusId(busId);
+            double ticketPrice = ticketDao.getTicketPriceByBusId(busId);
             callback.onTicketPriceLoaded(ticketPrice);
         });
     }
 
     public interface TicketPriceCallback {
-        void onTicketPriceLoaded(int ticketPrice);
+        void onTicketPriceLoaded(double ticketPrice);
     }
 }

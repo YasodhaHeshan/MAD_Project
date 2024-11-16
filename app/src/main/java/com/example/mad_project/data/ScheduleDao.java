@@ -17,12 +17,6 @@ public interface ScheduleDao {
     @Update
     void update(Schedule schedule);
 
-    @Delete
-    void delete(Schedule schedule);
-
-    @Query("SELECT * FROM Schedule WHERE id = :id")
-    Schedule getScheduleById(int id);
-
-    @Query("SELECT * FROM Schedule")
-    List<Schedule> getAllSchedules();
+    @Insert
+    void insertAll(Schedule[] schedules);
 }

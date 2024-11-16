@@ -3,6 +3,7 @@ package com.example.mad_project.data;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
@@ -11,12 +12,12 @@ public interface TicketDao {
     @Insert
     void insert(Ticket ticket);
 
-    @Query("SELECT * FROM tickets")
-    List<Ticket> getAllTickets();
+    @Update
+    void update(Ticket ticket);
 
-    @Query("SELECT * FROM tickets WHERE user_id = :userId")
-    int getTicketPriceByUserId(int userId);
+    @Insert
+    void insertAll(Ticket[] tickets);
 
-    @Query("SELECT * FROM tickets WHERE bus_id = :busId")
-    int getTicketPriceByBusId(int busId);
+    @Query("SELECT price FROM tickets WHERE bus_id = :busId")
+    double getTicketPriceByBusId(int busId);
 }

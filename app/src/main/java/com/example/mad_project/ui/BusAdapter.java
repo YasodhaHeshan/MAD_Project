@@ -33,13 +33,13 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         Bus bus = busList.get(position);
         holder.departureTime.setText(bus.getDepartureTime());
         holder.arrivalTime.setText(bus.getArrivalTime());
-        holder.departureLocation.setText(bus.getDepartureLocation());
-        holder.arrivalLocation.setText(bus.getArrivalLocation());
-        holder.availableSeats.setText(bus.getAvailableSeats() + R.string.tickets_bus_adapter);
+        holder.departureLocation.setText(bus.getStartLocation());
+        holder.arrivalLocation.setText(bus.getEndLocation());
+        holder.availableSeats.setText(bus.getTotalSeats() + R.string.tickets_bus_adapter);
 
         // Load ticket price using TicketController
         ticketController.getTicketPriceByBusId(bus.getId(), ticketPrice ->
-            holder.ticketPrice.post(() -> holder.ticketPrice.setText(R.string.ticket_price + ticketPrice))
+            holder.ticketPrice.post(() -> holder.ticketPrice.setText(R.string.ticket_price + " " + ticketPrice))
         );
     }
 

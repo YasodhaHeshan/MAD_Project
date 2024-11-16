@@ -10,19 +10,12 @@ import java.util.List;
 
 @Dao
 public interface PaymentDao {
-
     @Insert
     void insert(Payment payment);
 
     @Update
     void update(Payment payment);
 
-    @Delete
-    void delete(Payment payment);
-
-    @Query("SELECT * FROM Payments WHERE id = :id")
-    Payment getPaymentById(int id);
-
-    @Query("SELECT * FROM Payments")
-    List<Payment> getAllPayments();
+    @Insert
+    void insertAll(Payment[] payments);
 }
