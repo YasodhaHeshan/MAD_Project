@@ -20,9 +20,9 @@ public interface FeedbackDao {
     @Delete
     void delete(Feedback feedback);
 
-    @Query("SELECT * FROM Feedback WHERE id = :id")
+    @Query("SELECT * FROM Feedbacks WHERE id = :id")
     Feedback getFeedbackById(int id);
 
-    @Query("SELECT * FROM Feedback")
+    @Query("SELECT * FROM Feedbacks")
     List<Feedback> getAllFeedback();
 }
