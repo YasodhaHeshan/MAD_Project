@@ -35,7 +35,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         String destination = getIntent().getStringExtra("destination");
 
         if (origin != null && destination != null) {
-            DirectionsHandler directionsHandler = new DirectionsHandler(googleMap, this, getString(R.string.Direction_Api));
+            DirectionsHandler directionsHandler = new DirectionsHandler(googleMap, this, getString(R.string.MAPS_API_KEY));
             directionsHandler.displayRoute(origin, destination);
         }
     }
