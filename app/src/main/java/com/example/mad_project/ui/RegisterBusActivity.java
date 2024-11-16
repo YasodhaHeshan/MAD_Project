@@ -11,7 +11,7 @@ import androidx.room.Room;
 import com.example.mad_project.R;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDao;
-import com.example.mad_project.controller.AppDatabase;
+import com.example.mad_project.data.AppDatabase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -54,7 +54,7 @@ public class RegisterBusActivity extends AppCompatActivity {
             return;
         }
 
-        Bus bus = new Bus(0, departureLoc, arrivalLoc, departureT, arrivalT, availableS, busOwner, busDriver, ticketP);
+        Bus bus = new Bus("", busOwner, busDriver, 0, 0, departureLoc, arrivalLoc, departureT, arrivalT, availableS);
 
         AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
         ExecutorService executor = Executors.newSingleThreadExecutor();

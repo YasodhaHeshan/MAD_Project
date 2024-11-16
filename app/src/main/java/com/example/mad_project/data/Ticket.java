@@ -2,18 +2,34 @@ package com.example.mad_project.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "tickets")
+@Entity(tableName = "tickets",
+        foreignKeys = {
+                @ForeignKey(entity = User.class,
+                            parentColumns = "id",
+                            childColumns = "user_id",
+                            onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = Bus.class,
+                            parentColumns = "id",
+                            childColumns = "bus_id",
+                            onDelete = ForeignKey.CASCADE)
+        },
+        indices = {
+                @Index(value = "user_id"),
+                @Index(value = "bus_id")
+        })
 public class Ticket {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    @ColumnInfo(name = "booking_id")
-    public int bookingId;
+    @ColumnInfo(name = "user_id")
+    public int userId;
 
-    @ColumnInfo(name = "customer_id")
-    public int customerId;
+    @ColumnInfo(name = "bus_id")
+    public int busId;
 
     @ColumnInfo(name = "ticket_price")
     public int ticketPrice;
@@ -24,13 +40,16 @@ public class Ticket {
     @ColumnInfo(name = "issue_date")
     public String issueDate;
 
-    public Ticket(int id, int bookingId, int customerId, int ticketPrice, String ticketNumber, String issueDate) {
-        this.id = id;
-        this.bookingId = bookingId;
-        this.customerId = customerId;
+    @ColumnInfo(name = "expiry_date")
+    public String expiryDate;
+
+    public Ticket(int userId, int busId, int ticketPrice, String ticketNumber, String issueDate, String expiryDate) {
+        this.userId = userId;
+        this.busId = busId;
         this.ticketPrice = ticketPrice;
         this.ticketNumber = ticketNumber;
         this.issueDate = issueDate;
+        this.expiryDate = expiryDate;
     }
 
     public int getId() {
@@ -41,20 +60,20 @@ public class Ticket {
         this.id = id;
     }
 
-    public int getBookingId() {
-        return bookingId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setBookingId(int bookingId) {
-        this.bookingId = bookingId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public int getCustomerId() {
-        return customerId;
+    public int getBusId() {
+        return busId;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
+    public void setBusId(int busId) {
+        this.busId = busId;
     }
 
     public int getTicketPrice() {
@@ -79,5 +98,13 @@ public class Ticket {
 
     public void setIssueDate(String issueDate) {
         this.issueDate = issueDate;
+    }
+
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
     }
 }

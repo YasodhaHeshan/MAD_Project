@@ -20,9 +20,9 @@ public interface PaymentDao {
     @Delete
     void delete(Payment payment);
 
-    @Query("SELECT * FROM Payment WHERE id = :id")
+    @Query("SELECT * FROM Payments WHERE id = :id")
     Payment getPaymentById(int id);
 
-    @Query("SELECT * FROM Payment")
+    @Query("SELECT * FROM Payments")
     List<Payment> getAllPayments();
 }

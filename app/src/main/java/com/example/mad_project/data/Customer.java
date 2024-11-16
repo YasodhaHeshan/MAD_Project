@@ -26,8 +26,8 @@ public class Customer extends User {
     @ColumnInfo(name = "bus_id")
     private int busId;
 
-    public Customer(int id, String firstName, String lastName, String email, String phoneNumber, String password, String address, String paymentMethod, int loyaltyPoints, List<String> bookingHistory, String preferredSeatType, int busId) {
-        super(id, firstName, lastName, email, phoneNumber, password);
+    public Customer(String firstName, String lastName, String email, String phoneNumber, String password, String address, String paymentMethod, int loyaltyPoints, List<String> bookingHistory, String preferredSeatType, int busId) {
+        super(firstName, lastName, email, phoneNumber, password);
         this.address = address;
         this.paymentMethod = paymentMethod;
         this.loyaltyPoints = loyaltyPoints;
