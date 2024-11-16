@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/baseline_directions_bus_24"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/baseline_directions_bus_24"
+        android:supportsRtl="true"
+        android:theme="@style/bus_book"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.RegisterActivity" />
+        <activity android:name=".ui.LoginActivity" />
+        <activity android:name=".ui.DashboardActivity" />
+        <activity android:name=".ui.SelectBusActivity" />
+        <activity android:name=".ui.MapActivity" />
+        <activity android:name=".ui.PaymentActivity" />
+        <activity android:name=".ui.BookSeat" />
+        <activity android:name=".ui.RegisterOwnerActivity" />
+        <activity android:name=".ui.RegisterBusActivity" />
+        <activity android:name=".ui.SwapSeat" />
+        <activity android:name=".ui.ProfileActivity" />
+        <activity android:name=".ui.EditProfileActivity"/>
+        <activity android:name=".ui.DriverDashboardActivity"/>
+        <activity android:name=".ui.DriverFindBusActivity"/>
+        <activity android:name=".ui.FillDatabaseActivity" />
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts"
+            />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/MAPS_API_KEY" />
+
+    </application>
+
+</manifest>
