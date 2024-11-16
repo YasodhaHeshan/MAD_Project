@@ -2,9 +2,9 @@ package com.example.mad_project.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.room.ForeignKey;
 
 @Entity(tableName = "bus_owners",
         foreignKeys = @ForeignKey(entity = User.class,
@@ -12,7 +12,6 @@ import androidx.room.ForeignKey;
                 childColumns = "user_id",
                 onDelete = ForeignKey.CASCADE),
         indices = @Index(value = "user_id"))
-
 public class BusOwner {
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -29,16 +28,7 @@ public class BusOwner {
     @ColumnInfo(name = "nic")
     private String nic;
 
-    @ColumnInfo(name = "fleet_size")
-    private int fleetSize;
-
-    @ColumnInfo(name = "years_in_business")
-    private int yearsInBusiness;
-
-    @ColumnInfo(name = "rating")
-    private double rating;
-
-    public BusOwner(int userId, String companyName,  String licenseNumber, String nic) {
+    public BusOwner(int userId,  String companyName,  String licenseNumber,  String nic) {
         this.userId = userId;
         this.companyName = companyName;
         this.licenseNumber = licenseNumber;
@@ -65,39 +55,15 @@ public class BusOwner {
         return companyName;
     }
 
-    public void setCompanyName(String companyName) {
+    public void setCompanyName( String companyName) {
         this.companyName = companyName;
-    }
-
-    public int getFleetSize() {
-        return fleetSize;
-    }
-
-    public void setFleetSize(int fleetSize) {
-        this.fleetSize = fleetSize;
-    }
-
-    public int getYearsInBusiness() {
-        return yearsInBusiness;
-    }
-
-    public void setYearsInBusiness(int yearsInBusiness) {
-        this.yearsInBusiness = yearsInBusiness;
-    }
-
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
     }
 
     public String getLicenseNumber() {
         return licenseNumber;
     }
 
-    public void setLicenseNumber(String licenseNumber) {
+    public void setLicenseNumber( String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
@@ -105,7 +71,7 @@ public class BusOwner {
         return nic;
     }
 
-    public void setNic(String nic) {
+    public void setNic( String nic) {
         this.nic = nic;
     }
 }

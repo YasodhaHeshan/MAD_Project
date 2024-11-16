@@ -20,7 +20,7 @@ public class BusController {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    public void insertBus(Bus bus) {
+    public void register(Bus bus) {
         executorService.execute(() -> busDao.insert(bus));
     }
 

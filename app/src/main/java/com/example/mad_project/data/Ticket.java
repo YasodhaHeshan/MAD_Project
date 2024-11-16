@@ -9,13 +9,13 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "tickets",
         foreignKeys = {
                 @ForeignKey(entity = User.class,
-                            parentColumns = "id",
-                            childColumns = "user_id",
-                            onDelete = ForeignKey.CASCADE),
+                        parentColumns = "id",
+                        childColumns = "user_id",
+                        onDelete = ForeignKey.CASCADE),
                 @ForeignKey(entity = Bus.class,
-                            parentColumns = "id",
-                            childColumns = "bus_id",
-                            onDelete = ForeignKey.CASCADE)
+                        parentColumns = "id",
+                        childColumns = "bus_id",
+                        onDelete = ForeignKey.CASCADE)
         },
         indices = {
                 @Index(value = "user_id"),
@@ -23,33 +23,41 @@ import androidx.room.PrimaryKey;
         })
 public class Ticket {
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    private int id;
 
     @ColumnInfo(name = "user_id")
-    public int userId;
+    private int userId;
 
     @ColumnInfo(name = "bus_id")
-    public int busId;
+    private int busId;
+    
+    @ColumnInfo(name = "ticket_id")
+    private int ticketId;
 
-    @ColumnInfo(name = "ticket_price")
-    public int ticketPrice;
+    
+    @ColumnInfo(name = "seat_number")
+    private int seatNumber;
 
-    @ColumnInfo(name = "ticket_number")
-    public String ticketNumber;
+    
+    @ColumnInfo(name = "price")
+    private double price;
 
-    @ColumnInfo(name = "issue_date")
-    public String issueDate;
+    
+    @ColumnInfo(name = "booking_date")
+    private String bookingDate;
 
-    @ColumnInfo(name = "expiry_date")
-    public String expiryDate;
+    
+    @ColumnInfo(name = "travel_date")
+    private String travelDate;
 
-    public Ticket(int userId, int busId, int ticketPrice, String ticketNumber, String issueDate, String expiryDate) {
+    public Ticket(int userId, int busId, int ticketId,  int seatNumber, double price,  String bookingDate,  String travelDate) {
         this.userId = userId;
         this.busId = busId;
-        this.ticketPrice = ticketPrice;
-        this.ticketNumber = ticketNumber;
-        this.issueDate = issueDate;
-        this.expiryDate = expiryDate;
+        this.ticketId = ticketId;
+        this.seatNumber = seatNumber;
+        this.price = price;
+        this.bookingDate = bookingDate;
+        this.travelDate = travelDate;
     }
 
     public int getId() {
@@ -76,35 +84,46 @@ public class Ticket {
         this.busId = busId;
     }
 
-    public int getTicketPrice() {
-        return ticketPrice;
+    public int getTicketId() {
+        return ticketId;
     }
 
-    public void setTicketPrice(int ticketPrice) {
-        this.ticketPrice = ticketPrice;
+    public void setTicketId(int ticketId) {
+        this.ticketId = ticketId;
     }
 
-    public String getTicketNumber() {
-        return ticketNumber;
+
+    public int getSeatNumber() {
+        return seatNumber;
     }
 
-    public void setTicketNumber(String ticketNumber) {
-        this.ticketNumber = ticketNumber;
+    public void setSeatNumber( int seatNumber) {
+        this.seatNumber = seatNumber;
     }
 
-    public String getIssueDate() {
-        return issueDate;
+    public double getPrice() {
+        return price;
     }
 
-    public void setIssueDate(String issueDate) {
-        this.issueDate = issueDate;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
-    public String getExpiryDate() {
-        return expiryDate;
+
+    public String getBookingDate() {
+        return bookingDate;
     }
 
-    public void setExpiryDate(String expiryDate) {
-        this.expiryDate = expiryDate;
+    public void setBookingDate( String bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
+
+    public String getTravelDate() {
+        return travelDate;
+    }
+
+    public void setTravelDate( String travelDate) {
+        this.travelDate = travelDate;
     }
 }
