@@ -61,6 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> {
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
         });
 
         signupButton.setOnClickListener(v -> {
@@ -78,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Redirect to the login page
             Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
             startActivity(intent);
+            finish();
         });
     }
 

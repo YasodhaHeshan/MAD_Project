@@ -6,29 +6,33 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(
-        tableName = "payments",
-        foreignKeys = @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "user_id", onDelete = ForeignKey.CASCADE),
-        indices = @Index(value = "user_id")
-)
+@Entity(tableName = "payments",
+        foreignKeys = @ForeignKey(entity = User.class,
+                parentColumns = "id",
+                childColumns = "user_id",
+                onDelete = ForeignKey.CASCADE),
+        indices = @Index(value = "user_id"))
 public class Payment {
     @PrimaryKey(autoGenerate = true)
-    public int id;
+    private int id;
+
 
     @ColumnInfo(name = "user_id")
-    public int userId;
+    private int userId;
+
 
     @ColumnInfo(name = "amount")
-    public double amount;
+    private double amount;
+
 
     @ColumnInfo(name = "payment_date")
-    public String paymentDate;
+    private String paymentDate;
+
 
     @ColumnInfo(name = "payment_method")
-    public String paymentMethod;
+    private String paymentMethod;
 
-    public Payment(int id, int userId, double amount, String paymentDate, String paymentMethod) {
-        this.id = id;
+    public Payment(int userId, double amount, String paymentDate, String paymentMethod) {
         this.userId = userId;
         this.amount = amount;
         this.paymentDate = paymentDate;
@@ -59,6 +63,7 @@ public class Payment {
         this.amount = amount;
     }
 
+
     public String getPaymentDate() {
         return paymentDate;
     }
@@ -66,6 +71,7 @@ public class Payment {
     public void setPaymentDate(String paymentDate) {
         this.paymentDate = paymentDate;
     }
+
 
     public String getPaymentMethod() {
         return paymentMethod;
