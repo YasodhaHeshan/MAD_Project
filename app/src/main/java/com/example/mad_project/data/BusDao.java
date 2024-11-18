@@ -20,4 +20,7 @@ public interface BusDao {
 
     @Insert
     void insertAll(Bus[] buses);
+
+    @Query("SELECT * FROM buses WHERE start_location LIKE :from AND end_location LIKE :to")
+    List<Bus> getBusesByRoute(String from, String to);
 }

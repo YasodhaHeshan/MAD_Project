@@ -1,6 +1,5 @@
 package com.example.mad_project.data;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -26,23 +25,23 @@ public class Schedule {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    
+
     @ColumnInfo(name = "bus_id")
     private int busId;
 
-    
+
     @ColumnInfo(name = "route_id")
     private int routeId;
 
-    
+
     @ColumnInfo(name = "departure_time")
     private String departureTime;
 
-    
+
     @ColumnInfo(name = "arrival_time")
     private String arrivalTime;
 
-    public Schedule(int busId, int routeId,  String departureTime,  String arrivalTime) {
+    public Schedule(int busId, int routeId, String departureTime, String arrivalTime) {
         this.busId = busId;
         this.routeId = routeId;
         this.departureTime = departureTime;
@@ -73,21 +72,21 @@ public class Schedule {
         this.routeId = routeId;
     }
 
-    
+
     public String getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime( String departureTime) {
+    public void setDepartureTime(String departureTime) {
         this.departureTime = departureTime;
     }
 
-    
+
     public String getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime( String arrivalTime) {
+    public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 }

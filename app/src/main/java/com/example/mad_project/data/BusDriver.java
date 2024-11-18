@@ -16,19 +16,16 @@ public class BusDriver {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    
     @ColumnInfo(name = "user_id")
     private int userId;
 
-    
     @ColumnInfo(name = "license_number")
     private String licenseNumber;
 
-    
     @ColumnInfo(name = "nic")
     private String nic;
 
-    public BusDriver(int userId,  String licenseNumber,  String nic) {
+    public BusDriver(int userId, String licenseNumber, String nic) {
         this.userId = userId;
         this.licenseNumber = licenseNumber;
         this.nic = nic;
@@ -50,21 +47,19 @@ public class BusDriver {
         this.userId = userId;
     }
 
-    
     public String getLicenseNumber() {
         return licenseNumber;
     }
 
-    public void setLicenseNumber( String licenseNumber) {
+    public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
-    
     public String getNic() {
         return nic;
     }
 
-    public void setNic( String nic) {
+    public void setNic(String nic) {
         this.nic = nic;
     }
 }

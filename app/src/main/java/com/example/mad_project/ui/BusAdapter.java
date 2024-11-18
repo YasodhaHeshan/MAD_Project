@@ -30,17 +30,30 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull BusViewHolder holder, int position) {
-        Bus bus = busList.get(position);
-        holder.departureTime.setText(bus.getDepartureTime());
-        holder.arrivalTime.setText(bus.getArrivalTime());
-        holder.departureLocation.setText(bus.getStartLocation());
-        holder.arrivalLocation.setText(bus.getEndLocation());
-        holder.availableSeats.setText(bus.getTotalSeats() + R.string.tickets_bus_adapter);
+        try {
+            Bus bus = busList.get(position);
+            
+            holder.departureTime.setText(bus.getDepartureTime() != null ? bus.getDepartureTime() : "N/A");
+            holder.arrivalTime.setText(bus.getArrivalTime() != null ? bus.getArrivalTime() : "N/A");
+            holder.departureLocation.setText(bus.getStartLocation() != null ? bus.getStartLocation() : "N/A");
+            holder.arrivalLocation.setText(bus.getEndLocation() != null ? bus.getEndLocation() : "N/A");
+            holder.availableSeats.setText(bus.getTotalSeats() + " " + 
+                holder.itemView.getContext().getString(R.string.tickets_bus_adapter));
 
-        // Load ticket price using TicketController
-        ticketController.getTicketPriceByBusId(bus.getId(), ticketPrice ->
-            holder.ticketPrice.post(() -> holder.ticketPrice.setText(R.string.ticket_price + " " + ticketPrice))
-        );
+            // Load ticket price using TicketController
+            if (ticketController != null) {
+                ticketController.getTicketPriceByBusId(bus.getId(), ticketPrice ->
+                    holder.ticketPrice.post(() -> {
+                        if (holder.ticketPrice != null) {
+                            holder.ticketPrice.setText(holder.itemView.getContext().getString(R.string.ticket_price) 
+                                + " " + ticketPrice);
+                        }
+                    })
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
