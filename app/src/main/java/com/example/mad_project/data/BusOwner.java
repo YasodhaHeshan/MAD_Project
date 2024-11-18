@@ -28,7 +28,7 @@ public class BusOwner {
     @ColumnInfo(name = "nic")
     private String nic;
 
-    public BusOwner(int userId,  String companyName,  String licenseNumber,  String nic) {
+    public BusOwner(int userId, String companyName, String licenseNumber, String nic) {
         this.userId = userId;
         this.companyName = companyName;
         this.licenseNumber = licenseNumber;
@@ -55,7 +55,7 @@ public class BusOwner {
         return companyName;
     }
 
-    public void setCompanyName( String companyName) {
+    public void setCompanyName(String companyName) {
         this.companyName = companyName;
     }
 
@@ -63,7 +63,7 @@ public class BusOwner {
         return licenseNumber;
     }
 
-    public void setLicenseNumber( String licenseNumber) {
+    public void setLicenseNumber(String licenseNumber) {
         this.licenseNumber = licenseNumber;
     }
 
@@ -71,7 +71,7 @@ public class BusOwner {
         return nic;
     }
 
-    public void setNic( String nic) {
+    public void setNic(String nic) {
         this.nic = nic;
     }
 }

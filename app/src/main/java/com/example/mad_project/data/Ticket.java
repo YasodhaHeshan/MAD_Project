@@ -30,27 +30,23 @@ public class Ticket {
 
     @ColumnInfo(name = "bus_id")
     private int busId;
-    
+
     @ColumnInfo(name = "ticket_id")
     private int ticketId;
 
-    
     @ColumnInfo(name = "seat_number")
     private int seatNumber;
 
-    
     @ColumnInfo(name = "price")
     private double price;
 
-    
     @ColumnInfo(name = "booking_date")
     private String bookingDate;
 
-    
     @ColumnInfo(name = "travel_date")
     private String travelDate;
 
-    public Ticket(int userId, int busId, int ticketId,  int seatNumber, double price,  String bookingDate,  String travelDate) {
+    public Ticket(int userId, int busId, int ticketId, int seatNumber, double price, String bookingDate, String travelDate) {
         this.userId = userId;
         this.busId = busId;
         this.ticketId = ticketId;
@@ -92,12 +88,11 @@ public class Ticket {
         this.ticketId = ticketId;
     }
 
-
     public int getSeatNumber() {
         return seatNumber;
     }
 
-    public void setSeatNumber( int seatNumber) {
+    public void setSeatNumber(int seatNumber) {
         this.seatNumber = seatNumber;
     }
 
@@ -109,21 +104,19 @@ public class Ticket {
         this.price = price;
     }
 
-
     public String getBookingDate() {
         return bookingDate;
     }
 
-    public void setBookingDate( String bookingDate) {
+    public void setBookingDate(String bookingDate) {
         this.bookingDate = bookingDate;
     }
-
 
     public String getTravelDate() {
         return travelDate;
     }
 
-    public void setTravelDate( String travelDate) {
+    public void setTravelDate(String travelDate) {
         this.travelDate = travelDate;
     }
 }

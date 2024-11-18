@@ -59,7 +59,7 @@ public class Route {
         return startLocation;
     }
 
-    public void setStartLocation( String startLocation) {
+    public void setStartLocation(String startLocation) {
         this.startLocation = startLocation;
     }
 
@@ -67,7 +67,7 @@ public class Route {
         return endLocation;
     }
 
-    public void setEndLocation( String endLocation) {
+    public void setEndLocation(String endLocation) {
         this.endLocation = endLocation;
     }
 
@@ -75,7 +75,7 @@ public class Route {
         return departureTime;
     }
 
-    public void setDepartureTime( String departureTime) {
+    public void setDepartureTime(String departureTime) {
         this.departureTime = departureTime;
     }
 
@@ -83,7 +83,7 @@ public class Route {
         return arrivalTime;
     }
 
-    public void setArrivalTime( String arrivalTime) {
+    public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 }

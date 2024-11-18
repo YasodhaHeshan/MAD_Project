@@ -8,6 +8,9 @@ import androidx.room.Room;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import android.util.Log;
 
 public class BusController {
 
@@ -26,8 +29,26 @@ public class BusController {
 
     public void getAllBuses(BusCallback callback) {
         executorService.execute(() -> {
+            try {
+                List<Bus> busList = busDao.getAllBuses();
+                Log.d("BusController", "Retrieved " + busList.size() + " buses from database");
+                callback.onBusesLoaded(busList);
+            } catch (Exception e) {
+                Log.e("BusController", "Error getting buses", e);
+                callback.onBusesLoaded(new ArrayList<>()); // Return empty list instead of null
+            }
+        });
+    }
+
+    public void getBusesByRoute(String from, String to, BusCallback callback) {
+        executorService.execute(() -> {
             List<Bus> busList = busDao.getAllBuses();
-            callback.onBusesLoaded(busList);
+            List<Bus> filteredList = busList.stream()
+                .filter(bus -> 
+                    (from.isEmpty() || bus.getStartLocation().toLowerCase().contains(from.toLowerCase())) &&
+                    (to.isEmpty() || bus.getEndLocation().toLowerCase().contains(to.toLowerCase())))
+                .collect(Collectors.toList());
+            callback.onBusesLoaded(filteredList);
         });
     }
 
