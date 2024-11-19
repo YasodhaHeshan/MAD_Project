@@ -76,29 +76,19 @@ public class SelectBusActivity extends AppCompatActivity {
         // Load initial bus data
         loadBuses();
 
-        // Add click listeners for location fields
-        EditText fromField = findViewById(R.id.fromField);
-        EditText toField = findViewById(R.id.toField);
-        
-        // Prevent automatic focus and keyboard popup
-        fromField.setFocusable(false);
-        toField.setFocusable(false);
-        
-        View.OnTouchListener locationFieldTouchListener = (v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                showLocationSelectionDialog((EditText) v);
-            }
-            return true;
-        };
-        
-        fromField.setOnTouchListener(locationFieldTouchListener);
-        toField.setOnTouchListener(locationFieldTouchListener);
     }
 
     private void loadBuses() {
         busController.getAllBuses(buses -> {
             runOnUiThread(() -> {
-                busAdapter.updateBusList(buses);
+                if (!buses.isEmpty()) {
+                    String defaultFrom = buses.get(0).getStartLocation();
+                    String defaultTo = buses.get(0).getEndLocation();
+                    busAdapter = new BusAdapter(buses, defaultFrom, defaultTo);
+                    busRecyclerView.setAdapter(busAdapter);
+                } else {
+                    busAdapter.updateBusList(buses);
+                }
             });
         });
     }
@@ -126,6 +116,11 @@ public class SelectBusActivity extends AppCompatActivity {
             
             runOnUiThread(() -> {
                 busAdapter.updateBusList(filteredBuses);
+                busAdapter = new BusAdapter(filteredBuses, from, to);
+                busRecyclerView.setAdapter(busAdapter);
+                if (filteredBuses.isEmpty()) {
+                    Toast.makeText(this, "No buses found for selected route", Toast.LENGTH_SHORT).show();
+                }
                 if (filteredBuses.isEmpty()) {
                     Toast.makeText(this, "No buses found for selected route", Toast.LENGTH_SHORT).show();
                 }

@@ -1,6 +1,7 @@
 package com.example.mad_project.utils;
 
 import android.util.Log;
+import com.example.mad_project.utils.EmailContentGenerator;
 
 import java.util.Properties;
 import javax.mail.Authenticator;
@@ -39,6 +40,10 @@ public class EmailSender {
 
     public void sendEmail(String recipientEmail, String subject, String body) throws MessagingException {
         Session session = createSession();
+        EmailContentGenerator.generateBusTicketEmail(
+                "User Name", "12345", "Bus123", "City A",
+                "City B", "2023-10-10", "10:00 AM", "12A"
+        );
 
         try {
             Message message = new MimeMessage(session);
