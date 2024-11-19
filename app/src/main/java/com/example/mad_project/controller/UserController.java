@@ -13,7 +13,7 @@ import androidx.room.Room;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.User;
 import com.example.mad_project.data.UserDao;
-import com.example.mad_project.ui.DashboardActivity;
+import com.example.mad_project.ui.NavbarActivity;
 import com.example.mad_project.utils.EmailSender;
 
 public class UserController {
@@ -57,28 +57,36 @@ public void register(String firstName, String lastName, String email, String mob
     }
 }
 
-    public void login(String email, String password, Context context) {
+    public void login(String email, String password, Context context, LoginCallback callback) {
         new Thread(() -> {
             try {
                 if (email.isEmpty() || password.isEmpty()) {
                     ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Fields cannot be empty", Toast.LENGTH_SHORT).show());
+                    callback.onResult(false);
                 } else if (userDao.getUserByEmail(email) == null) {
                     ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show());
+                    callback.onResult(false);
                 } else if (!userDao.getUserByEmail(email).getPassword().equals(hashPassword(email, password))) {
                     ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Incorrect username or password", Toast.LENGTH_SHORT).show());
+                    callback.onResult(false);
                 } else {
                     ((Activity) context).runOnUiThread(() -> {
                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(context, DashboardActivity.class);
-                        context.startActivity(intent);
                     });
+                    callback.onResult(true);
                 }
             } catch (Exception e) {
                 Log.e("UserController", "Failed to login user", e);
                 ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Failed to login user: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                callback.onResult(false);
             } finally {
                 db.close();
             }
         }).start();
     }
+
+    public interface LoginCallback {
+        void onResult(boolean success);
+    }
+
 }

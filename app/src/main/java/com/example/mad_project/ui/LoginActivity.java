@@ -36,10 +36,15 @@ public class LoginActivity extends AppCompatActivity {
             String email = this.username.getText().toString();
             String password = this.password.getText().toString();
 
-            //if login is successful, send the user to the dashboard and close the login activity
+            // If login is successful, send the user to the NavbarActivity and close the login activity
             UserController userController = new UserController(this);
-            userController.login(email, password, this);
-            finish();
+            userController.login(email, password, this, success -> {
+                if (success) {
+                    Intent intent = new Intent(LoginActivity.this, NavbarActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            });
         });
     }
 }
