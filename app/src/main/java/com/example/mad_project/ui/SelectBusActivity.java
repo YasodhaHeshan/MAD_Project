@@ -76,23 +76,6 @@ public class SelectBusActivity extends AppCompatActivity {
         // Load initial bus data
         loadBuses();
 
-        // Add click listeners for location fields
-        EditText fromField = findViewById(R.id.fromField);
-        EditText toField = findViewById(R.id.toField);
-        
-        // Prevent automatic focus and keyboard popup
-        fromField.setFocusable(false);
-        toField.setFocusable(false);
-        
-        View.OnTouchListener locationFieldTouchListener = (v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                showLocationSelectionDialog((EditText) v);
-            }
-            return true;
-        };
-        
-        fromField.setOnTouchListener(locationFieldTouchListener);
-        toField.setOnTouchListener(locationFieldTouchListener);
     }
 
     private void loadBuses() {
