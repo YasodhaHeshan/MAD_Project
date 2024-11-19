@@ -33,7 +33,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    packagingOptions {
+    packaging {
         resources {
             excludes += setOf("META-INF/NOTICE.md", "META-INF/LICENSE.md")
         }
@@ -42,6 +42,12 @@ android {
 
 dependencies {
 
+    implementation(libs.rxandroid)
+    implementation(libs.places)
+    annotationProcessor(libs.androidx.room.compiler)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    testImplementation(libs.junit)
     implementation(libs.appcompat)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
@@ -50,11 +56,7 @@ dependencies {
     implementation(libs.cardview)
     implementation(libs.room.common)
     implementation(libs.androidx.room.runtime)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    implementation("com.sun.mail:android-mail:1.6.7")
-    implementation("com.sun.mail:android-activation:1.6.7")
-    annotationProcessor(libs.androidx.room.compiler)
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
 
 }
