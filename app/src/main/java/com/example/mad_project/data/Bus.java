@@ -19,20 +19,18 @@ public class Bus {
     private String endLocation;
 
     @ColumnInfo(name = "departure_time")
-    private String departureTime;
+    private long departureTime;
 
     @ColumnInfo(name = "arrival_time")
-    private String arrivalTime;
+    private long arrivalTime;
 
     @ColumnInfo(name = "total_seats")
     private int totalSeats;
 
-    public Bus(String busNumber, String startLocation, String endLocation, String departureTime, String arrivalTime, int totalSeats) {
+    public Bus(String busNumber, String startLocation, String endLocation, int totalSeats) {
         this.busNumber = busNumber;
         this.startLocation = startLocation;
         this.endLocation = endLocation;
-        this.departureTime = departureTime;
-        this.arrivalTime = arrivalTime;
         this.totalSeats = totalSeats;
     }
 
@@ -68,19 +66,19 @@ public class Bus {
         this.endLocation = endLocation;
     }
 
-    public String getDepartureTime() {
+    public long getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(String departureTime) {
+    public void setDepartureTime(long departureTime) {
         this.departureTime = departureTime;
     }
 
-    public String getArrivalTime() {
+    public long getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(String arrivalTime) {
+    public void setArrivalTime(long arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 

@@ -54,7 +54,7 @@ public class RegisterBusActivity extends AppCompatActivity {
         int routeId = Integer.parseInt(editTextRouteId.getText().toString());
         int seats = Integer.parseInt(editTextSeats.getText().toString());
 
-        Bus bus = new Bus(busNumber, "Start Location", "End Location", "Departure Time", "Arrival Time", seats);
+        Bus bus = new Bus(busNumber, "Start Location", "End Location", seats);
 
         new Thread(() -> {
             try {
