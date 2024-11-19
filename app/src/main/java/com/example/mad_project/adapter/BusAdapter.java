@@ -20,14 +20,6 @@ import java.util.List;
 public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
     private List<Bus> busList;
     private OnBusSelectedListener listener;
-    private String origin;
-    private String destination;
-
-    public BusAdapter(List<Bus> busList, String origin, String destination) {
-        this.busList = busList;
-        this.origin = origin;
-        this.destination = destination;
-    }
 
     public interface OnBusSelectedListener {
         void onBusSelected(Bus bus);
@@ -60,10 +52,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
             if (listener != null) {
                 listener.onBusSelected(bus);
             }
-            Intent intent = new Intent(v.getContext(), MapActivity.class);
-            intent.putExtra("origin", origin);
-            intent.putExtra("destination", destination);
-            v.getContext().startActivity(intent);
         });
 
         // Handle card click (excluding select button)

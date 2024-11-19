@@ -81,14 +81,7 @@ public class SelectBusActivity extends AppCompatActivity {
     private void loadBuses() {
         busController.getAllBuses(buses -> {
             runOnUiThread(() -> {
-                if (!buses.isEmpty()) {
-                    String defaultFrom = buses.get(0).getStartLocation();
-                    String defaultTo = buses.get(0).getEndLocation();
-                    busAdapter = new BusAdapter(buses, defaultFrom, defaultTo);
-                    busRecyclerView.setAdapter(busAdapter);
-                } else {
-                    busAdapter.updateBusList(buses);
-                }
+                busAdapter.updateBusList(buses);
             });
         });
     }
@@ -116,11 +109,6 @@ public class SelectBusActivity extends AppCompatActivity {
             
             runOnUiThread(() -> {
                 busAdapter.updateBusList(filteredBuses);
-                busAdapter = new BusAdapter(filteredBuses, from, to);
-                busRecyclerView.setAdapter(busAdapter);
-                if (filteredBuses.isEmpty()) {
-                    Toast.makeText(this, "No buses found for selected route", Toast.LENGTH_SHORT).show();
-                }
                 if (filteredBuses.isEmpty()) {
                     Toast.makeText(this, "No buses found for selected route", Toast.LENGTH_SHORT).show();
                 }
