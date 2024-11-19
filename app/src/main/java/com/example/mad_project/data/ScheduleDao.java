@@ -1,12 +1,8 @@
 package com.example.mad_project.data;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
-import androidx.room.Query;
 import androidx.room.Update;
-
-import java.util.List;
 
 @Dao
 public interface ScheduleDao {
@@ -17,12 +13,6 @@ public interface ScheduleDao {
     @Update
     void update(Schedule schedule);
 
-    @Delete
-    void delete(Schedule schedule);
-
-    @Query("SELECT * FROM Schedule WHERE id = :id")
-    Schedule getScheduleById(int id);
-
-    @Query("SELECT * FROM Schedule")
-    List<Schedule> getAllSchedules();
+    @Insert
+    void insertAll(Schedule[] schedules);
 }
