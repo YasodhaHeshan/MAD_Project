@@ -2,9 +2,24 @@ package com.example.mad_project.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
+import androidx.room.PrimaryKey;
 
-@Entity(tableName = "bus_drivers")
-public class BusDriver extends User {
+@Entity(tableName = "bus_drivers",
+        foreignKeys = @ForeignKey(entity = User.class,
+                parentColumns = "id",
+                childColumns = "user_id",
+                onDelete = ForeignKey.CASCADE),
+        indices = @Index(value = "user_id"))
+
+public class BusDriver {
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+
+    @ColumnInfo(name = "user_id")
+    private int userId;
+
     @ColumnInfo(name = "license_number")
     private String licenseNumber;
 
@@ -23,14 +38,32 @@ public class BusDriver extends User {
     @ColumnInfo(name = "nic")
     private String nic;
 
-    public BusDriver(int id, String firstName, String lastName, String email, String phoneNumber, String password, String licenseNumber, String routeAssigned, int experienceYears, String busAssigned, double rating, String nic) {
-        super(id, firstName, lastName, email, phoneNumber, password);
+    @ColumnInfo(name = "is_active")
+    private boolean isActive;
+
+    @ColumnInfo(name = "bus_number")
+    private String busNumber;
+
+    public BusDriver(int userId, String licenseNumber, String nic) {
+        this.userId = userId;
         this.licenseNumber = licenseNumber;
-        this.routeAssigned = routeAssigned;
-        this.experienceYears = experienceYears;
-        this.busAssigned = busAssigned;
-        this.rating = rating;
         this.nic = nic;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getLicenseNumber() {
@@ -48,6 +81,7 @@ public class BusDriver extends User {
     public void setRouteAssigned(String routeAssigned) {
         this.routeAssigned = routeAssigned;
     }
+
 
     public int getExperienceYears() {
         return experienceYears;
@@ -79,5 +113,21 @@ public class BusDriver extends User {
 
     public void setNic(String nic) {
         this.nic = nic;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getBusNumber() {
+        return busNumber;
+    }
+
+    public void setBusNumber(String busNumber) {
+        this.busNumber = busNumber;
     }
 }
