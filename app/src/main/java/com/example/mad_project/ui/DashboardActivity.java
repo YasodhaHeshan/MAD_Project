@@ -6,7 +6,6 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-
 import com.example.mad_project.R;
 
 public class DashboardActivity extends AppCompatActivity {

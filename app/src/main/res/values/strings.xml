@@ -3,4 +3,5 @@
     <string name="MAPS_API_KEY">AIzaSyAxdiBmFJTWxBqgR-IhvIN4cfB0CB5_3OQ</string>
     <string name="tickets_bus_adapter"> tickets</string>
     <string name="ticket_price"> Rs</string>
+    <string name="close_text">Close</string>
 </resources>
