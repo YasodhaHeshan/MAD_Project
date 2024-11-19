@@ -115,8 +115,8 @@ public class FillDatabaseActivity extends AppCompatActivity {
             User[] users = {
                     new User("John", "Doe", "john@mail.com", "1234567890",
                             HashPassword.hashPassword("john@mail.com", "a")),
-                    new User("Jane", "Smith", "jane@mail.com", "0987654321",
-                            HashPassword.hashPassword("jane@mail.com", "b"))
+                    new User("Jane", "Smith", "a", "0987654321",
+                            HashPassword.hashPassword("a", "a"))
             };
 
             for (User user : users) {
@@ -132,8 +132,8 @@ public class FillDatabaseActivity extends AppCompatActivity {
         try {
             BusDao busDao = db.busDao();
             Bus[] buses = {
-                    new Bus("BUS123", "Location A", "Location B", "08:00", "10:00", 40),
-                    new Bus("BUS456", "Location C", "Location D", "12:00", "14:00", 50)
+                    new Bus("BUS123", "Colombo", "Galle", 40),
+                    new Bus("BUS456", "Colombo", "Katunayaka", 50)
             };
 
             for (Bus bus : buses) {

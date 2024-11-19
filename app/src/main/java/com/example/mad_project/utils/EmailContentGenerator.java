@@ -1,4 +1,4 @@
-package com.example.mad_project.ui;
+package com.example.mad_project.utils;
 
 public class EmailContentGenerator {
     public static String generateBusTicketEmail(String userName, String bookingId, String busNumber, String departure, String destination, String date, String time, String seatNumber) {

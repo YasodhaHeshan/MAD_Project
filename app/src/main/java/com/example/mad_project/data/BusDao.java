@@ -15,12 +15,9 @@ public interface BusDao {
     @Update
     void update(Bus bus);
 
-    @Query("SELECT * FROM buses")
-    List<Bus> getAllBuses();
-
     @Insert
     void insertAll(Bus[] buses);
 
-    @Query("SELECT * FROM buses WHERE start_location LIKE :from AND end_location LIKE :to")
-    List<Bus> getBusesByRoute(String from, String to);
+    @Query("SELECT * FROM buses")
+    List<Bus> getAllBuses();
 }
