@@ -24,8 +24,7 @@ public class User {
     @ColumnInfo(name = "password")
     private String password;
 
-    public User(int id, String firstName, String lastName, String email, String phoneNumber, String password) {
-        this.id = id;
+    public User(String firstName, String lastName, String email, String phoneNumber, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

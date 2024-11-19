@@ -1,25 +1,24 @@
-// BusListAdapter.java
-package com.example.mad_project.controller;
+package com.example.mad_project.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.mad_project.R;
+import com.example.mad_project.controller.TicketController;
 import com.example.mad_project.data.Bus;
-
 import java.util.List;
 
-public class BusListAdapter extends RecyclerView.Adapter<BusListAdapter.BusViewHolder> {
+public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
 
-    private List<Bus> busList;
+    private final List<Bus> busList;
+    private final TicketController ticketController;
 
-    public BusListAdapter(List<Bus> busList) {
+    public BusAdapter(List<Bus> busList, TicketController ticketController) {
         this.busList = busList;
+        this.ticketController = ticketController;
     }
 
     @NonNull
@@ -36,8 +35,12 @@ public class BusListAdapter extends RecyclerView.Adapter<BusListAdapter.BusViewH
         holder.arrivalTime.setText(bus.getArrivalTime());
         holder.departureLocation.setText(bus.getDepartureLocation());
         holder.arrivalLocation.setText(bus.getArrivalLocation());
-        holder.availableSeats.setText(String.valueOf(bus.getAvailableSeats()));
-        holder.ticketPrice.setText(String.valueOf(bus.getTicketPrice()));
+        holder.availableSeats.setText(bus.getAvailableSeats() + R.string.tickets_bus_adapter);
+
+        // Load ticket price using TicketController
+        ticketController.getTicketPriceByBusId(bus.getId(), ticketPrice ->
+            holder.ticketPrice.post(() -> holder.ticketPrice.setText(R.string.ticket_price + ticketPrice))
+        );
     }
 
     @Override
@@ -45,8 +48,8 @@ public class BusListAdapter extends RecyclerView.Adapter<BusListAdapter.BusViewH
         return busList.size();
     }
 
-    static class BusViewHolder extends RecyclerView.ViewHolder {
-        TextView departureTime, arrivalTime, departureLocation, arrivalLocation, availableSeats, ticketPrice;
+    public static class BusViewHolder extends RecyclerView.ViewHolder {
+        TextView departureTime, arrivalTime, departureLocation, arrivalLocation, ticketPrice, availableSeats;
 
         public BusViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -54,8 +57,8 @@ public class BusListAdapter extends RecyclerView.Adapter<BusListAdapter.BusViewH
             arrivalTime = itemView.findViewById(R.id.arrival_time);
             departureLocation = itemView.findViewById(R.id.departure_location);
             arrivalLocation = itemView.findViewById(R.id.arrival_location);
+            ticketPrice = itemView.findViewById(R.id.one_way_ticket);
             availableSeats = itemView.findViewById(R.id.available_seats);
-            ticketPrice = itemView.findViewById(R.id.book_now_button);
         }
     }
 }
