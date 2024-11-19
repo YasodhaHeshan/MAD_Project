@@ -17,10 +17,21 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_margin="16dp"
+        android:layout_marginTop="80dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Back"
         android:src="@drawable/baseline_arrow_back_24"
         android:layout_gravity="top|start"
         />
+
+    <Button
+        android:id="@+id/confirm_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Confirm Location"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="#A4C639"
+        android:textColor="#101010"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
