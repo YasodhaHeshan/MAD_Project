@@ -1,9 +1,16 @@
 package com.example.mad_project.ui;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
 
+import com.example.mad_project.R;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDao;
@@ -11,75 +18,238 @@ import com.example.mad_project.data.BusDriver;
 import com.example.mad_project.data.BusDriverDao;
 import com.example.mad_project.data.BusOwner;
 import com.example.mad_project.data.BusOwnerDao;
+import com.example.mad_project.data.Payment;
+import com.example.mad_project.data.PaymentDao;
+import com.example.mad_project.data.Route;
+import com.example.mad_project.data.RouteDao;
+import com.example.mad_project.data.Schedule;
+import com.example.mad_project.data.ScheduleDao;
 import com.example.mad_project.data.Ticket;
 import com.example.mad_project.data.TicketDao;
 import com.example.mad_project.data.User;
 import com.example.mad_project.data.UserDao;
+import com.example.mad_project.utils.HashPassword;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
 
 public class FillDatabaseActivity extends AppCompatActivity {
+    private AppDatabase db;
+    private ListView progressListView;
+    private Button exitButton;
+    private ArrayAdapter<String> progressAdapter;
+    private List<String> progressMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_database_test);
 
-        // Initialize the database
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "mad_project_db").build();
+        initializeViews();
+        setupDatabase();
+        startDatabaseFill();
+    }
 
-        // Insert Users
-        UserDao userDao = db.userDao();
-        User user1 = new User("John", "Doe", "john.doe@example.com", "1234567890", "password123");
-        User user2 = new User("Jane", "Smith", "jane.smith@example.com", "0987654321", "password456");
-        User user3 = new User("Alice", "Johnson", "alice.johnson@example.com", "1122334455", "password789");
-        User user4 = new User("Bob", "Brown", "bob.brown@example.com", "2233445566", "password012");
-        userDao.insert(user1);
-        userDao.insert(user2);
-        userDao.insert(user3);
-        userDao.insert(user4);
+    private void initializeViews() {
+        progressListView = findViewById(R.id.progressListView);
+        exitButton = findViewById(R.id.exitButton);
 
-        // Insert Bus Owners
-        BusOwnerDao busOwnerDao = db.busOwnerDao();
-        BusOwner busOwner1 = new BusOwner(user1.getId(), "Company A", "LIC123", "NIC123");
-        BusOwner busOwner2 = new BusOwner(user2.getId(), "Company B", "LIC456", "NIC456");
-        BusOwner busOwner3 = new BusOwner(user3.getId(), "Company C", "LIC789", "NIC789");
-        BusOwner busOwner4 = new BusOwner(user4.getId(), "Company D", "LIC012", "NIC012");
-        busOwnerDao.insert(busOwner1);
-        busOwnerDao.insert(busOwner2);
-        busOwnerDao.insert(busOwner3);
-        busOwnerDao.insert(busOwner4);
+        progressMessages = new ArrayList<>();
+        progressAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, progressMessages);
+        progressListView.setAdapter(progressAdapter);
 
-        // Insert Bus Drivers
-        BusDriverDao busDriverDao = db.busDriverDao();
-        BusDriver busDriver1 = new BusDriver(user1.getId(), "LIC789", "NIC789");
-        BusDriver busDriver2 = new BusDriver(user2.getId(), "LIC012", "NIC012");
-        BusDriver busDriver3 = new BusDriver(user3.getId(), "LIC345", "NIC345");
-        BusDriver busDriver4 = new BusDriver(user4.getId(), "LIC678", "NIC678");
-        busDriverDao.insert(busDriver1);
-        busDriverDao.insert(busDriver2);
-        busDriverDao.insert(busDriver3);
-        busDriverDao.insert(busDriver4);
+        exitButton.setOnClickListener(v -> finish());
+    }
 
-        // Insert Buses
-        BusDao busDao = db.busDao();
-        Bus bus1 = new Bus("Bus001", busOwner1.getId(), busDriver1.getId(), 1, 1, "Location A", "Location B", "08:00", "10:00", 40);
-        Bus bus2 = new Bus("Bus002", busOwner2.getId(), busDriver2.getId(), 2, 2, "Location C", "Location D", "09:00", "11:00", 35);
-        Bus bus3 = new Bus("Bus003", busOwner3.getId(), busDriver3.getId(), 3, 3, "Location E", "Location F", "10:00", "12:00", 30);
-        Bus bus4 = new Bus("Bus004", busOwner4.getId(), busDriver4.getId(), 4, 4, "Location G", "Location H", "11:00", "13:00", 25);
-        busDao.insert(bus1);
-        busDao.insert(bus2);
-        busDao.insert(bus3);
-        busDao.insert(bus4);
+    private void setupDatabase() {
+        db = Room.databaseBuilder(getApplicationContext(),
+                        AppDatabase.class,
+                        "mad_project_db")
+                .fallbackToDestructiveMigration()
+                .build();
+    }
 
-        // Insert Tickets
-        TicketDao ticketDao = db.ticketDao();
-        Ticket ticket1 = new Ticket(user1.getId(), bus1.getId(), 40, "T001", "2023-01-01", "2023-01-02");
-        Ticket ticket2 = new Ticket(user2.getId(), bus2.getId(), 35, "T002", "2023-01-01", "2023-01-02");
-        Ticket ticket3 = new Ticket(user3.getId(), bus3.getId(), 30, "T003", "2023-01-01", "2023-01-02");
-        Ticket ticket4 = new Ticket(user4.getId(), bus4.getId(), 25, "T004", "2023-01-01", "2023-01-02");
-        ticketDao.insert(ticket1);
-        ticketDao.insert(ticket2);
-        ticketDao.insert(ticket3);
-        ticketDao.insert(ticket4);
+    private void startDatabaseFill() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                updateProgress("Starting database fill");
 
-        System.out.println("Database populated with test data.");
+                createUsers();
+                createBusOwners();
+                createBusDrivers();
+                createBuses();
+                createRoutes();
+                createTickets();
+                createPayments();
+                createSchedules();
+
+                updateProgress("Database fill completed");
+            } catch (Exception e) {
+                Log.e("FillDatabaseActivity", "Error filling database", e);
+                showError("Error: " + e.getMessage());
+            }
+        });
+    }
+
+    private synchronized void updateProgress(String status) {
+        runOnUiThread(() -> {
+            progressMessages.add(status);
+            progressAdapter.notifyDataSetChanged();
+            progressListView.smoothScrollToPosition(progressMessages.size() - 1);
+        });
+    }
+
+    private void showError(String message) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            progressMessages.add("Error: " + message);
+            progressAdapter.notifyDataSetChanged();
+            exitButton.setText(R.string.close_text);
+        });
+    }
+
+    private void createUsers() {
+        try {
+            UserDao userDao = db.userDao();
+            User[] users = {
+                    new User("John", "Doe", "john@mail.com", "1234567890",
+                            HashPassword.hashPassword("john@mail.com", "a")),
+                    new User("Jane", "Smith", "jane@mail.com", "0987654321",
+                            HashPassword.hashPassword("jane@mail.com", "b"))
+            };
+
+            for (User user : users) {
+                userDao.insert(user);
+                updateProgress("Created user: " + user.getEmail());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating users: " + e.getMessage());
+        }
+    }
+
+    private void createBuses() {
+        try {
+            BusDao busDao = db.busDao();
+            Bus[] buses = {
+                    new Bus("BUS123", "Location A", "Location B", "08:00", "10:00", 40),
+                    new Bus("BUS456", "Location C", "Location D", "12:00", "14:00", 50)
+            };
+
+            for (Bus bus : buses) {
+                busDao.insert(bus);
+                updateProgress("Created bus: " + bus.getBusNumber());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating buses: " + e.getMessage());
+        }
+    }
+
+    private void createBusOwners() {
+        try {
+            BusOwnerDao busOwnerDao = db.busOwnerDao();
+            BusOwner[] busOwners = {
+                    new BusOwner(1, "Bus Company A", "BUS123", "1234567890"),
+                    new BusOwner(2, "Bus Company B", "BUS456", "0987654321")
+            };
+
+            for (BusOwner busOwner : busOwners) {
+                busOwnerDao.insert(busOwner);
+                updateProgress("Created bus owner: " + busOwner.getCompanyName());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating bus owners: " + e.getMessage());
+        }
+    }
+
+    private void createBusDrivers() {
+        try {
+            BusDriverDao busDriverDao = db.busDriverDao();
+            BusDriver[] busDrivers = {
+                    new BusDriver(1, "DL123", "1234567890"),
+                    new BusDriver(2, "DL456", "0987654321")
+            };
+
+            for (BusDriver busDriver : busDrivers) {
+                busDriverDao.insert(busDriver);
+                updateProgress("Created bus driver: " + busDriver.getLicenseNumber());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating bus drivers: " + e.getMessage());
+        }
+    }
+
+    private void createRoutes() {
+        try {
+            RouteDao routeDao = db.routeDao();
+            Route[] routes = {
+                    new Route(1, "Location A", "Location B", "10.00AM", "12.00PM"),
+                    new Route(2, "Location C", "Location D", "15.00PM", "17.00PM")
+            };
+
+            for (Route route : routes) {
+                routeDao.insert(route);
+                updateProgress("Created route: " + route.getStartLocation() + " to " + route.getEndLocation());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating routes: " + e.getMessage());
+        }
+    }
+
+    private void createTickets() {
+        try {
+            TicketDao ticketDao = db.ticketDao();
+            Ticket[] tickets = {
+                    new Ticket(1, 1, 1, 1, 1000.00, "2021-12-01", "2022-01-01"),
+                    new Ticket(2, 2, 2, 2, 1000.00, "2021-12-02", "2022-01-02")
+            };
+
+            for (Ticket ticket : tickets) {
+                ticketDao.insert(ticket);
+                updateProgress("Created ticket: " + ticket.getId());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating tickets: " + e.getMessage());
+        }
+    }
+
+    private void createPayments() {
+        try {
+            PaymentDao paymentDao = db.paymentDao();
+            Payment[] payments = {
+                    new Payment(1, 1, "2021-12-01", "Cash"),
+                    new Payment(2, 2, "2021-12-02", "Card")
+            };
+
+            for (Payment payment : payments) {
+                paymentDao.insert(payment);
+                updateProgress("Created payment: " + payment.getId());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating payments: " + e.getMessage());
+        }
+    }
+
+    private void createSchedules() {
+        try {
+            ScheduleDao scheduleDao = db.scheduleDao();
+            Schedule[] schedules = {
+                    new Schedule(1, 1, "08:00", "10:00"),
+                    new Schedule(2, 2, "12:00", "14:00")
+            };
+
+            for (Schedule schedule : schedules) {
+                scheduleDao.insert(schedule);
+                updateProgress("Created schedule: " + schedule.getId());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating schedules: " + e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 }

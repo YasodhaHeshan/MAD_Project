@@ -1,4 +1,4 @@
-package com.example.mad_project.controller;
+package com.example.mad_project.utils;
 
 import androidx.room.TypeConverter;
 
