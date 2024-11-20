@@ -7,8 +7,20 @@
     <color name="green_light">#9DC88D</color>
     <color name="green_dark">#4A6E4D</color>
     <color name="gray">#808080</color>
+    <color name="seat_available_color">#C7DE99</color>
     <color name="seat_reserved_color">#C7DE99</color>
     <color name="seat_selected_color">#A4C639</color>
     <color name="seat_default_color">#ff6750a4</color>
     <color name="seat_booked_color">#E4080A</color>
+    <color name="background_dark">#131313</color>
+    <color name="text_dark">#101010</color>
+    <color name="semi_transparent_white">#1AFFFFFF</color>
+    <color name="stroke_white">#33FFFFFF</color>
+    <color name="accent_blue">#03A9F4</color>
+    <color name="accent_green">#4CAF50</color>
+    <color name="colorPrimary">#1E1E1E</color>
+    <color name="colorAccent">#C7DE99</color>
+    <color name="icon_color_active">#FFFFFF</color>
+    <color name="icon_color_inactive">#80FFFFFF</color>
+    <color name="white_20">#33FFFFFF</color>
 </resources>

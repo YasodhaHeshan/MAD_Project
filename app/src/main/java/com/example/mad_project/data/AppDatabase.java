@@ -1,14 +1,19 @@
 package com.example.mad_project.data;
 
+import android.content.Context;
 import androidx.room.Database;
+import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import com.example.mad_project.ui.TicketsActivity;
 import com.example.mad_project.utils.Converters;
 
-@Database(entities = {User.class, BusOwner.class, BusDriver.class, Bus.class, Payment.class, Schedule.class, Ticket.class, Route.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, BusOwner.class, BusDriver.class, Bus.class, Payment.class, Ticket.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
+    private static volatile AppDatabase INSTANCE;
+
     public abstract UserDao userDao();
 
     public abstract BusOwnerDao busOwnerDao();
@@ -19,9 +24,27 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract TicketDao ticketDao();
 
-    public abstract RouteDao routeDao();
-
-    public abstract ScheduleDao scheduleDao();
-
     public abstract PaymentDao paymentDao();
+
+    public static AppDatabase getDatabase(Context context) {
+        if (INSTANCE == null) {
+            synchronized (AppDatabase.class) {
+                if (INSTANCE == null) {
+                    try {
+                        INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                AppDatabase.class, "mad_project_db")
+                                .fallbackToDestructiveMigration()
+                                .build();
+                    } catch (IllegalStateException e) {
+                        context.deleteDatabase("mad_project_db");
+                        INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                                AppDatabase.class, "mad_project_db")
+                                .fallbackToDestructiveMigration()
+                                .build();
+                    }
+                }
+            }
+        }
+        return INSTANCE;
+    }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -21,6 +22,8 @@ public class RegisterActivity extends AppCompatActivity {
     private Button customerButton;
     private Button ownerButton;
     private Button driverButton;
+    private UserController userController;
+    private String selectedRole = "customer"; // Default role
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +45,11 @@ public class RegisterActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.btnLogin);
         Button signupButton = findViewById(R.id.btnSignup);
 
+        userController = new UserController(this);
+
         // Set onClickListeners for the buttons
         customerButton.setOnClickListener(v -> {
+            selectedRole = "customer";
             updateHints("Customer First Name", "Customer Last Name", "Customer Email", "Customer Mobile", "Customer Password", "Confirm Customer Password");
             updateButtonColors(customerButton, ownerButton, driverButton);
         });
@@ -54,6 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
         }));
 
         driverButton.setOnClickListener(v -> {
+            selectedRole = "driver";
             updateHints("Driver First Name", "Driver Last Name", "Driver Email", "Driver Mobile", "Driver Password", "Confirm Driver Password");
             updateButtonColors(driverButton, customerButton, ownerButton);
         });
@@ -65,21 +72,29 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         signupButton.setOnClickListener(v -> {
-            String firstName = firstNameEditText.getText().toString();
-            String lastName = lastNameEditText.getText().toString();
+            String name = firstNameEditText.getText().toString() + " " + 
+                         lastNameEditText.getText().toString();
             String email = emailEditText.getText().toString();
-            String mobile = mobileEditText.getText().toString();
+            String phone = mobileEditText.getText().toString();
             String password = passwordEditText.getText().toString();
             String confirmPassword = confirmPasswordEditText.getText().toString();
-
-            // Register the user
-            UserController userController = new UserController(this);
-            userController.register(firstName, lastName, email, mobile, password, confirmPassword, this);
-
-            // Redirect to the login page
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            
+            if (!password.equals(confirmPassword)) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            userController.register(name, email, phone, password, selectedRole, success -> {
+                runOnUiThread(() -> {
+                    if (success) {
+                        Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(this, LoginActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
         });
     }
 

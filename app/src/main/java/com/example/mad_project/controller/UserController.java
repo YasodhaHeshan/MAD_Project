@@ -4,7 +4,6 @@ import static com.example.mad_project.utils.HashPassword.hashPassword;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,80 +12,83 @@ import androidx.room.Room;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.User;
 import com.example.mad_project.data.UserDao;
-import com.example.mad_project.ui.NavbarActivity;
 import com.example.mad_project.utils.EmailSender;
+import com.example.mad_project.utils.HashPassword;
+
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class UserController {
 
     private final AppDatabase db;
     private final UserDao userDao;
+    private final ExecutorService executorService;
 
     public UserController(Context context) {
-        db = Room.databaseBuilder(context, AppDatabase.class, "mad_project_db").build();
+        db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "mad_project_db").build();
         userDao = db.userDao();
+        executorService = Executors.newSingleThreadExecutor();
     }
 
-public void register(String firstName, String lastName, String email, String mobile, String password, String confirmPassword, Context context) {
-    if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || mobile.isEmpty() || confirmPassword.isEmpty()) {
-        Toast.makeText(context, "Please fill all fields", Toast.LENGTH_SHORT).show();
-    } else if (password.length() < 8) {
-        Toast.makeText(context, "Password must be at least 8 characters long", Toast.LENGTH_SHORT).show();
-    } else if (!password.equals(confirmPassword)) {
-        Toast.makeText(context, "Passwords do not match", Toast.LENGTH_SHORT).show();
-    } else {
-        new Thread(() -> {
+    public void register(String name, String email, String phone, String password, String role, Consumer<Boolean> callback) {
+        executorService.execute(() -> {
             try {
-                String passwordHash = hashPassword(email, password);
-                User newUser = new User(firstName, lastName, email, mobile, passwordHash);
-                userDao.insert(newUser);
+                if (userDao.isEmailExists(email)) {
+                    callback.accept(false);
+                    return;
+                }
 
-                ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Registration successful", Toast.LENGTH_LONG).show());
-
-                // Send confirmation email
-                EmailSender emailSender = new EmailSender();
-                emailSender.sendEmail(email, "Email Confirmation", "Thank you for registering!");
-
-                ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Registration successful", Toast.LENGTH_LONG).show());
+                String hashedPassword = hashPassword(password);
+                User user = new User(name, email, phone, hashedPassword, role);
+                userDao.insert(user);
+                callback.accept(true);
             } catch (Exception e) {
-                Log.e("UserController", "Failed to register user", e);
-                ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Failed to register user: " + e.getMessage(), Toast.LENGTH_LONG).show());
-            } finally {
-                db.close();
+                Log.e("UserController", "Error registering user", e);
+                callback.accept(false);
             }
-        }).start();
+        });
     }
-}
 
-    public void login(String email, String password, Context context, LoginCallback callback) {
-        new Thread(() -> {
+    public void login(String email, String password, Consumer<User> callback) {
+        executorService.execute(() -> {
             try {
-                if (email.isEmpty() || password.isEmpty()) {
-                    ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Fields cannot be empty", Toast.LENGTH_SHORT).show());
-                    callback.onResult(false);
-                } else if (userDao.getUserByEmail(email) == null) {
-                    ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show());
-                    callback.onResult(false);
-                } else if (!userDao.getUserByEmail(email).getPassword().equals(hashPassword(email, password))) {
-                    ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Incorrect username or password", Toast.LENGTH_SHORT).show());
-                    callback.onResult(false);
+                User user = userDao.getUserByEmail(email);
+                if (user != null && HashPassword.verifyPassword(password, user.getPassword())) {
+                    callback.accept(user);
                 } else {
-                    ((Activity) context).runOnUiThread(() -> {
-                        Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show();
-                    });
-                    callback.onResult(true);
+                    callback.accept(null);
                 }
             } catch (Exception e) {
-                Log.e("UserController", "Failed to login user", e);
-                ((Activity) context).runOnUiThread(() -> Toast.makeText(context, "Failed to login user: " + e.getMessage(), Toast.LENGTH_LONG).show());
-                callback.onResult(false);
-            } finally {
-                db.close();
+                Log.e("UserController", "Error logging in", e);
+                callback.accept(null);
             }
-        }).start();
+        });
     }
 
-    public interface LoginCallback {
-        void onResult(boolean success);
+    public void updateUser(User user, Consumer<Boolean> callback) {
+        executorService.execute(() -> {
+            try {
+                user.setUpdatedAt(System.currentTimeMillis());
+                userDao.update(user);
+                callback.accept(true);
+            } catch (Exception e) {
+                Log.e("UserController", "Error updating user", e);
+                callback.accept(false);
+            }
+        });
     }
 
+    public void deactivateUser(int userId, Consumer<Boolean> callback) {
+        executorService.execute(() -> {
+            try {
+                userDao.deactivateUser(userId);
+                callback.accept(true);
+            } catch (Exception e) {
+                Log.e("UserController", "Error deactivating user", e);
+                callback.accept(false);
+            }
+        });
+    }
 }

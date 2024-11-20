@@ -22,13 +22,29 @@ public class BusDriver {
     @ColumnInfo(name = "license_number")
     private String licenseNumber;
 
-    @ColumnInfo(name = "nic")
-    private String nic;
+    @ColumnInfo(name = "license_expiry")
+    private long licenseExpiry;
 
-    public BusDriver(int userId, String licenseNumber, String nic) {
+    @ColumnInfo(name = "years_experience")
+    private int yearsExperience;
+
+    @ColumnInfo(name = "is_active")
+    private boolean isActive;
+
+    @ColumnInfo(name = "created_at")
+    private long createdAt;
+
+    @ColumnInfo(name = "updated_at")
+    private long updatedAt;
+
+    public BusDriver(int userId, String licenseNumber, long licenseExpiry, int yearsExperience) {
         this.userId = userId;
         this.licenseNumber = licenseNumber;
-        this.nic = nic;
+        this.licenseExpiry = licenseExpiry;
+        this.yearsExperience = yearsExperience;
+        this.isActive = true;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public int getId() {
@@ -55,11 +71,43 @@ public class BusDriver {
         this.licenseNumber = licenseNumber;
     }
 
-    public String getNic() {
-        return nic;
+    public long getLicenseExpiry() {
+        return licenseExpiry;
     }
 
-    public void setNic(String nic) {
-        this.nic = nic;
+    public void setLicenseExpiry(long licenseExpiry) {
+        this.licenseExpiry = licenseExpiry;
+    }
+
+    public int getYearsExperience() {
+        return yearsExperience;
+    }
+
+    public void setYearsExperience(int yearsExperience) {
+        this.yearsExperience = yearsExperience;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

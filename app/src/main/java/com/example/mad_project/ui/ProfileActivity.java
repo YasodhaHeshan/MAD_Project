@@ -8,17 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mad_project.R;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        Button btnUpdate = findViewById(R.id.btnUpdate);
-        btnUpdate.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
-            startActivity(intent);
-        });
+        
+        // Setup actionbar with title, show back button only
+        setupActionBar("Profile", true, false, false);
     }
 }

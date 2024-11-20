@@ -5,6 +5,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.List;
+
 @Dao
 public interface TicketDao {
     @Insert
@@ -13,9 +15,27 @@ public interface TicketDao {
     @Update
     void update(Ticket ticket);
 
-    @Insert
-    void insertAll(Ticket[] tickets);
+    @Query("SELECT * FROM tickets WHERE is_active = 1")
+    List<Ticket> getAllActiveTickets();
 
-    @Query("SELECT price FROM tickets WHERE bus_id = :busId")
-    double getTicketPriceByBusId(int busId);
+    @Query("SELECT * FROM tickets WHERE user_id = :userId AND is_active = 1")
+    List<Ticket> getTicketsByUserId(int userId);
+
+    @Query("SELECT * FROM tickets WHERE bus_id = :busId AND is_active = 1")
+    List<Ticket> getTicketsByBusId(int busId);
+
+    @Query("SELECT * FROM tickets WHERE journey_date >= :date AND is_active = 1")
+    List<Ticket> getUpcomingTickets(long date);
+
+    @Query("UPDATE tickets SET status = :status, updated_at = :timestamp WHERE id = :ticketId")
+    void updateTicketStatus(int ticketId, String status, long timestamp);
+
+    @Query("UPDATE tickets SET is_active = 0 WHERE id = :ticketId")
+    void deactivateTicket(int ticketId);
+
+    @Query("UPDATE tickets SET payment_id = :paymentId WHERE id = :ticketId")
+    void updateTicketPaymentId(int ticketId, int paymentId);
+
+    @Query("SELECT * FROM tickets")
+    List<Ticket> getAllTickets();
 }

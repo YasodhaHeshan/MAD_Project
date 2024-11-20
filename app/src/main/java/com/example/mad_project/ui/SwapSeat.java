@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.example.mad_project.R;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -31,31 +32,31 @@ public class SwapSeat extends AppCompatActivity {
         bookedSeats.add("H2");
 
         // List of all seat IDs
-        String[] seatIds = {
-                "I1", "I2", "I3", "I4", "I5",
-                "H1", "H2", "H3", "H4",
-                "G1", "G2", "G3", "G4",
-                "F1", "F2", "F3", "F4",
-                "E1", "E2", "E3", "E4",
-                "D1", "D2", "D3", "D4",
-                "C1", "C2", "C3", "C4",
-                "B1", "B2", "B3", "B4",
-                "A1", "A2", "A3", "A4"
+        int[] seatIds = {
+                R.id.I1, R.id.I2, R.id.I3, R.id.I4, R.id.I5,
+                R.id.H1, R.id.H2, R.id.H3, R.id.H4,
+                R.id.G1, R.id.G2, R.id.G3, R.id.G4,
+                R.id.F1, R.id.F2, R.id.F3, R.id.F4,
+                R.id.E1, R.id.E2, R.id.E3, R.id.E4,
+                R.id.D1, R.id.D2, R.id.D3, R.id.D4,
+                R.id.C1, R.id.C2, R.id.C3, R.id.C4,
+                R.id.B1, R.id.B2, R.id.B3, R.id.B4,
+                R.id.A1, R.id.A2, R.id.A3, R.id.A4
         };
 
         // Loop through all seats and set up their properties
-        for (String seatId : seatIds) {
-            int resId = getResources().getIdentifier(seatId, "id", getPackageName());
+        for (int resId : seatIds) {
             Button seatButton = findViewById(resId);
 
             if (seatButton != null) {
+                String seatId = getResources().getResourceEntryName(resId);
                 // Set normal seats to default color
-                seatButton.setBackgroundTintList(getColorStateList(R.color.gray));
+                seatButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.gray));
                 seatButton.setEnabled(false);
 
                 // Check if the seat is booked
                 if (bookedSeats.contains(seatId)) {
-                    seatButton.setBackgroundTintList(getColorStateList(R.color.seat_booked_color));
+                    seatButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.seat_booked_color));
                     seatButton.setEnabled(true);
                     seatButton.setOnClickListener(v -> showSwapSeatDialog(seatId));
                 }

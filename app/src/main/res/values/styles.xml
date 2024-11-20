@@ -6,8 +6,21 @@
         <item name="android:layout_height">60dp</item>
         <item name="android:layout_margin">4dp</item>
         <item name="android:background">@drawable/carseat</item>
-        <item name="android:textColor">#131313</item>
-        <item name="android:backgroundTint">#C7DE99</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="android:backgroundTint">@color/accent_green</item>
+    </style>
+
+    <style name="AppTheme.ActionBar" parent="Widget.MaterialComponents.ActionBar.Primary">
+        <item name="android:background">@color/black</item>
+        <item name="elevation">4dp</item>
+    </style>
+
+    <style name="AppTheme.ActionBar.Button" parent="Widget.Material3.Button.IconButton">
+        <item name="android:minWidth">40dp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:padding">8dp</item>
+        <item name="iconTint">@color/white</item>
+        <item name="rippleColor">@color/white_20</item>
     </style>
 
 </resources>
