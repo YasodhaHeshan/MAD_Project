@@ -42,7 +42,8 @@
         <activity android:name=".ui.DriverDashboardActivity"/>
         <activity android:name=".ui.DriverFindBusActivity"/>
         <activity android:name=".ui.FillDatabaseActivity" />
-        <activity android:name=".ui.NavbarActivity" />
+        <activity android:name=".ui.TicketsActivity" />
+        <activity android:name=".ui.BaseActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

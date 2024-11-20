@@ -4,40 +4,59 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mad_project.R;
 
 import com.example.mad_project.controller.BusOwnerController;
+import com.example.mad_project.data.User;
 
 public class RegisterOwnerActivity extends AppCompatActivity {
 
-    private final BusOwnerController busOwnerController = new BusOwnerController(this);
+    private BusOwnerController busOwnerController;
+    private User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_bus_owner);
-        EditText companyName = findViewById(R.id.editTextCompanyName);
-        EditText licenseNumber = findViewById(R.id.editTextLicenseNumber);
-        EditText nic = findViewById(R.id.editTextNIC);
-        Button registerOwnerButton = findViewById(R.id.buttonRegisterOwner);
-        Button buttonAddBus = findViewById(R.id.buttonAddBus);
 
-        // Initialize ButtonRegisterOwner
-        registerOwnerButton.setOnClickListener(v -> {
-            String companyNameText = companyName.getText().toString();
-            String licenseNumberText = licenseNumber.getText().toString();
-            String nicText = nic.getText().toString();
+        busOwnerController = new BusOwnerController(this);
+        currentUser = (User) getIntent().getSerializableExtra("user");
 
-            busOwnerController.registerBusOwner(companyNameText, licenseNumberText, nicText, this);
-        });
+        EditText companyNameField = findViewById(R.id.editTextCompanyName);
+        EditText registrationField = findViewById(R.id.editTextRegistration);
+        EditText taxIdField = findViewById(R.id.editTextTaxId);
+        Button registerButton = findViewById(R.id.buttonRegisterOwner);
 
-        // Initialize ButtonAddBus
-        buttonAddBus.setOnClickListener(v -> {
-            Intent intent = new Intent(RegisterOwnerActivity.this, RegisterBusActivity.class);
-            startActivity(intent);
+        registerButton.setOnClickListener(v -> {
+            String companyName = companyNameField.getText().toString().trim();
+            String registration = registrationField.getText().toString().trim();
+            String taxId = taxIdField.getText().toString().trim();
+
+            if (companyName.isEmpty() || registration.isEmpty() || taxId.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            busOwnerController.registerBusOwner(
+                currentUser.getId(),
+                companyName,
+                registration,
+                taxId,
+                success -> runOnUiThread(() -> {
+                    if (success) {
+                        Toast.makeText(this, "Bus owner registered successfully", 
+                            Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Registration failed. Please try again.", 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                })
+            );
         });
     }
 }

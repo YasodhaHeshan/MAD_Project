@@ -15,11 +15,16 @@ import androidx.room.PrimaryKey;
                 @ForeignKey(entity = Bus.class,
                         parentColumns = "id",
                         childColumns = "bus_id",
+                        onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = Payment.class,
+                        parentColumns = "id",
+                        childColumns = "payment_id",
                         onDelete = ForeignKey.CASCADE)
         },
         indices = {
                 @Index(value = "user_id"),
-                @Index(value = "bus_id")
+                @Index(value = "bus_id"),
+                @Index(value = "payment_id")
         })
 public class Ticket {
     @PrimaryKey(autoGenerate = true)
@@ -31,29 +36,46 @@ public class Ticket {
     @ColumnInfo(name = "bus_id")
     private int busId;
 
-    @ColumnInfo(name = "ticket_id")
-    private int ticketId;
+    @ColumnInfo(name = "payment_id")
+    private Integer paymentId;
 
     @ColumnInfo(name = "seat_number")
-    private int seatNumber;
+    private String seatNumber;
 
-    @ColumnInfo(name = "price")
-    private double price;
+    @ColumnInfo(name = "journey_date")
+    private long journeyDate;
 
-    @ColumnInfo(name = "booking_date")
-    private String bookingDate;
+    @ColumnInfo(name = "source")
+    private String source;
 
-    @ColumnInfo(name = "travel_date")
-    private String travelDate;
+    @ColumnInfo(name = "destination")
+    private String destination;
 
-    public Ticket(int userId, int busId, int ticketId, int seatNumber, double price, String bookingDate, String travelDate) {
+    @ColumnInfo(name = "status")
+    private String status;
+
+    @ColumnInfo(name = "is_active")
+    private boolean isActive;
+
+    @ColumnInfo(name = "created_at")
+    private long createdAt;
+
+    @ColumnInfo(name = "updated_at")
+    private long updatedAt;
+
+    public Ticket(int userId, int busId, String seatNumber, 
+                 long journeyDate, String source, String destination, String status) {
         this.userId = userId;
         this.busId = busId;
-        this.ticketId = ticketId;
+        this.paymentId = null;
         this.seatNumber = seatNumber;
-        this.price = price;
-        this.bookingDate = bookingDate;
-        this.travelDate = travelDate;
+        this.journeyDate = journeyDate;
+        this.source = source;
+        this.destination = destination;
+        this.status = status;
+        this.isActive = true;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public int getId() {
@@ -80,43 +102,75 @@ public class Ticket {
         this.busId = busId;
     }
 
-    public int getTicketId() {
-        return ticketId;
+    public Integer getPaymentId() {
+        return paymentId;
     }
 
-    public void setTicketId(int ticketId) {
-        this.ticketId = ticketId;
+    public void setPaymentId(Integer paymentId) {
+        this.paymentId = paymentId;
     }
 
-    public int getSeatNumber() {
+    public String getSeatNumber() {
         return seatNumber;
     }
 
-    public void setSeatNumber(int seatNumber) {
+    public void setSeatNumber(String seatNumber) {
         this.seatNumber = seatNumber;
     }
 
-    public double getPrice() {
-        return price;
+    public long getJourneyDate() {
+        return journeyDate;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setJourneyDate(long journeyDate) {
+        this.journeyDate = journeyDate;
     }
 
-    public String getBookingDate() {
-        return bookingDate;
+    public String getSource() {
+        return source;
     }
 
-    public void setBookingDate(String bookingDate) {
-        this.bookingDate = bookingDate;
+    public void setSource(String source) {
+        this.source = source;
     }
 
-    public String getTravelDate() {
-        return travelDate;
+    public String getDestination() {
+        return destination;
     }
 
-    public void setTravelDate(String travelDate) {
-        this.travelDate = travelDate;
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

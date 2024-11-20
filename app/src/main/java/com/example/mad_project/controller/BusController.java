@@ -22,14 +22,28 @@ public class BusController {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    public void register(Bus bus) {
-        executorService.execute(() -> busDao.insert(bus));
-    }
-
     public void getAllBuses(Consumer<List<Bus>> callback) {
         executorService.execute(() -> {
             List<Bus> busList = busDao.getAllBuses();
             callback.accept(busList);
+        });
+    }
+
+    public void getBusesByRoute(String from, String to, Consumer<List<Bus>> callback) {
+        executorService.execute(() -> {
+            List<Bus> busList = busDao.getBusesByRoute(from, to);
+            callback.accept(busList);
+        });
+    }
+
+    public void createBus(Bus bus, Consumer<Boolean> callback) {
+        executorService.execute(() -> {
+            try {
+                busDao.insert(bus);
+                callback.accept(true);
+            } catch (Exception e) {
+                callback.accept(false);
+            }
         });
     }
 }

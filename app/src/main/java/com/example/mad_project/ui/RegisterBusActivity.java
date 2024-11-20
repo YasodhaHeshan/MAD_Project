@@ -47,23 +47,46 @@ public class RegisterBusActivity extends AppCompatActivity {
     }
 
     private void registerBus() {
-        String busNumber = editTextBusNumber.getText().toString();
-        int busOwnerId = Integer.parseInt(editTextBusOwnerId.getText().toString());
-        int busDriverId = Integer.parseInt(editTextBusDriverId.getText().toString());
-        int ticketId = Integer.parseInt(editTextTicketId.getText().toString());
-        int routeId = Integer.parseInt(editTextRouteId.getText().toString());
-        int seats = Integer.parseInt(editTextSeats.getText().toString());
+        try {
+            String busNumber = editTextBusNumber.getText().toString();
+            int ownerId = Integer.parseInt(editTextBusOwnerId.getText().toString());
+            int seats = Integer.parseInt(editTextSeats.getText().toString());
+            String routeFrom = editTextRouteId.getText().toString();
+            String routeTo = editTextRouteId.getText().toString();
 
-        Bus bus = new Bus(busNumber, "Start Location", "End Location", seats);
-
-        new Thread(() -> {
-            try {
-                BusDao busDao = db.busDao();
-                busDao.insert(bus);
-                runOnUiThread(() -> Toast.makeText(this, "Bus registered successfully", Toast.LENGTH_SHORT).show());
-            } catch (Exception e) {
-                runOnUiThread(() -> Toast.makeText(this, "Error registering bus: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            if (busNumber.isEmpty() || routeFrom.isEmpty() || routeTo.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                return;
             }
-        }).start();
+
+            Bus bus = new Bus(
+                ownerId,
+                busNumber,
+                "Standard", // Default model
+                seats,
+                "Basic", // Default amenities
+                true,
+                routeFrom,
+                routeTo
+            );
+
+            new Thread(() -> {
+                try {
+                    BusDao busDao = db.busDao();
+                    busDao.insert(bus);
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Bus registered successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                } catch (Exception e) {
+                    runOnUiThread(() -> 
+                        Toast.makeText(this, "Error registering bus: " + e.getMessage(), 
+                        Toast.LENGTH_LONG).show()
+                    );
+                }
+            }).start();
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Please enter valid numbers", Toast.LENGTH_SHORT).show();
+        }
     }
 }

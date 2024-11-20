@@ -2,36 +2,65 @@ package com.example.mad_project.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "buses")
+@Entity(tableName = "buses",
+        foreignKeys = {
+                @ForeignKey(entity = BusOwner.class,
+                        parentColumns = "id",
+                        childColumns = "owner_id",
+                        onDelete = ForeignKey.CASCADE)
+        },
+        indices = {
+                @Index(value = "owner_id")
+        })
 public class Bus {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    @ColumnInfo(name = "bus_number")
-    private String busNumber;
+    @ColumnInfo(name = "owner_id")
+    private int ownerId;
 
-    @ColumnInfo(name = "start_location")
-    private String startLocation;
+    @ColumnInfo(name = "registration_number")
+    private String registrationNumber;
 
-    @ColumnInfo(name = "end_location")
-    private String endLocation;
-
-    @ColumnInfo(name = "departure_time")
-    private long departureTime;
-
-    @ColumnInfo(name = "arrival_time")
-    private long arrivalTime;
+    @ColumnInfo(name = "model")
+    private String model;
 
     @ColumnInfo(name = "total_seats")
     private int totalSeats;
 
-    public Bus(String busNumber, String startLocation, String endLocation, int totalSeats) {
-        this.busNumber = busNumber;
-        this.startLocation = startLocation;
-        this.endLocation = endLocation;
+    @ColumnInfo(name = "amenities")
+    private String amenities;
+
+    @ColumnInfo(name = "is_active")
+    private boolean isActive;
+
+    @ColumnInfo(name = "route_from")
+    private String routeFrom;
+
+    @ColumnInfo(name = "route_to")
+    private String routeTo;
+
+    @ColumnInfo(name = "created_at")
+    private long createdAt;
+
+    @ColumnInfo(name = "updated_at")
+    private long updatedAt;
+
+    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo) {
+        this.ownerId = ownerId;
+        this.registrationNumber = registrationNumber;
+        this.model = model;
         this.totalSeats = totalSeats;
+        this.amenities = amenities;
+        this.isActive = isActive;
+        this.routeFrom = routeFrom;
+        this.routeTo = routeTo;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public int getId() {
@@ -42,44 +71,28 @@ public class Bus {
         this.id = id;
     }
 
-    public String getBusNumber() {
-        return busNumber;
+    public int getOwnerId() {
+        return ownerId;
     }
 
-    public void setBusNumber(String busNumber) {
-        this.busNumber = busNumber;
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
-    public String getStartLocation() {
-        return startLocation;
+    public String getRegistrationNumber() {
+        return registrationNumber;
     }
 
-    public void setStartLocation(String startLocation) {
-        this.startLocation = startLocation;
+    public void setRegistrationNumber(String registrationNumber) {
+        this.registrationNumber = registrationNumber;
     }
 
-    public String getEndLocation() {
-        return endLocation;
+    public String getModel() {
+        return model;
     }
 
-    public void setEndLocation(String endLocation) {
-        this.endLocation = endLocation;
-    }
-
-    public long getDepartureTime() {
-        return departureTime;
-    }
-
-    public void setDepartureTime(long departureTime) {
-        this.departureTime = departureTime;
-    }
-
-    public long getArrivalTime() {
-        return arrivalTime;
-    }
-
-    public void setArrivalTime(long arrivalTime) {
-        this.arrivalTime = arrivalTime;
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public int getTotalSeats() {
@@ -88,5 +101,53 @@ public class Bus {
 
     public void setTotalSeats(int totalSeats) {
         this.totalSeats = totalSeats;
+    }
+
+    public String getAmenities() {
+        return amenities;
+    }
+
+    public void setAmenities(String amenities) {
+        this.amenities = amenities;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public String getRouteFrom() {
+        return routeFrom;
+    }
+
+    public void setRouteFrom(String routeFrom) {
+        this.routeFrom = routeFrom;
+    }
+
+    public String getRouteTo() {
+        return routeTo;
+    }
+
+    public void setRouteTo(String routeTo) {
+        this.routeTo = routeTo;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
