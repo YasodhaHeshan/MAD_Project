@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#131313">
+
+    <!-- Non-scrollable part -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/txtHome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="21dp"
+            android:layout_marginBottom="22dp"
+            android:text="Home"
+            android:textColor="#D9D9D9"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="232dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="33dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
+            app:layout_constraintStart_toEndOf="@+id/txtHome"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/bell" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginEnd="26dp"
+            android:layout_marginBottom="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/settings" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Scrollable part -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout"
+        app:layout_constraintBottom_toTopOf="@id/includeNavbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Your existing content here -->
+
+            <Button
+                android:id="@+id/btnAddBus"
+                android:layout_width="361dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="76dp"
+                android:layout_marginEnd="25dp"
+                android:backgroundTint="#C7DE99"
+                android:fontFamily="@font/akaya_telivigala"
+                android:text="Add Bus"
+                android:textColor="#131313"
+                android:textSize="25dp"
+                app:layout_constraintBottom_toTopOf="@+id/btnFindDriver"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layoutmini3" />
+
+            <Button
+                android:id="@+id/btnFindDriver"
+                android:layout_width="361dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="22dp"
+                android:layout_marginEnd="25dp"
+                android:backgroundTint="#C7DE99"
+                android:fontFamily="@font/akaya_telivigala"
+                android:text="Find Driver"
+                android:textColor="#131313"
+                android:textSize="25dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnAddBus" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutmini3"
+                android:layout_width="361dp"
+                android:layout_height="174dp"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="25dp"
+                android:background="@drawable/border"
+                app:layout_constraintBottom_toTopOf="@+id/btnAddBus"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/txtCurrentBus"
+                    android:layout_width="202dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="134dp"
+                    android:layout_marginBottom="19dp"
+                    android:fontFamily="@font/akaya_telivigala"
+                    android:text="Current Bus"
+                    android:textColor="#D9D9D9"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtBusNo"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/busId"
+                    android:layout_width="202dp"
+                    android:layout_height="35dp"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginEnd="7dp"
+                    android:layout_marginBottom="17dp"
+                    android:fontFamily="@font/akaya_telivigala"
+                    android:text="WD - 1234"
+                    android:textColor="#D9D9D9"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toTopOf="@+id/routeId"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/txtBusNo"
+                    app:layout_constraintTop_toBottomOf="@+id/txtCurrentBus" />
+
+                <TextView
+                    android:id="@+id/routeId"
+                    android:layout_width="202dp"
+                    android:layout_height="35dp"
+                    android:layout_marginEnd="7dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/akaya_telivigala"
+                    android:text="E03"
+                    android:textColor="#D9D9D9"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/txtRoutrNo"
+                    app:layout_constraintTop_toBottomOf="@+id/busId" />
+
+                <TextView
+                    android:id="@+id/txtBusNo"
+                    android:layout_width="102dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:layout_marginBottom="18dp"
+                    android:fontFamily="@font/akaya_telivigala"
+                    android:text="Bus No."
+                    android:textColor="#D9D9D9"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toTopOf="@+id/txtRoutrNo"
+                    app:layout_constraintEnd_toStartOf="@+id/busId"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtCurrentBus" />
+
+                <TextView
+                    android:id="@+id/txtRoutrNo"
+                    android:layout_width="102dp"
+                    android:layout_height="35dp"
+                    android:layout_marginStart="25dp"
+                    android:layout_marginEnd="26dp"
+                    android:layout_marginBottom="16dp"
+                    android:fontFamily="@font/akaya_telivigala"
+                    android:text="Route No."
+                    android:textColor="#D9D9D9"
+                    android:textSize="20sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/routeId"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtBusNo" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+    <!-- Include the bottom navigation bar -->
+
+    <include
+        android:id="@+id/includeNavbar"
+        layout="@layout/driver_nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
