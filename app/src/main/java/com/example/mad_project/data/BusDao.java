@@ -15,9 +15,9 @@ public interface BusDao {
     @Update
     void update(Bus bus);
 
-    @Insert
-    void insertAll(Bus[] buses);
-
-    @Query("SELECT * FROM buses")
+    @Query("SELECT * FROM buses WHERE is_active = 1")
     List<Bus> getAllBuses();
+
+    @Query("SELECT * FROM buses WHERE route_from LIKE :from AND route_to LIKE :to AND is_active = 1")
+    List<Bus> getBusesByRoute(String from, String to);
 }

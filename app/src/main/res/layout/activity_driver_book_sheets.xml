@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#131313">
+    android:background="@color/background_dark">
 
     <!-- Back Button -->
     <ImageButton
@@ -41,7 +41,7 @@
         android:layout_marginTop="13dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/back_button">
+        app:layout_constraintTop_toBottomOf="@+id/actionbar">
 
         <!-- LinearLayout to hold the GridLayout -->
         <LinearLayout
@@ -66,7 +66,7 @@
                     android:background="@drawable/carseat"
                     android:backgroundTint="#C7DE99"
                     android:text="I1"
-                    android:textColor="#131313"
+                    android:textColor="@color/text_dark"
                     android:textColorHighlight="#C7DE99"
                     android:textColorHint="#C7DE99"
                     android:textColorLink="#C7DE99" />
@@ -78,7 +78,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="I2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/I3"
@@ -87,7 +87,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="I3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/I4"
@@ -96,7 +96,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="I4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/I5"
@@ -105,7 +105,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="I5"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -126,7 +126,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="H1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/H2"
@@ -135,7 +135,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="H2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/H3"
@@ -145,7 +145,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="H3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/H4"
@@ -154,7 +154,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="H4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -175,7 +175,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="G1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/G2"
@@ -184,7 +184,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="G2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/G3"
@@ -194,7 +194,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="G3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/G4"
@@ -203,7 +203,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="G4"
-                    android:textColor="#131313" />
+                        android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -224,7 +224,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="F1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/F2"
@@ -233,7 +233,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="F2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/F3"
@@ -243,7 +243,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="F3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/F4"
@@ -252,7 +252,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="F4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -273,7 +273,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="E1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/E2"
@@ -282,7 +282,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="E2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/E3"
@@ -292,7 +292,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="E3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/E4"
@@ -301,7 +301,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="E4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -322,7 +322,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="D1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/D2"
@@ -331,7 +331,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="D2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/D3"
@@ -341,7 +341,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="D3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/D4"
@@ -350,7 +350,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="D4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -371,7 +371,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="C1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/C2"
@@ -380,7 +380,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="C2"
-                    android:textColor="#131313"
+                    android:textColor="@color/text_dark"
                     android:textColorLink="#673AB7" />
 
                 <Button
@@ -391,7 +391,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="C3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/C4"
@@ -400,7 +400,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="C4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -420,7 +420,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="B1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/B2"
@@ -429,7 +429,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="B2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/B3"
@@ -439,7 +439,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="B3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/B4"
@@ -448,7 +448,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="B4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -468,7 +468,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="A1"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/A2"
@@ -477,7 +477,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="A2"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/A3"
@@ -487,7 +487,7 @@
                     android:layout_marginLeft="69dp"
                     android:background="@drawable/carseat"
                     android:text="A3"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <Button
                     android:id="@+id/A4"
@@ -496,7 +496,7 @@
                     android:layout_margin="4dp"
                     android:background="@drawable/carseat"
                     android:text="A4"
-                    android:textColor="#131313" />
+                    android:textColor="@color/text_dark" />
 
                 <!-- Add more buttons as needed to represent seats -->
 
@@ -510,9 +510,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="110dp"
-        android:backgroundTint="#A4C639"
+        android:backgroundTint="@color/accent_green"
         android:text="Book Seat"
-        android:textColor="#101010"
+        android:textColor="@color/text_dark"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -523,7 +523,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="64dp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/text_dark"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

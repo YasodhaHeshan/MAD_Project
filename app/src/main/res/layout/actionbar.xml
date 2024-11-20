@@ -1,53 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.appbar.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black"
-    android:padding="16dp">
+    android:elevation="4dp">
 
-    <!-- Back Button -->
-    <ImageButton
-        android:id="@+id/backButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentStart="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Go back to the previous screen"
-        android:src="@drawable/baseline_arrow_back_24"
-        android:tint="@color/seat_selected_color" />
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
 
-    <!-- Page Title -->
-    <TextView
-        android:id="@+id/pageTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Home"
-        android:textColor="@color/colorWhite"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    <!-- Settings Button -->
-    <ImageButton
-        android:id="@+id/settingsButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentEnd="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Open settings"
-        android:src="@drawable/settings"
-        android:tint="@color/seat_selected_color" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/backButton"
+                style="@style/AppTheme.ActionBar.Button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:contentDescription="Back"
+                app:icon="@drawable/baseline_arrow_back_24"
+                app:iconTint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Notification Button -->
-    <ImageButton
-        android:id="@+id/notificationButton"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:layout_toStartOf="@id/settingsButton"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="View notifications"
-        android:src="@drawable/notification"
-        android:tint="@color/seat_selected_color" />
+            <TextView
+                android:id="@+id/toolbarTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/actionsContainer"
+                app:layout_constraintStart_toEndOf="@+id/backButton"
+                app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+            <LinearLayout
+                android:id="@+id/actionsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/notificationButton"
+                    style="@style/AppTheme.ActionBar.Button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="Notifications"
+                    app:icon="@drawable/baseline_notifications_24"
+                    app:iconTint="@color/white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/settingsButton"
+                    style="@style/AppTheme.ActionBar.Button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="Settings"
+                    app:icon="@drawable/baseline_settings_24"
+                    app:iconTint="@color/white" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+</com.google.android.material.appbar.AppBarLayout>

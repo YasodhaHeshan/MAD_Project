@@ -15,12 +15,18 @@ public interface UserDao {
     @Update
     void update(User user);
 
-    @Query("SELECT id From users")
-    List<Integer> getUserId();
+    @Query("SELECT * FROM users WHERE is_active = 1")
+    List<User> getAllActiveUsers();
 
-    @Query("SELECT * FROM users WHERE email = :email")
+    @Query("SELECT * FROM users WHERE email = :email AND is_active = 1")
     User getUserByEmail(String email);
 
-    @Insert
-    void insertAll(User[] users);
+    @Query("SELECT * FROM users WHERE role = :role AND is_active = 1")
+    List<User> getUsersByRole(String role);
+
+    @Query("UPDATE users SET is_active = 0 WHERE id = :userId")
+    void deactivateUser(int userId);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email)")
+    boolean isEmailExists(String email);
 }

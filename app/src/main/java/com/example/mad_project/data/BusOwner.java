@@ -22,17 +22,29 @@ public class BusOwner {
     @ColumnInfo(name = "company_name")
     private String companyName;
 
-    @ColumnInfo(name = "license_number")
-    private String licenseNumber;
+    @ColumnInfo(name = "company_registration")
+    private String companyRegistration;
 
-    @ColumnInfo(name = "nic")
-    private String nic;
+    @ColumnInfo(name = "tax_id")
+    private String taxId;
 
-    public BusOwner(int userId, String companyName, String licenseNumber, String nic) {
+    @ColumnInfo(name = "is_active")
+    private boolean isActive;
+
+    @ColumnInfo(name = "created_at")
+    private long createdAt;
+
+    @ColumnInfo(name = "updated_at")
+    private long updatedAt;
+
+    public BusOwner(int userId, String companyName, String companyRegistration, String taxId) {
         this.userId = userId;
         this.companyName = companyName;
-        this.licenseNumber = licenseNumber;
-        this.nic = nic;
+        this.companyRegistration = companyRegistration;
+        this.taxId = taxId;
+        this.isActive = true;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public int getId() {
@@ -59,19 +71,43 @@ public class BusOwner {
         this.companyName = companyName;
     }
 
-    public String getLicenseNumber() {
-        return licenseNumber;
+    public String getCompanyRegistration() {
+        return companyRegistration;
     }
 
-    public void setLicenseNumber(String licenseNumber) {
-        this.licenseNumber = licenseNumber;
+    public void setCompanyRegistration(String companyRegistration) {
+        this.companyRegistration = companyRegistration;
     }
 
-    public String getNic() {
-        return nic;
+    public String getTaxId() {
+        return taxId;
     }
 
-    public void setNic(String nic) {
-        this.nic = nic;
+    public void setTaxId(String taxId) {
+        this.taxId = taxId;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public long getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(long createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

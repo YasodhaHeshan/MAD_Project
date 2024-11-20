@@ -44,6 +44,7 @@ dependencies {
 
     implementation(libs.rxandroid)
     implementation(libs.places)
+    implementation(libs.androidx.security.crypto)
     annotationProcessor(libs.androidx.room.compiler)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

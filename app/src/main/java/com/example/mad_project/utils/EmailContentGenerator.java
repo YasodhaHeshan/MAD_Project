@@ -29,7 +29,7 @@ public class EmailContentGenerator {
                 "<h2>Dear " + userName + ",</h2>" +
                 "<p>Thank you for booking your bus ticket with us. Here are your ticket details:</p>" +
                 "<table class=\"ticket-details\">" +
-                "<tr><th>Booking ID</th><td>" + bookingId + "</td></tr>" +
+                "<tr><th>Book ID</th><td>" + bookingId + "</td></tr>" +
                 "<tr><th>Bus Number</th><td>" + busNumber + "</td></tr>" +
                 "<tr><th>Departure</th><td>" + departure + "</td></tr>" +
                 "<tr><th>Destination</th><td>" + destination + "</td></tr>" +
@@ -39,10 +39,10 @@ public class EmailContentGenerator {
                 "</table>" +
                 "<p>We hope you have a pleasant journey!</p>" +
                 "<p>Best regards,</p>" +
-                "<p>The Bus Booking Team</p>" +
+                "<p>The Bus Book Team</p>" +
                 "</div>" +
                 "<div class=\"footer\">" +
-                "<p>&copy; 2023 Bus Booking System. All rights reserved.</p>" +
+                "<p>&copy; 2023 Bus Book System. All rights reserved.</p>" +
                 "</div>" +
                 "</div>" +
                 "</body>" +
