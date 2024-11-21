@@ -14,8 +14,15 @@ public class ProfileActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        Button editProfileButton = findViewById(R.id.editProfileButton);
         
         // Setup actionbar with title, show back button only
         setupActionBar("Profile", true, false, false);
+
+        editProfileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ProfileActivity.this, EditProfileActivity.class);
+            startActivity(intent);
+        });
     }
 }

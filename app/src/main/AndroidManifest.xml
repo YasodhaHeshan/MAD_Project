@@ -35,6 +35,7 @@
         <activity android:name=".ui.TicketsActivity" />
         <activity android:name=".ui.BaseActivity" />
         <activity android:name=".ui.BusActivity" />
+        <activity android:name=".ui.EditProfileActivity"/>
 
         <meta-data
             android:name="preloaded_fonts"
