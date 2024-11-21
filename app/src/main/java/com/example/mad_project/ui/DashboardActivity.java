@@ -16,6 +16,6 @@ public class DashboardActivity extends BaseActivity {
         setContentView(R.layout.activity_dashboard);
         
         // Setup actionbar
-        setupActionBar("Home", true, true, true);
+        setupActionBar("Home", false, true, true);
     }
 }
