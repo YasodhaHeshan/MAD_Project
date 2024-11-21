@@ -154,8 +154,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             return new Intent(this, DashboardActivity.class);
         } else if (itemId == R.id.navigation_social) {
             return new Intent(this, TicketsActivity.class);
-        } else if (itemId == R.id.navigation_payment) {
-            return new Intent(this, PaymentActivity.class);
+        } else if (itemId == R.id.navigation_bus) {
+            return new Intent(this, BusActivity.class);
         } else if (itemId == R.id.navigation_profile) {
             return new Intent(this, ProfileActivity.class);
         }
@@ -181,8 +181,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             return R.id.navigation_home;
         } else if (className.contains("TicketsActivity")) {
             return R.id.navigation_social;
-        } else if (className.contains("PaymentActivity")) {
-            return R.id.navigation_payment;
+        } else if (className.contains("BusActivity")) {
+            return R.id.navigation_bus;
         } else if (className.contains("ProfileActivity")) {
             return R.id.navigation_profile;
         }
