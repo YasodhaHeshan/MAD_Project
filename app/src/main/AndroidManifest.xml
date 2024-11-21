@@ -27,23 +27,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.RegisterActivity" />
+
         <activity android:name=".ui.LoginActivity" />
         <activity android:name=".ui.DashboardActivity" />
-        <activity android:name=".ui.SelectBusActivity" />
-        <activity android:name=".ui.MapActivity" />
-        <activity android:name=".ui.PaymentActivity" />
-        <activity android:name=".ui.BookSeat" />
-        <activity android:name=".ui.RegisterOwnerActivity" />
-        <activity android:name=".ui.RegisterBusActivity" />
-        <activity android:name=".ui.SwapSeat" />
         <activity android:name=".ui.ProfileActivity" />
-        <activity android:name=".ui.EditProfileActivity"/>
-        <activity android:name=".ui.DriverDashboardActivity"/>
-        <activity android:name=".ui.DriverFindBusActivity"/>
         <activity android:name=".ui.FillDatabaseActivity" />
         <activity android:name=".ui.TicketsActivity" />
         <activity android:name=".ui.BaseActivity" />
+        <activity android:name=".ui.BusActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
