@@ -81,7 +81,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/btnFindBus" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/layoutmini3"
                 android:layout_width="361dp"
                 android:layout_height="174dp"
                 android:layout_marginStart="25dp"
