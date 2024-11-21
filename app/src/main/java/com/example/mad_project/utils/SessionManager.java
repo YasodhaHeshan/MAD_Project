@@ -36,4 +36,8 @@ public class SessionManager {
         editor.clear();
         editor.commit();
     }
+
+    public String getUserRole() {
+        return pref.getString("user_role", "USER");
+    }
 }

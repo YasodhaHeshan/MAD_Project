@@ -160,6 +160,40 @@
                             android:background="@color/stroke_white"/>
 
                         <com.google.android.material.button.MaterialButton
+                            android:id="@+id/registerAsDriverButton"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Register as Driver"
+                            android:textColor="@color/white"
+                            android:gravity="start|center_vertical"
+                            android:padding="16dp"
+                            app:icon="@drawable/baseline_directions_bus_24"
+                            app:iconTint="@color/white"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/stroke_white"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/registerAsOwnerButton"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Register as Owner"
+                            android:textColor="@color/white"
+                            android:gravity="start|center_vertical"
+                            android:padding="16dp"
+                            app:icon="@drawable/baseline_home_24"
+                            app:iconTint="@color/white"/>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/stroke_white"/>
+
+                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/logoutButton"
                             style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="match_parent"
