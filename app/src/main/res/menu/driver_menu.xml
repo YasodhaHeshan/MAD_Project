@@ -9,13 +9,11 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/navigation_booking"
         android:title="Books"
         android:icon="@drawable/booking"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/navigation_explore"
         android:title="Explore"
         android:icon="@drawable/explore"
         app:showAsAction="ifRoom" />

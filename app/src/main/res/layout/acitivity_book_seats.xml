@@ -51,7 +51,6 @@
 
             <!-- GridLayout for seat buttons -->
             <GridLayout
-                android:id="@+id/seatLayout1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -112,7 +111,6 @@
             </GridLayout>
 
             <GridLayout
-                android:id="@+id/seatLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -161,7 +159,6 @@
             </GridLayout>
 
             <GridLayout
-                android:id="@+id/seatLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -210,7 +207,6 @@
             </GridLayout>
 
             <GridLayout
-                android:id="@+id/seatLayout4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -259,7 +255,6 @@
             </GridLayout>
 
             <GridLayout
-                android:id="@+id/seatLayout5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -308,7 +303,6 @@
             </GridLayout>
 
             <GridLayout
-                android:id="@+id/seatLayout6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -357,7 +351,6 @@
             </GridLayout>
 
             <GridLayout
-                android:id="@+id/seatLayout7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -406,7 +399,6 @@
 
             </GridLayout>
             <GridLayout
-                android:id="@+id/seatLayout8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
@@ -454,7 +446,6 @@
 
             </GridLayout>
             <GridLayout
-                android:id="@+id/seatLayout9"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="5"
