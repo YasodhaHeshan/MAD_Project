@@ -15,9 +15,9 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/navigation_payment"
-        android:title="Payment"
-        android:icon="@drawable/explore"
+        android:id="@+id/navigation_bus"
+        android:title="Buses"
+        android:icon="@drawable/baseline_directions_bus_24"
         app:showAsAction="ifRoom" />
 
     <item
