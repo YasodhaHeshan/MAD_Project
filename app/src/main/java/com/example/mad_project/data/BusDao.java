@@ -20,4 +20,10 @@ public interface BusDao {
 
     @Query("SELECT * FROM buses WHERE route_from LIKE :from AND route_to LIKE :to AND is_active = 1")
     List<Bus> getBusesByRoute(String from, String to);
+
+    @Query("SELECT DISTINCT route_from FROM buses WHERE route_from LIKE :query")
+    List<String> getFromLocations(String query);
+
+    @Query("SELECT DISTINCT route_to FROM buses WHERE route_to LIKE :query")
+    List<String> getToLocations(String query);
 }

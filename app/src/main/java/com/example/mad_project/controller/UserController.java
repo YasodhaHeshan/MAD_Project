@@ -22,6 +22,23 @@ import java.util.function.Consumer;
 
 public class UserController {
 
+    private static boolean isLoggedIn = false;
+    private static int currentUserId = -1;
+
+    public static boolean isLoggedIn() {
+        return isLoggedIn;
+    }
+
+    public static void setLoggedIn(boolean loggedIn, int userId) {
+        isLoggedIn = loggedIn;
+        currentUserId = userId;
+    }
+
+    public static void logout() {
+        isLoggedIn = false;
+        currentUserId = -1;
+    }
+
     private final AppDatabase db;
     private final UserDao userDao;
     private final ExecutorService executorService;

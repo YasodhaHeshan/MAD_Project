@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.mad_project.R;
+import com.example.mad_project.controller.UserController;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -187,5 +188,14 @@ public abstract class BaseActivity extends AppCompatActivity {
             return R.id.navigation_profile;
         }
         return -1;
+    }
+
+    protected void checkAuth() {
+        if (!UserController.isLoggedIn()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
     }
 }
