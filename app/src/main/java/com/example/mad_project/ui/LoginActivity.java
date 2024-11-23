@@ -30,9 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        
         initializeViews();
-        setupListeners();
         
         userController = new UserController(this);
         sessionManager = new SessionManager(this);
@@ -42,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(new Intent(this, DashboardActivity.class));
             finish();
         }
+
+        setupListeners();
     }
 
     private void initializeViews() {
@@ -57,7 +58,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> attemptLogin());
         
         registerButton.setOnClickListener(v -> {
-
+            Intent intent = new Intent(this, RegisterActivity.class);
+            startActivity(intent);
         });
     }
 

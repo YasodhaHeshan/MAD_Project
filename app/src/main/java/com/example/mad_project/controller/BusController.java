@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 public class BusController {
 
@@ -17,7 +19,9 @@ public class BusController {
     private final ExecutorService executorService;
 
     public BusController(Context context) {
-        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "mad_project_db").build();
+        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "mad_project_db")
+                .fallbackToDestructiveMigration()
+                .build();
         busDao = db.busDao();
         executorService = Executors.newSingleThreadExecutor();
     }
@@ -45,5 +49,25 @@ public class BusController {
                 callback.accept(false);
             }
         });
+    }
+
+    public void getRouteSuggestions(String query, Consumer<List<String>> callback) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            List<String> suggestions = new ArrayList<>();
+            
+            // Get unique 'from' locations
+            List<String> fromLocations = busDao.getFromLocations("%" + query + "%");
+            // Get unique 'to' locations
+            List<String> toLocations = busDao.getToLocations("%" + query + "%");
+            
+            // Combine and remove duplicates
+            suggestions.addAll(fromLocations);
+            suggestions.addAll(toLocations);
+            suggestions = new ArrayList<>(new LinkedHashSet<>(suggestions));
+            
+            callback.accept(suggestions);
+        });
+        executor.shutdown();
     }
 }

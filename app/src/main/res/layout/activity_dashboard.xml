@@ -51,34 +51,35 @@
                         android:textStyle="bold"/>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/fromLocationLayout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:hint="From"
-                        android:textColorHint="@color/gray"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        android:layout_height="wrap_content">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <AutoCompleteTextView
+                            android:id="@+id/fromLocationInput"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/white"/>
+                            android:hint="From"
+                            android:inputType="text"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/toLocationLayout"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:hint="To"
-                        android:textColorHint="@color/gray"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        android:layout_height="wrap_content">
 
-                        <com.google.android.material.textfield.TextInputEditText
+                        <AutoCompleteTextView
+                            android:id="@+id/toLocationInput"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/white"/>
+                            android:hint="To"
+                            android:inputType="text"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <Button
+                        android:id="@+id/searchBusButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"

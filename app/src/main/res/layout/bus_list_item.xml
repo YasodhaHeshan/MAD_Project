@@ -15,6 +15,7 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/busNumberText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
@@ -43,32 +44,75 @@
                 android:textColor="@color/white"/>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/busModelText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/gray"/>
+
+        <TextView
+            android:id="@+id/amenitiesText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/gray"/>
+
+        <TextView
+            android:id="@+id/seatsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/green_light"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="8dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/gray"/>
+                android:orientation="vertical">
 
-            <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Departure"
+                    android:textColor="@color/gray"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/departureTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="end"
-                android:textColor="@color/gray"/>
+                android:orientation="vertical"
+                android:gravity="end">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Arrival"
+                    android:textColor="@color/gray"
+                    android:textSize="12sp"/>
+
+                <TextView
+                    android:id="@+id/arrivalTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"/>
+            </LinearLayout>
         </LinearLayout>
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Select"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/green_light"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

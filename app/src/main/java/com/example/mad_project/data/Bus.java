@@ -6,6 +6,10 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 @Entity(tableName = "buses",
         foreignKeys = {
                 @ForeignKey(entity = BusOwner.class,
@@ -50,7 +54,19 @@ public class Bus {
     @ColumnInfo(name = "updated_at")
     private long updatedAt;
 
-    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo) {
+    @ColumnInfo(name = "latitude")
+    private double latitude;
+
+    @ColumnInfo(name = "longitude")
+    private double longitude;
+
+    @ColumnInfo(name = "departure_time")
+    private long departureTime;
+
+    @ColumnInfo(name = "arrival_time")
+    private long arrivalTime;
+
+    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime) {
         this.ownerId = ownerId;
         this.registrationNumber = registrationNumber;
         this.model = model;
@@ -59,8 +75,12 @@ public class Bus {
         this.isActive = isActive;
         this.routeFrom = routeFrom;
         this.routeTo = routeTo;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
+        this.departureTime = departureTime;
+        this.arrivalTime = arrivalTime;
     }
 
     public int getId() {
@@ -149,5 +169,55 @@ public class Bus {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public int getCapacity() {
+        return totalSeats;
+    }
+
+    public void setCapacity(int capacity) {
+        this.totalSeats = capacity;
+    }
+
+    public long getDepartureTime() {
+        return departureTime;
+    }
+
+    public long getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public String getFormattedDepartureTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(new Date(departureTime));
+    }
+
+    public String getFormattedArrivalTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(new Date(arrivalTime));
+    }
+
+    public void setDepartureTime(long departureTime) {
+        this.departureTime = departureTime;
+    }
+
+    public void setArrivalTime(long arrivalTime) {
+        this.arrivalTime = arrivalTime;
     }
 }
