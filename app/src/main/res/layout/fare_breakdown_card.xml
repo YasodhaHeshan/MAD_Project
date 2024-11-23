@@ -129,5 +129,14 @@
                 android:textColor="@color/green_light"
                 android:textSize="16sp"/>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/bookNowButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Book Now"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/green_light"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

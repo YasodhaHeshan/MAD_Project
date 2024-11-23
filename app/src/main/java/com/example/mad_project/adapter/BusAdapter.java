@@ -3,6 +3,7 @@ package com.example.mad_project.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +20,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
 
     public interface OnBusClickListener {
         void onBusClick(Bus bus);
+        void onBookClick(Bus bus);
     }
 
     public BusAdapter(List<Bus> buses, OnBusClickListener listener) {
@@ -51,11 +53,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         String basePrice = currencyFormat.format(bus.getBaseFare());
         String premiumPrice = currencyFormat.format(bus.getPremiumFare());
         
-        if (bus.getPremiumFare() > bus.getBaseFare()) {
-            holder.priceText.setText(String.format("%s - %s", basePrice, premiumPrice));
-        } else {
-            holder.priceText.setText(basePrice);
-        }
+        holder.priceText.setText(basePrice);
         
         holder.baseFareText.setText(basePrice);
         holder.premiumFareText.setText(premiumPrice);
@@ -63,7 +61,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         holder.itemView.setOnClickListener(v -> {
             boolean isExpanded = holder.priceBreakdownLayout.getVisibility() == View.VISIBLE;
             holder.priceBreakdownLayout.setVisibility(isExpanded ? View.GONE : View.VISIBLE);
+            
+            if (!isExpanded && bus.getPremiumFare() > bus.getBaseFare()) {
+                holder.priceText.setText(String.format("%s - %s", basePrice, premiumPrice));
+            } else {
+                holder.priceText.setText(basePrice);
+            }
+            
             listener.onBusClick(bus);
+        });
+        
+        holder.bookButton.setOnClickListener(v -> {
+            listener.onBookClick(bus);
         });
     }
 
@@ -85,6 +94,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         private final TextView baseFareText;
         private final TextView premiumFareText;
         private final View priceBreakdownLayout;
+        private final Button bookButton;
 
         public BusViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,6 +110,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
             baseFareText = itemView.findViewById(R.id.baseFareText);
             premiumFareText = itemView.findViewById(R.id.premiumFareText);
             priceBreakdownLayout = itemView.findViewById(R.id.priceBreakdownLayout);
+            bookButton = itemView.findViewById(R.id.bookButton);
         }
     }
 }

@@ -39,6 +39,7 @@
         <activity android:name=".ui.RegisterDriverActivity" />
         <activity android:name=".ui.RegisterOwnerActivity" />
         <activity android:name=".ui.RegisterActivity" />
+        <activity android:name=".ui.SeatSelectionActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

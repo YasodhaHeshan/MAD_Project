@@ -19,4 +19,6 @@
     <color name="green_dark">#2E7D32</color>
     <color name="red">#C62828</color>
     <color name="orange">#FFA500</color>
+    <color name="colorPrimaryBackground">#121212</color>
+    <color name="gold">#FFC107</color>
 </resources>

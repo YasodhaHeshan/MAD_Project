@@ -1,5 +1,6 @@
 package com.example.mad_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -22,6 +23,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.core.widget.NestedScrollView;
 
@@ -131,7 +134,17 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
             busCountText.setText(countText);
 
             // Update bus list
-            BusAdapter adapter = new BusAdapter(buses, this::showBusDetails);
+            BusAdapter adapter = new BusAdapter(buses, new BusAdapter.OnBusClickListener() {
+                @Override
+                public void onBusClick(Bus bus) {
+                    showBusDetails(bus);
+                }
+
+                @Override
+                public void onBookClick(Bus bus) {
+                    startBookingProcess(bus);
+                }
+            });
             busRecyclerView.setAdapter(adapter);
             
             // Update map markers
@@ -219,8 +232,21 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
             currencyFormat.format(standardFare.totalFare),
             currencyFormat.format(premiumFare.totalFare)));
         
+        // Add booking button handler
+        Button bookNowButton = bottomSheetView.findViewById(R.id.bookNowButton);
+        bookNowButton.setOnClickListener(v -> {
+            startBookingProcess(bus);
+            bottomSheet.dismiss();
+        });
+        
         bottomSheet.setContentView(bottomSheetView);
         bottomSheet.show();
+    }
+
+    private void startBookingProcess(Bus bus) {
+        Intent intent = new Intent(this, SeatSelectionActivity.class);
+        intent.putExtra("bus_id", bus.getId());
+        startActivity(intent);
     }
 
     private void clearFilters() {
