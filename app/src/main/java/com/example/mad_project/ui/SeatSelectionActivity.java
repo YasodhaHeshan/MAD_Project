@@ -28,7 +28,8 @@ import android.content.res.ColorStateList;
 import androidx.core.content.ContextCompat;
 
 public class SeatSelectionActivity extends BaseActivity {
-    private GridLayout seatGrid;
+    private GridLayout leftSeatGrid;
+    private GridLayout rightSeatGrid;
     private TextView selectedSeatText;
     private TextView fareText;
     private Button confirmButton;
@@ -43,7 +44,7 @@ public class SeatSelectionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_seat_selection);
-        setupActionBar("Select Seat", true, false, false);
+        setupActionBar("Select Your Seat", true, false, false);
 
         // Initialize database
         db = AppDatabase.getDatabase(this);
@@ -61,7 +62,8 @@ public class SeatSelectionActivity extends BaseActivity {
     }
 
     private void initializeViews() {
-        seatGrid = findViewById(R.id.seatGrid);
+        leftSeatGrid = findViewById(R.id.leftSeatGrid);
+        rightSeatGrid = findViewById(R.id.rightSeatGrid);
         selectedSeatText = findViewById(R.id.selectedSeatText);
         fareText = findViewById(R.id.fareText);
         confirmButton = findViewById(R.id.confirmButton);
@@ -115,110 +117,75 @@ public class SeatSelectionActivity extends BaseActivity {
     private void setupSeatGrid() {
         if (selectedBus == null) return;
         
-        // Clear existing views
-        seatGrid.removeAllViews();
+        leftSeatGrid.removeAllViews();
+        rightSeatGrid.removeAllViews();
         
-        // Calculate button size (4 seats + aisle)
-        int buttonSize = 80; // Fixed size for better visibility
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int buttonSize = (screenWidth - 32 - 48) / 6; // Account for padding and aisle
         
-        // Calculate rows needed (4 seats per row)
-        int totalSeats = selectedBus.getCapacity();
-        int rows = (totalSeats + 3) / 4; // Round up division
+        final MaterialButton[] selectedButtonHolder = new MaterialButton[1];
         
-        // Set grid properties
-        seatGrid.setColumnCount(5); // 2 seats + aisle + 2 seats
-        seatGrid.setRowCount(rows);
-        
-        MaterialButton[] previouslySelected = new MaterialButton[1];
-        
-        // Create seat layout
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < 5; col++) {
-                if (col == 2) { // Middle column (aisle)
-                    Space space = new Space(this);
-                    GridLayout.LayoutParams spaceParams = new GridLayout.LayoutParams();
-                    spaceParams.width = buttonSize/2; // Half the button size for aisle
-                    spaceParams.height = buttonSize;
-                    space.setLayoutParams(spaceParams);
-                    seatGrid.addView(space);
-                    continue;
-                }
-                
-                int seatIndex = row * 4 + (col > 2 ? col - 1 : col);
-                if (seatIndex >= totalSeats) continue;
-                
-                MaterialButton seatButton = new MaterialButton(this);
-                String seatNumber = getSeatNumber(seatIndex);
-                
-                // Set button size and margins
-                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                params.width = buttonSize;
-                params.height = buttonSize;
-                params.setMargins(4, 4, 4, 4);
-                seatButton.setLayoutParams(params);
-                
-                // Style the button
-                seatButton.setBackground(ContextCompat.getDrawable(this, R.drawable.seat_button_background));
-                seatButton.setText(seatNumber);
-                seatButton.setTextSize(12);
-                seatButton.setTextColor(Color.WHITE);
-                seatButton.setInsetTop(0);
-                seatButton.setInsetBottom(0);
-                seatButton.setPadding(0, 0, 0, 0);
-                
-                if (bookedSeats.contains(seatNumber)) {
-                    seatButton.setEnabled(false);
-                }
-                
-                if (isPremiumSeat(seatNumber)) {
-                    seatButton.setStrokeColor(ColorStateList.valueOf(
-                        ContextCompat.getColor(this, R.color.gold)));
-                    seatButton.setStrokeWidth(2);
-                }
-                
-                seatButton.setOnClickListener(v -> {
-                    // Deselect previous button if exists
-                    if (previouslySelected[0] != null) {
-                        previouslySelected[0].setSelected(false);
-                        previouslySelected[0].animate()
-                            .scaleX(1.0f)
-                            .scaleY(1.0f)
-                            .setDuration(150)
-                            .start();
-                    }
-                    
-                    // Select current button
-                    seatButton.setSelected(true);
-                    previouslySelected[0] = seatButton;
-                    
-                    // Animate selection
-                    seatButton.animate()
-                        .scaleX(1.15f)
-                        .scaleY(1.15f)
-                        .setDuration(150)
-                        .withEndAction(() -> {
-                            // Subtle bounce effect
-                            seatButton.animate()
-                                .scaleX(1.1f)
-                                .scaleY(1.1f)
-                                .setDuration(100)
-                                .start();
-                        })
-                        .start();
-                    
-                    // Update selection info
-                    updateSelectionInfo(seatNumber, isPremiumSeat(seatNumber));
-                    
-                    // Highlight selected seat in info panel
-                    selectedSeatText.setTextColor(ContextCompat.getColor(
-                        SeatSelectionActivity.this, 
-                        R.color.green_light
-                    ));
-                });
-                
-                seatGrid.addView(seatButton);
+        for (int i = 0; i < selectedBus.getCapacity(); i++) {
+            MaterialButton seatButton = createSeatButton(i, buttonSize, selectedButtonHolder);
+            
+            // Add to appropriate grid based on position
+            if ((i % 4) < 2) {
+                leftSeatGrid.addView(seatButton);
+            } else {
+                rightSeatGrid.addView(seatButton);
             }
         }
+    }
+
+    private MaterialButton createSeatButton(int index, int buttonSize, final MaterialButton[] selectedButtonHolder) {
+        MaterialButton seatButton = new MaterialButton(this);
+        String seatNumber = getSeatNumber(index);
+        
+        // Set button size and margins
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = buttonSize;
+        params.height = buttonSize;
+        params.setMargins(4, 4, 4, 4);
+        seatButton.setLayoutParams(params);
+        
+        // Style the button
+        seatButton.setBackgroundResource(R.drawable.seat_button_background);
+        seatButton.setText(seatNumber);
+        seatButton.setTextSize(12);
+        seatButton.setTextColor(Color.WHITE);
+        seatButton.setInsetTop(0);
+        seatButton.setInsetBottom(0);
+        seatButton.setPadding(0, 0, 0, 0);
+        
+        // Handle booked seats
+        if (bookedSeats.contains(seatNumber)) {
+            seatButton.setEnabled(false);
+            seatButton.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.red)));
+        }
+        
+        // Handle premium seats
+        if (isPremiumSeat(seatNumber)) {
+            seatButton.setStrokeColor(ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.gold)));
+            seatButton.setStrokeWidth(2);
+        }
+        
+        seatButton.setOnClickListener(v -> {
+            if (selectedButtonHolder[0] != null) {
+                selectedButtonHolder[0].setBackgroundResource(R.drawable.seat_button_background);
+                selectedButtonHolder[0].setSelected(false);
+            }
+            
+            seatButton.setBackgroundResource(R.drawable.seat_button_selected_background);
+            seatButton.setSelected(true);
+            selectedButtonHolder[0] = seatButton;
+            selectedSeat = seatNumber;
+            
+            updateSelectionInfo(seatNumber, isPremiumSeat(seatNumber));
+        });
+        
+        return seatButton;
     }
 
     private void updateSelectionInfo(String seatNumber, boolean isPremium) {
@@ -250,10 +217,20 @@ public class SeatSelectionActivity extends BaseActivity {
     }
 
     private String getSeatNumber(int index) {
-        // Convert index to seat number (e.g., A1, A2, B1, B2)
-        char row = (char) ('A' + (index / 4));
-        int number = (index % 4) + 1;
-        return String.format("%c%d", row, number);
+        // Organize seats from front to back
+        // First two rows (A, B) are premium
+        int row = index / 4;
+        int col = index % 4;
+        
+        // Adjust column number for aisle gap
+        if (col >= 2) {
+            col += 1; // Add gap after second seat
+        }
+        
+        // Convert row number to letter (A, B, C, etc.)
+        char rowLetter = (char) ('A' + row);
+        
+        return String.format("%c%d", rowLetter, col + 1);
     }
 
     private void proceedToPayment() {
