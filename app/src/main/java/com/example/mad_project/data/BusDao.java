@@ -26,4 +26,7 @@ public interface BusDao {
 
     @Query("SELECT DISTINCT route_to FROM buses WHERE route_to LIKE :query")
     List<String> getToLocations(String query);
+
+    @Query("SELECT * FROM buses WHERE id = :busId")
+    Bus getBusById(int busId);
 }

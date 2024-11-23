@@ -11,24 +11,35 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mad_project.R;
+import com.example.mad_project.data.Payment;
+import com.example.mad_project.data.PaymentDao;
 import com.example.mad_project.data.Ticket;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketViewHolder> {
     private final List<Ticket> tickets;
     private final OnTicketClickListener listener;
+    private final PaymentDao paymentDao;
+    private final Executor executor;
+    private final NumberFormat currencyFormat;
 
     public interface OnTicketClickListener {
         void onTicketClick(Ticket ticket);
     }
-
-    public TicketAdapter(List<Ticket> tickets, OnTicketClickListener listener) {
+    
+    public TicketAdapter(List<Ticket> tickets, OnTicketClickListener listener, PaymentDao paymentDao) {
         this.tickets = tickets;
         this.listener = listener;
+        this.paymentDao = paymentDao;
+        this.executor = Executors.newSingleThreadExecutor();
+        this.currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
     }
 
     @NonNull
@@ -57,6 +68,8 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
         private final TextView journeyDateText;
         private final TextView busDetailsText;
         private final TextView seatNumberText;
+        private final TextView ticketFareText;
+        private final TextView paymentStatusText;
 
         public TicketViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,6 +80,8 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             journeyDateText = itemView.findViewById(R.id.journeyDateText);
             busDetailsText = itemView.findViewById(R.id.busDetailsText);
             seatNumberText = itemView.findViewById(R.id.seatNumberText);
+            ticketFareText = itemView.findViewById(R.id.ticketFareText);
+            paymentStatusText = itemView.findViewById(R.id.paymentStatusText);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -87,23 +102,52 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             seatNumberText.setText("Seat: " + ticket.getSeatNumber());
             
             // Set status background color based on ticket status
-            GradientDrawable background = (GradientDrawable) ticketStatusText.getBackground();
-            int color;
+            GradientDrawable ticketStatusBackground = (GradientDrawable) ticketStatusText.getBackground();
+            int ticketStatusColor;
             switch (ticket.getStatus().toLowerCase()) {
                 case "booked":
-                    color = ContextCompat.getColor(itemView.getContext(), R.color.green_dark);
+                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.green_dark);
                     break;
                 case "cancelled":
-                    color = ContextCompat.getColor(itemView.getContext(), R.color.red);
+                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.red);
                     break;
                 default:
-                    color = ContextCompat.getColor(itemView.getContext(), R.color.gray);
+                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.gray);
                     break;
             }
-            background.setColor(color);
+            ticketStatusBackground.setColor(ticketStatusColor);
             
-            // Get bus details if needed
-            // busDetailsText.setText(String.format("Bus: %s (%s)", bus.getRegistrationNumber(), bus.getModel()));
+            // Load payment info asynchronously
+            executor.execute(() -> {
+                Payment payment = ticket.getPaymentId() != null ? 
+                    paymentDao.getPaymentById(ticket.getPaymentId()) : null;
+                
+                itemView.post(() -> {
+                    if (payment != null) {
+                        ticketFareText.setText(currencyFormat.format(payment.getAmount()));
+                        paymentStatusText.setText(payment.getStatus().toUpperCase());
+                        
+                        int paymentStatusColor;
+                        switch (payment.getStatus().toLowerCase()) {
+                            case "completed":
+                                paymentStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.green_dark);
+                                break;
+                            case "pending":
+                                paymentStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.orange);
+                                break;
+                            default:
+                                paymentStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.gray);
+                        }
+                        GradientDrawable paymentStatusBackground = (GradientDrawable) paymentStatusText.getBackground();
+                        paymentStatusBackground.setColor(paymentStatusColor);
+                    } else {
+                        ticketFareText.setText("N/A");
+                        paymentStatusText.setText("Not Paid");
+                        GradientDrawable paymentStatusBackground = (GradientDrawable) paymentStatusText.getBackground();
+                        paymentStatusBackground.setColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+                    }
+                });
+            });
         }
     }
 }

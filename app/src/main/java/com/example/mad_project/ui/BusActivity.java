@@ -1,5 +1,6 @@
 package com.example.mad_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -10,6 +11,7 @@ import com.example.mad_project.R;
 import com.example.mad_project.adapter.BusAdapter;
 import com.example.mad_project.controller.BusController;
 import com.example.mad_project.data.Bus;
+import com.example.mad_project.service.bus.FareCalculator;
 import com.example.mad_project.utils.DirectionsHandler;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,8 +23,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.core.widget.NestedScrollView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -31,6 +37,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class BusActivity extends BaseActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -126,7 +134,17 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
             busCountText.setText(countText);
 
             // Update bus list
-            BusAdapter adapter = new BusAdapter(buses, this::showBusDetails);
+            BusAdapter adapter = new BusAdapter(buses, new BusAdapter.OnBusClickListener() {
+                @Override
+                public void onBusClick(Bus bus) {
+                    showBusDetails(bus);
+                }
+
+                @Override
+                public void onBookClick(Bus bus) {
+                    startBookingProcess(bus);
+                }
+            });
             busRecyclerView.setAdapter(adapter);
             
             // Update map markers
@@ -195,7 +213,40 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
     private void showBusDetails(Bus bus) {
-        // Implement bus details dialog/activity
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.fare_breakdown_card, null);
+        
+        // Calculate fares
+        FareCalculator.FareBreakdown standardFare = FareCalculator.calculateFare(bus, "STANDARD");
+        FareCalculator.FareBreakdown premiumFare = FareCalculator.calculateFare(bus, "PREMIUM");
+        
+        // Format currency
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
+        
+        // Set fare details
+        TextView baseFareText = bottomSheetView.findViewById(R.id.baseFareText);
+        TextView totalFareText = bottomSheetView.findViewById(R.id.totalFareText);
+        
+        baseFareText.setText(currencyFormat.format(standardFare.baseFare));
+        totalFareText.setText(String.format("%s - %s", 
+            currencyFormat.format(standardFare.totalFare),
+            currencyFormat.format(premiumFare.totalFare)));
+        
+        // Add booking button handler
+        Button bookNowButton = bottomSheetView.findViewById(R.id.bookNowButton);
+        bookNowButton.setOnClickListener(v -> {
+            startBookingProcess(bus);
+            bottomSheet.dismiss();
+        });
+        
+        bottomSheet.setContentView(bottomSheetView);
+        bottomSheet.show();
+    }
+
+    private void startBookingProcess(Bus bus) {
+        Intent intent = new Intent(this, SeatSelectionActivity.class);
+        intent.putExtra("bus_id", bus.getId());
+        startActivity(intent);
     }
 
     private void clearFilters() {

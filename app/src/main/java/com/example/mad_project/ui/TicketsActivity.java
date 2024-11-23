@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mad_project.R;
 import com.example.mad_project.adapter.TicketAdapter;
 import com.example.mad_project.data.AppDatabase;
+import com.example.mad_project.data.PaymentDao;
 import com.example.mad_project.data.Ticket;
 import com.example.mad_project.data.TicketDao;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -17,6 +18,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class TicketsActivity extends BaseActivity {
     private RecyclerView ticketsRecyclerView;
@@ -46,14 +49,14 @@ public class TicketsActivity extends BaseActivity {
     private void loadTickets() {
         executor.execute(() -> {
             TicketDao ticketDao = db.ticketDao();
-            // TODO: Replace with actual user ID
+            PaymentDao paymentDao = db.paymentDao();
             List<Ticket> tickets = ticketDao.getAllTickets();
 
             runOnUiThread(() -> {
                 if (tickets.isEmpty()) {
                     showEmptyState();
                 } else {
-                    showTickets(tickets);
+                    displayTickets(tickets, paymentDao);
                 }
             });
         });
@@ -64,13 +67,11 @@ public class TicketsActivity extends BaseActivity {
         emptyStateText.setVisibility(View.VISIBLE);
     }
 
-    private void showTickets(List<Ticket> tickets) {
+    private void displayTickets(List<Ticket> tickets, PaymentDao paymentDao) {
         ticketsRecyclerView.setVisibility(View.VISIBLE);
         emptyStateText.setVisibility(View.GONE);
         
-        TicketAdapter adapter = new TicketAdapter(tickets, ticket -> {
-            showTicketDetails(ticket);
-        });
+        TicketAdapter adapter = new TicketAdapter(tickets, this::showTicketDetails, paymentDao);
         ticketsRecyclerView.setAdapter(adapter);
     }
 
