@@ -29,4 +29,7 @@ public interface PaymentDao {
 
     @Query("SELECT * FROM payments WHERE transaction_id = :transactionId AND is_active = 1")
     Payment getPaymentByTransactionId(String transactionId);
+
+    @Query("SELECT * FROM payments WHERE id = :paymentId AND is_active = 1")
+    Payment getPaymentById(Integer paymentId);
 }

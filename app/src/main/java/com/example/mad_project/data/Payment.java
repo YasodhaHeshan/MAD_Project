@@ -54,12 +54,15 @@ public class Payment {
     @ColumnInfo(name = "updated_at")
     private long updatedAt;
 
-    public Payment(int userId, int ticketId, double amount, String paymentMethod) {
+    public Payment(int id, int userId, int ticketId, double amount, String paymentMethod, 
+                   String transactionId, String status) {
+        this.id = id;
         this.userId = userId;
         this.ticketId = ticketId;
         this.amount = amount;
         this.paymentMethod = paymentMethod;
-        this.status = "PENDING";
+        this.transactionId = transactionId;
+        this.status = status;
         this.isActive = true;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
