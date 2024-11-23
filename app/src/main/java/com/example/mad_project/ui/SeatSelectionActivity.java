@@ -39,6 +39,8 @@ public class SeatSelectionActivity extends BaseActivity {
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
     private AppDatabase db;
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private List<MaterialButton> selectedButtons = new ArrayList<>();
+    private List<String> selectedSeats = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,37 +174,56 @@ public class SeatSelectionActivity extends BaseActivity {
         }
         
         seatButton.setOnClickListener(v -> {
-            if (selectedButtonHolder[0] != null) {
-                selectedButtonHolder[0].setBackgroundResource(R.drawable.seat_button_background);
-                selectedButtonHolder[0].setSelected(false);
+            if (selectedButtons.contains(seatButton)) {
+                // Deselect seat
+                selectedButtons.remove(seatButton);
+                selectedSeats.remove(seatNumber);
+                seatButton.setBackgroundResource(R.drawable.seat_button_background);
+                seatButton.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.colorSecondaryBackground)));
+                seatButton.setSelected(false);
+            } else {
+                // Select new seat
+                selectedButtons.add(seatButton);
+                selectedSeats.add(seatNumber);
+                seatButton.setBackgroundResource(R.drawable.seat_button_selected_background);
+                seatButton.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.green_light)));
+                seatButton.setSelected(true);
             }
             
-            seatButton.setBackgroundResource(R.drawable.seat_button_selected_background);
-            seatButton.setSelected(true);
-            selectedButtonHolder[0] = seatButton;
-            selectedSeat = seatNumber;
-            
-            updateSelectionInfo(seatNumber, isPremiumSeat(seatNumber));
+            // Update selection info with all selected seats
+            updateSelectionInfo(selectedSeats, isPremiumSeat(seatNumber));
         });
         
         return seatButton;
     }
 
-    private void updateSelectionInfo(String seatNumber, boolean isPremium) {
-        String seatType = isPremium ? "Premium Seat" : "Standard Seat";
-        selectedSeatText.setText(String.format("%s: %s", seatType, seatNumber));
+    private void updateSelectionInfo(List<String> seatNumbers, boolean isPremium) {
+        if (seatNumbers.isEmpty()) {
+            selectedSeatText.setText("No seats selected");
+            fareText.setText("");
+            return;
+        }
         
-        // Calculate and display fare with animation
-        FareCalculator.FareBreakdown fare = FareCalculator.calculateFare(
-            selectedBus, 
-            isPremium ? "PREMIUM" : "STANDARD"
-        );
+        String seatType = isPremium ? "Premium Seats" : "Standard Seats";
+        selectedSeatText.setText(String.format("%s: %s", seatType, 
+            String.join(", ", seatNumbers)));
         
+        // Calculate total fare for all selected seats
+        final double finalTotalFare = seatNumbers.stream()
+            .mapToDouble(seat -> FareCalculator.calculateFare(
+                selectedBus, 
+                isPremiumSeat(seat) ? "PREMIUM" : "STANDARD"
+            ).totalFare)
+            .sum();
+        
+        // Animate fare update
         fareText.animate()
             .alpha(0f)
             .setDuration(150)
             .withEndAction(() -> {
-                fareText.setText("Total Fare: " + currencyFormat.format(fare.totalFare));
+                fareText.setText("Total Fare: " + currencyFormat.format(finalTotalFare));
                 fareText.animate()
                     .alpha(1f)
                     .setDuration(150)
@@ -234,6 +255,17 @@ public class SeatSelectionActivity extends BaseActivity {
     }
 
     private void proceedToPayment() {
-        // Implement payment flow
+        // Clear selections after successful booking
+        for (MaterialButton button : selectedButtons) {
+            button.setBackgroundResource(R.drawable.seat_button_background);
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.colorSecondaryBackground)));
+            button.setSelected(false);
+        }
+        selectedButtons.clear();
+        selectedSeats.clear();
+        
+        // Proceed with payment logic
+        // ...
     }
 } 
