@@ -1,3 +1,7 @@
+package com.example.mad_project.service.bus;
+
+import com.example.mad_project.data.Bus;
+
 public class FareCalculator {
     public static class FareBreakdown {
         public double baseFare;

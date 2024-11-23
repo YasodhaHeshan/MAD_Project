@@ -10,6 +10,7 @@ import com.example.mad_project.R;
 import com.example.mad_project.adapter.BusAdapter;
 import com.example.mad_project.controller.BusController;
 import com.example.mad_project.data.Bus;
+import com.example.mad_project.service.bus.FareCalculator;
 import com.example.mad_project.utils.DirectionsHandler;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,6 +24,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import android.widget.TextView;
 import androidx.core.widget.NestedScrollView;
+
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -31,6 +34,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.json.JSONObject;
 
 import java.util.List;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class BusActivity extends BaseActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -195,7 +200,27 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
     }
 
     private void showBusDetails(Bus bus) {
-        // Implement bus details dialog/activity
+        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.fare_breakdown_card, null);
+        
+        // Calculate fares
+        FareCalculator.FareBreakdown standardFare = FareCalculator.calculateFare(bus, "STANDARD");
+        FareCalculator.FareBreakdown premiumFare = FareCalculator.calculateFare(bus, "PREMIUM");
+        
+        // Format currency
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
+        
+        // Set fare details
+        TextView baseFareText = bottomSheetView.findViewById(R.id.baseFareText);
+        TextView totalFareText = bottomSheetView.findViewById(R.id.totalFareText);
+        
+        baseFareText.setText(currencyFormat.format(standardFare.baseFare));
+        totalFareText.setText(String.format("%s - %s", 
+            currencyFormat.format(standardFare.totalFare),
+            currencyFormat.format(premiumFare.totalFare)));
+        
+        bottomSheet.setContentView(bottomSheetView);
+        bottomSheet.show();
     }
 
     private void clearFilters() {

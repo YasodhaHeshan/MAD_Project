@@ -125,6 +125,35 @@ public class FillDatabaseActivity extends AppCompatActivity {
             try {
                 updateProgress("Starting database fill");
 
+                fillDatabase();
+                Thread.sleep(100);
+
+                updateProgress("Database fill completed");
+            } catch (Exception e) {
+                Log.e("FillDatabaseActivity", "Error filling database", e);
+                showError("Error: " + e.getMessage());
+            }
+        });
+    }
+
+    private void updateProgress(String status) {
+        runOnUiThread(() -> {
+            statusText.setText(status);
+            progressBar.setProgress(progressBar.getProgress() + 1);
+        });
+    }
+
+    private void showError(String message) {
+        runOnUiThread(() -> {
+            statusText.setText("Error: " + message);
+            statusText.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+            exitButton.setText(R.string.close_text);
+        });
+    }
+
+    private void fillDatabase() {
+        executor.execute(() -> {
+            try {
                 createUsers();
                 Thread.sleep(100);
                 
@@ -154,21 +183,6 @@ public class FillDatabaseActivity extends AppCompatActivity {
         });
     }
 
-    private void updateProgress(String status) {
-        runOnUiThread(() -> {
-            statusText.setText(status);
-            progressBar.setProgress(progressBar.getProgress() + 1);
-        });
-    }
-
-    private void showError(String message) {
-        runOnUiThread(() -> {
-            statusText.setText("Error: " + message);
-            statusText.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
-            exitButton.setText(R.string.close_text);
-        });
-    }
-
     private void createUsers() throws NoSuchAlgorithmException {
         UserDao userDao = db.userDao();
         String hashedPassword = HashPassword.hashPassword("a");
@@ -191,30 +205,37 @@ public class FillDatabaseActivity extends AppCompatActivity {
     private void createBuses() {
         BusDao busDao = db.busDao();
 
-        // Get current time
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, 6); // Start at 6 AM
+        calendar.set(Calendar.HOUR_OF_DAY, 6);
         calendar.set(Calendar.MINUTE, 0);
         long baseTime = calendar.getTimeInMillis();
 
         Bus[] buses = {
             // Colombo - Kandy Route (A1 Highway)
-            new Bus(1, "NA-1234", "Volvo B11R", 45, "WiFi, AC, USB Charging, Reclining Seats", true, 
+            new Bus(1, "NA-1234", "Volvo B11R", 45, 
+                "WiFi, AC, USB Charging, Reclining Seats", true, 
                 "Colombo", "Kandy", 6.9271, 79.8612, 
-                baseTime, baseTime + (3 * 3600000)), // 6:00 AM - 9:00 AM
+                baseTime, baseTime + (3 * 3600000),
+                2500.00, 3500.00), // Base fare: 2500, Premium: 3500
 
-            new Bus(1, "NC-5678", "Yutong ZK6147H", 53, "WiFi, AC, Entertainment System", true, 
+            new Bus(1, "NC-5678", "Yutong ZK6147H", 53, 
+                "WiFi, AC, Entertainment System", true, 
                 "Kandy", "Colombo", 7.2906, 80.6337,
-                baseTime + (4 * 3600000), baseTime + (7 * 3600000)), // 10:00 AM - 1:00 PM
+                baseTime + (4 * 3600000), baseTime + (7 * 3600000),
+                2300.00, 3200.00), // Base fare: 2300, Premium: 3200
 
             // Colombo - Galle Route (Southern Expressway)
-            new Bus(2, "NB-9012", "King Long XMQ6129Y", 48, "WiFi, AC, LCD TV", true, 
+            new Bus(2, "NB-9012", "King Long XMQ6129Y", 48, 
+                "WiFi, AC, LCD TV", true, 
                 "Colombo", "Galle", 6.9271, 79.8612,
-                baseTime + (8 * 3600000), baseTime + (10 * 3600000)), // 2:00 PM - 4:00 PM
+                baseTime + (8 * 3600000), baseTime + (10 * 3600000),
+                1800.00, 2500.00), // Base fare: 1800, Premium: 2500
 
-            new Bus(2, "ND-3456", "Volvo B8R", 42, "WiFi, AC, Luxury Seats", true, 
+            new Bus(2, "ND-3456", "Volvo B8R", 42, 
+                "WiFi, AC, Luxury Seats", true, 
                 "Galle", "Colombo", 6.0535, 80.2210,
-                baseTime + (11 * 3600000), baseTime + (13 * 3600000)) // 5:00 PM - 7:00 PM
+                baseTime + (11 * 3600000), baseTime + (13 * 3600000),
+                1800.00, 2500.00)  // Base fare: 1800, Premium: 2500
         };
 
         for (Bus bus : buses) {
@@ -254,15 +275,16 @@ public class FillDatabaseActivity extends AppCompatActivity {
 
     private void createTickets() {
         TicketDao ticketDao = db.ticketDao();
-
         long journeyDate = System.currentTimeMillis();
 
         Ticket[] tickets = {
             new Ticket(1, 1, "A1", journeyDate, "Colombo", "Galle", "booked"),
-            new Ticket(2, 2, "A2", journeyDate, "Colombo", "Katunayaka", "booked")
+            new Ticket(2, 2, "B3", journeyDate, "Colombo", "Katunayaka", "booked"),
+            new Ticket(1, 3, "C2", journeyDate + 86400000, "Kandy", "Colombo", "pending")
         };
 
         for (Ticket ticket : tickets) {
+            ticket.setPaymentId(null);
             ticketDao.insert(ticket);
             updateProgress("Created ticket: " + ticket.getId());
         }
@@ -272,8 +294,9 @@ public class FillDatabaseActivity extends AppCompatActivity {
         PaymentDao paymentDao = db.paymentDao();
 
         Payment[] payments = {
-            new Payment(1, 1, 100.0, "Cash"),
-            new Payment(2, 2, 200.0, "Card")
+            new Payment(1, 1, 1, 2500.00, "Cash", "TXN001", "completed"),
+            new Payment(2, 2, 2, 3200.00, "Card", "TXN002", "completed"),
+            new Payment(3, 1, 3, 1800.00, "Card", "TXN003", "pending")
         };
 
         for (Payment payment : payments) {

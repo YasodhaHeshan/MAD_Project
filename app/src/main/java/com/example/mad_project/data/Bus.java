@@ -72,7 +72,7 @@ public class Bus {
     @ColumnInfo(name = "premium_fare")
     private double premiumFare;
 
-    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime, double base_fare, double premium_fare) {
+    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime, double baseFare, double premiumFare) {
         this.ownerId = ownerId;
         this.registrationNumber = registrationNumber;
         this.model = model;
@@ -87,8 +87,8 @@ public class Bus {
         this.updatedAt = System.currentTimeMillis();
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
-        this.base_fare = base_fare;
-        this.premium_fare = premium_fare;
+        this.baseFare = baseFare;
+        this.premiumFare = premiumFare;
     }
 
     public int getId() {
