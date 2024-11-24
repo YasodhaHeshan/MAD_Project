@@ -11,7 +11,7 @@ import com.example.mad_project.R;
 import com.example.mad_project.adapter.BusAdapter;
 import com.example.mad_project.controller.BusController;
 import com.example.mad_project.data.Bus;
-import com.example.mad_project.service.bus.FareCalculator;
+import com.example.mad_project.utils.FareCalculator;
 import com.example.mad_project.utils.DirectionsHandler;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,11 +30,6 @@ import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
-import android.graphics.Color;
-import android.os.AsyncTask;
-import android.util.Log;
-import com.google.android.gms.maps.model.PolylineOptions;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.text.NumberFormat;

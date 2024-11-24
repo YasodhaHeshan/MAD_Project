@@ -2,19 +2,15 @@ package com.example.mad_project.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mad_project.R;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Ticket;
-import com.example.mad_project.service.bus.FareCalculator;
+import com.example.mad_project.utils.FareCalculator;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.NumberFormat;
