@@ -65,7 +65,6 @@
                 android:textColor="@color/gray"/>
 
             <TextView
-                android:id="@+id/bookingFeeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"/>
@@ -94,7 +93,6 @@
                 android:textColor="@color/gray"/>
 
             <TextView
-                android:id="@+id/premiumChargeText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"/>
