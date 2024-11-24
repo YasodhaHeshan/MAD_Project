@@ -1,4 +1,4 @@
-package com.example.mad_project.service.bus;
+package com.example.mad_project.utils;
 
 import com.example.mad_project.data.Bus;
 
