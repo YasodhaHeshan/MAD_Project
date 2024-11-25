@@ -10,13 +10,10 @@ import java.util.List;
 @Dao
 public interface BusOwnerDao {
     @Insert
-    void insert(BusOwner busOwner);
+    long insert(BusOwner busOwner);
 
     @Update
     void update(BusOwner busOwner);
-
-    @Query("SELECT * FROM bus_owners WHERE is_active = 1")
-    List<BusOwner> getAllBusOwners();
 
     @Query("SELECT * FROM bus_owners WHERE user_id = :userId AND is_active = 1")
     BusOwner getBusOwnerByUserId(int userId);
@@ -28,5 +25,8 @@ public interface BusOwnerDao {
     void deactivateOwner(int ownerId);
 
     @Query("SELECT EXISTS(SELECT 1 FROM bus_owners WHERE company_registration = :regNumber)")
-    boolean isRegistrationExists(String regNumber);
+    boolean isCompanyRegistrationExists(String regNumber);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM bus_owners WHERE tax_id = :taxId)")
+    boolean isTaxIdExists(String taxId);
 }

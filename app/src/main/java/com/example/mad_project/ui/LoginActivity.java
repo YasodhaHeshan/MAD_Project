@@ -2,15 +2,13 @@ package com.example.mad_project.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Patterns;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mad_project.R;
 import com.example.mad_project.controller.UserController;
-import com.example.mad_project.utils.SessionManager;
+import com.example.mad_project.utils.Validation;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -24,23 +22,17 @@ public class LoginActivity extends AppCompatActivity {
     private MaterialButton loginButton;
     private MaterialButton registerButton;
     private UserController userController;
-    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        
+
         initializeViews();
-        
+
         userController = new UserController(this);
-        sessionManager = new SessionManager(this);
-        
-        // Check if user is already logged in
-        if (sessionManager.isLoggedIn()) {
-            startActivity(new Intent(this, DashboardActivity.class));
-            finish();
-        }
+
+        //TODO: check if user is already logged in
 
         setupListeners();
     }
@@ -56,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void setupListeners() {
         loginButton.setOnClickListener(v -> attemptLogin());
-        
+
         registerButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
@@ -72,12 +64,12 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordInput.getText().toString().trim();
 
         // Validate input
-        if (!isValidEmail(email)) {
+        if (!Validation.isValidEmail(email)) {
             emailLayout.setError("Please enter a valid email address");
             return;
         }
 
-        if (password.isEmpty()) {
+        if (!Validation.isValidPassword(password)) {
             passwordLayout.setError("Password cannot be empty");
             return;
         }
@@ -92,23 +84,16 @@ public class LoginActivity extends AppCompatActivity {
                 loginButton.setText("Login");
 
                 if (user != null) {
-                    // Save session
-                    sessionManager.setLogin(true, email);
-                    
                     // Navigate to dashboard
                     Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(LoginActivity.this, 
-                        "Invalid email or password", 
+                    Toast.makeText(LoginActivity.this,
+                        "Invalid email or password",
                         Toast.LENGTH_SHORT).show();
                 }
             });
         });
-    }
-
-    private boolean isValidEmail(String email) {
-        return !email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 }

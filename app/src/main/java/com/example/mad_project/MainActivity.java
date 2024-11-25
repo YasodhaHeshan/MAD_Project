@@ -3,10 +3,9 @@ package com.example.mad_project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.EdgeToEdge;
@@ -14,12 +13,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mad_project.ui.BusActivity;
 import com.example.mad_project.ui.DashboardActivity;
-import com.example.mad_project.ui.DebugMenuActivity;
-import com.example.mad_project.utils.FillDatabase;
 import com.example.mad_project.ui.LoginActivity;
 import com.example.mad_project.ui.ProfileActivity;
 import com.example.mad_project.ui.RegisterActivity;
 import com.example.mad_project.ui.TicketsActivity;
+import com.example.mad_project.utils.RebuildDatabase;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -31,16 +29,11 @@ public class MainActivity extends AppCompatActivity {
     protected BottomNavigationView bottomNavigationView;
     protected AppBarLayout appBarLayout;
     protected FrameLayout contentFrame;
-    
-    // Set to true to show debug features
-    protected static final boolean DEBUG_MODE = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        Log.d("MainActivity", "onCreate started");
-
         // Initialize SessionManager
         sessionManager = new SessionManager(this);
         
@@ -81,26 +74,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void setupBaseViews() {
-        Log.d("MainActivity", "Setting up base views");
-        try {
-            // Initialize views
-            appBarLayout = findViewById(R.id.appBarLayout);
-            topAppBar = findViewById(R.id.topAppBar);
-            bottomNavigationView = findViewById(R.id.bottomNavigationView);
-            contentFrame = findViewById(R.id.content_frame);
+        // Initialize views
+        appBarLayout = findViewById(R.id.appBarLayout);
+        topAppBar = findViewById(R.id.topAppBar);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        contentFrame = findViewById(R.id.content_frame);
 
-            // Hide navigation by default for child activities
-            if (appBarLayout != null) appBarLayout.setVisibility(View.GONE);
-            if (bottomNavigationView != null) bottomNavigationView.setVisibility(View.GONE);
-
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error in setupBaseViews: " + e.getMessage());
-        }
+        // Hide navigation by default for child activities
+        if (appBarLayout != null) appBarLayout.setVisibility(View.GONE);
+        if (bottomNavigationView != null) bottomNavigationView.setVisibility(View.GONE);
     }
 
     protected void redirectToDashboard() {
         // If logged in, redirect to Dashboard
-        Log.d("MainActivity", "User logged in, redirecting to DashboardActivity");
         Intent intent = new Intent(this, DashboardActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -109,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void redirectToLogin() {
         // If not logged in, redirect to Login
-        Log.d("MainActivity", "User not logged in, redirecting to LoginActivity");
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
@@ -117,52 +102,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupWelcomeScreen() {
-        Log.d("MainActivity", "Setting up welcome screen");
-        try {
-            View loginButton = findViewById(R.id.btnLogin);
-            View registerButton = findViewById(R.id.btnRegister);
-            View fillDatabaseButton = findViewById(R.id.btnFillDatabase);
+        // Initialize database in background
+        initializeDatabase();
 
-            if (loginButton != null) {
-                Log.d("MainActivity", "Login button found");
-                loginButton.setOnClickListener(v -> {
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                });
-            } else {
-                Log.e("MainActivity", "Login button not found!");
+        View loginButton = findViewById(R.id.btnLogin);
+        View registerButton = findViewById(R.id.btnRegister);
+
+        loginButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        });
+
+        registerButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void initializeDatabase() {
+        RebuildDatabase.clearAndRebuildDatabase(this, true, new RebuildDatabase.DatabaseCallback() {
+            @Override
+            public void onSuccess(String message) {
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
             }
 
-            if (registerButton != null) {
-                Log.d("MainActivity", "Register button found");
-                registerButton.setOnClickListener(v -> {
-                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                    startActivity(intent);
-                });
-            } else {
-                Log.e("MainActivity", "Register button not found!");
+            @Override
+            public void onError(String error) {
+                Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
             }
-
-            // Show Fill Database button in debug mode
-            if (fillDatabaseButton != null && DEBUG_MODE) {
-                Log.d("MainActivity", "Fill database button found and debug mode enabled");
-                fillDatabaseButton.setVisibility(View.VISIBLE);
-                fillDatabaseButton.setOnClickListener(v -> {
-                    Intent intent = new Intent(MainActivity.this, FillDatabase.class);
-                    startActivity(intent);
-                });
-            } else {
-                Log.d("MainActivity", "Fill database button not found or debug mode disabled");
-            }
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error in setupWelcomeScreen: " + e.getMessage());
-        }
+        });
     }
 
     protected void setupNavigation(boolean showToolbar, boolean showBottomNav, String title) {
-        try {
-            if (showToolbar && topAppBar != null && appBarLayout != null) {
-                appBarLayout.setVisibility(View.VISIBLE);
+        if (showToolbar && topAppBar != null && appBarLayout != null) {
+            appBarLayout.setVisibility(View.VISIBLE);
                 topAppBar.setTitle(title);
                 
                 // Show back button if not on main screens
@@ -179,14 +152,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             
-            if (bottomNavigationView != null) {
-                bottomNavigationView.setVisibility(showBottomNav ? View.VISIBLE : View.GONE);
-                if (showBottomNav) {
-                    setupBottomNavigationListener();
-                }
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setVisibility(showBottomNav ? View.VISIBLE : View.GONE);
+            if (showBottomNav) {
+                setupBottomNavigationListener();
             }
-        } catch (Exception e) {
-            Log.e("MainActivity", "Error in setupNavigation: " + e.getMessage());
         }
     }
 
@@ -253,39 +223,5 @@ public class MainActivity extends AppCompatActivity {
                 bottomNavigationView.setSelectedItemId(selectedItem);
             }
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (appBarLayout.getVisibility() == View.VISIBLE) {
-            getMenuInflater().inflate(R.menu.top_app_bar, menu);
-            
-            // Show debug menu in debug mode
-            MenuItem debugItem = menu.findItem(R.id.action_debug);
-            if (debugItem != null) {
-                debugItem.setVisible(DEBUG_MODE);
-            }
-            
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            getOnBackPressedDispatcher().onBackPressed();
-            return true;
-        } else if (item.getItemId() == R.id.action_settings) {
-            sessionManager.logout();
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-            return true;
-        } else if (item.getItemId() == R.id.action_debug) {
-            startActivity(new Intent(this, DebugMenuActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

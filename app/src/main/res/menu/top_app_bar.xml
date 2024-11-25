@@ -10,6 +10,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_reset_db"
+        android:title="Reset Database"
+        android:visible="true"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_notifications"
         android:icon="@drawable/baseline_notifications_24"
         android:title="Notifications"
@@ -22,4 +28,5 @@
         android:title="Settings"
         android:contentDescription="Settings"
         app:showAsAction="ifRoom" />
+
 </menu>

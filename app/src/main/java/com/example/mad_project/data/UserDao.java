@@ -1,6 +1,7 @@
 package com.example.mad_project.data;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -10,13 +11,16 @@ import java.util.List;
 @Dao
 public interface UserDao {
     @Insert
-    void insert(User user);
+    long insert(User user);
 
     @Update
-    void update(User user);
+    int update(User user);
+
+    @Delete
+    void delete(User user);
 
     @Query("SELECT * FROM users WHERE is_active = 1")
-    List<User> getAllActiveUsers();
+    List<User> getAllUsers();
 
     @Query("SELECT * FROM users WHERE email = :email AND is_active = 1")
     User getUserByEmail(String email);
@@ -29,4 +33,7 @@ public interface UserDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM users WHERE email = :email)")
     boolean isEmailExists(String email);
+
+    @Query("SELECT * FROM users WHERE id = :userId")
+    User getUserById(int userId);
 }

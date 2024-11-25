@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
+import com.example.mad_project.utils.RebuildDatabase;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 

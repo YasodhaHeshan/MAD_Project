@@ -10,7 +10,7 @@ import java.util.List;
 @Dao
 public interface TicketDao {
     @Insert
-    void insert(Ticket ticket);
+    long insert(Ticket ticket);
 
     @Update
     void update(Ticket ticket);
