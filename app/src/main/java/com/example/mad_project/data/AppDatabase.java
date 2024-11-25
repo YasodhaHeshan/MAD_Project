@@ -30,21 +30,24 @@ public abstract class AppDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
-                    try {
-                        INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                AppDatabase.class, "mad_project_db")
-                                .fallbackToDestructiveMigration()
-                                .build();
-                    } catch (IllegalStateException e) {
-                        context.deleteDatabase("mad_project_db");
-                        INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                AppDatabase.class, "mad_project_db")
-                                .fallbackToDestructiveMigration()
-                                .build();
-                    }
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                            AppDatabase.class, "mad_project_db")
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }
         return INSTANCE;
+    }
+
+    public static void closeDatabase() {
+        if (INSTANCE != null) {
+            synchronized (AppDatabase.class) {
+                if (INSTANCE != null) {
+                    INSTANCE.close();
+                    INSTANCE = null;
+                }
+            }
+        }
     }
 }

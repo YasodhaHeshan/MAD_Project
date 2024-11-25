@@ -15,9 +15,6 @@ public interface BusDriverDao {
     @Update
     void update(BusDriver busDriver);
 
-    @Query("SELECT * FROM bus_drivers WHERE is_active = 1")
-    List<BusDriver> getAllActiveDrivers();
-
     @Query("SELECT * FROM bus_drivers WHERE user_id = :userId AND is_active = 1")
     BusDriver getDriverByUserId(int userId);
 

@@ -31,7 +31,6 @@
         <activity android:name=".ui.LoginActivity" android:exported="true" />
         <activity android:name=".ui.DashboardActivity" android:exported="true" />
         <activity android:name=".ui.ProfileActivity" android:exported="true" />
-        <activity android:name=".utils.FillDatabase" android:exported="true" />
         <activity android:name=".ui.TicketsActivity" android:exported="true" />
         <activity android:name=".ui.BusActivity" android:exported="true" />
         <activity android:name=".ui.EditProfileActivity" android:exported="true"/>
@@ -39,7 +38,6 @@
         <activity android:name=".ui.RegisterOwnerActivity" android:exported="true" />
         <activity android:name=".ui.RegisterActivity" android:exported="true" />
         <activity android:name=".ui.SeatSelectionActivity" android:exported="true" />
-        <activity android:name=".ui.DebugMenuActivity" android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"

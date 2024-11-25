@@ -10,7 +10,7 @@ import java.util.List;
 @Dao
 public interface BusDao {
     @Insert
-    void insert(Bus bus);
+    long insert(Bus bus);
 
     @Update
     void update(Bus bus);
