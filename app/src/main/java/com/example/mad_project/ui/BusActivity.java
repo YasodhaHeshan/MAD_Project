@@ -7,6 +7,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.adapter.BusAdapter;
 import com.example.mad_project.controller.BusController;
@@ -35,7 +37,7 @@ import java.util.List;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class BusActivity extends BaseActivity implements OnMapReadyCallback {
+public class BusActivity extends MainActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private RecyclerView busRecyclerView;
     private BusController busController;
@@ -48,9 +50,9 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bus);
-        setupActionBar("Buses", true, true, true);
-        
+        getLayoutInflater().inflate(R.layout.activity_bus, contentFrame);
+        setupNavigation(true, true, "Bus Details");
+
         // Get route filter if coming from search
         fromLocation = getIntent().getStringExtra("from");
         toLocation = getIntent().getStringExtra("to");
@@ -212,8 +214,7 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
         View bottomSheetView = getLayoutInflater().inflate(R.layout.fare_breakdown_card, null);
         
         // Calculate fares
-        FareCalculator.FareBreakdown standardFare = FareCalculator.calculateFare(bus, "STANDARD");
-        FareCalculator.FareBreakdown premiumFare = FareCalculator.calculateFare(bus, "PREMIUM");
+        FareCalculator.FareBreakdown standardFare = FareCalculator.calculateFare(bus);
         
         // Format currency
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
@@ -223,9 +224,8 @@ public class BusActivity extends BaseActivity implements OnMapReadyCallback {
         TextView totalFareText = bottomSheetView.findViewById(R.id.totalFareText);
         
         baseFareText.setText(currencyFormat.format(standardFare.baseFare));
-        totalFareText.setText(String.format("%s - %s", 
-            currencyFormat.format(standardFare.totalFare),
-            currencyFormat.format(premiumFare.totalFare)));
+        totalFareText.setText(String.format("%s",
+            currencyFormat.format(standardFare.totalFare)));
         
         // Add booking button handler
         Button bookNowButton = bottomSheetView.findViewById(R.id.bookNowButton);

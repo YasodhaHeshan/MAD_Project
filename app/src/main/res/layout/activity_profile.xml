@@ -6,19 +6,12 @@
     android:layout_height="match_parent"
     android:background="@color/background_dark">
 
-    <include
-        android:id="@+id/actionbar"
-        layout="@layout/actionbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/actionbar"
-        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView2">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -91,40 +84,16 @@
                     app:cardCornerRadius="12dp"
                     app:cardBackgroundColor="@color/colorPrimary">
 
-                    <LinearLayout
+                    <Button
+                        android:id="@+id/editProfileButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:text="Edit Profile"
+                        android:textColor="@color/white"
+                        android:background="?attr/selectableItemBackground"
+                        android:padding="16dp"
+                        android:gravity="start|center_vertical"/>
 
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/editProfileButton"
-                            style="@style/Widget.Material3.Button.TextButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Edit Profile"
-                            android:textColor="@color/white"
-                            android:gravity="start|center_vertical"
-                            android:padding="16dp"
-                            app:icon="@drawable/baseline_edit_24"
-                            app:iconTint="@color/white"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/stroke_white"/>
-
-                        <com.google.android.material.button.MaterialButton
-                            style="@style/Widget.Material3.Button.TextButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Payment Methods"
-                            android:textColor="@color/white"
-                            android:gravity="start|center_vertical"
-                            android:padding="16dp"
-                            app:icon="@drawable/baseline_payment_24"
-                            app:iconTint="@color/white"/>
-
-                    </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -140,79 +109,46 @@
                         android:orientation="vertical">
 
                         <com.google.android.material.button.MaterialButton
-                            style="@style/Widget.Material3.Button.TextButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Help &amp; Support"
-                            android:textColor="@color/white"
-                            android:gravity="start|center_vertical"
-                            android:padding="16dp"
-                            app:icon="@drawable/baseline_help_24"
-                            app:iconTint="@color/white"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/stroke_white"/>
-
-                        <com.google.android.material.button.MaterialButton
                             android:id="@+id/registerAsDriverButton"
-                            style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Register as Driver"
                             android:textColor="@color/white"
-                            android:gravity="start|center_vertical"
+                            android:background="?attr/selectableItemBackground"
                             android:padding="16dp"
-                            app:icon="@drawable/baseline_directions_bus_24"
-                            app:iconTint="@color/white"/>
+                            android:gravity="start|center_vertical"/>
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@color/stroke_white"/>
+                            android:background="@color/white_20"/>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/registerAsOwnerButton"
-                            style="@style/Widget.Material3.Button.TextButton"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Register as Owner"
                             android:textColor="@color/white"
-                            android:gravity="start|center_vertical"
+                            android:background="?attr/selectableItemBackground"
                             android:padding="16dp"
-                            app:icon="@drawable/baseline_home_24"
-                            app:iconTint="@color/white"/>
-
-                        <View
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:background="@color/stroke_white"/>
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/logoutButton"
-                            style="@style/Widget.Material3.Button.TextButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Logout"
-                            android:textColor="@color/accent_blue"
-                            android:gravity="start|center_vertical"
-                            android:padding="16dp"
-                            app:icon="@drawable/baseline_logout_24"
-                            app:iconTint="@color/accent_blue"/>
+                            android:gravity="start|center_vertical"/>
 
                     </LinearLayout>
+
                 </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/logoutButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Logout"
+                    android:textColor="@color/error_red"
+                    style="@style/Widget.Material3.Button.OutlinedButton"/>
+
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/menu"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

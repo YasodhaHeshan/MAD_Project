@@ -28,13 +28,13 @@ public class SessionManager {
         return pref.getBoolean(KEY_IS_LOGGED_IN, false);
     }
 
-    public String getUserEmail() {
-        return pref.getString(KEY_USER_EMAIL, null);
-    }
-
     public void logout() {
         editor.clear();
         editor.commit();
+    }
+
+    public String getUserEmail() {
+        return pref.getString(KEY_USER_EMAIL, null);
     }
 
     public String getUserRole() {

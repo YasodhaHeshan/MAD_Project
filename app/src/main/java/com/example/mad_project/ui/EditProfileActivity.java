@@ -4,11 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class EditProfileActivity extends BaseActivity {
+public class EditProfileActivity extends MainActivity {
     
     private TextInputEditText nameInput;
     private TextInputEditText emailInput;
@@ -19,11 +20,9 @@ public class EditProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
-        
-        // Setup actionbar
-        setupActionBar("Edit Profile", true, false, false);
-        
+        getLayoutInflater().inflate(R.layout.activity_edit_profile, contentFrame);
+        setupNavigation(true, false, "Edit Profile");
+
         initializeViews();
         setupListeners();
         loadUserData();

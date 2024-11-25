@@ -7,6 +7,7 @@ import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Ticket;
@@ -23,7 +24,7 @@ import com.example.mad_project.data.AppDatabase;
 import android.content.res.ColorStateList;
 import androidx.core.content.ContextCompat;
 
-public class SeatSelectionActivity extends BaseActivity {
+public class SeatSelectionActivity extends MainActivity {
     private GridLayout leftSeatGrid;
     private GridLayout rightSeatGrid;
     private TextView selectedSeatText;
@@ -41,8 +42,8 @@ public class SeatSelectionActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_seat_selection);
-        setupActionBar("Select Your Seat", true, false, false);
+        getLayoutInflater().inflate(R.layout.activity_seat_selection, contentFrame);
+        setupNavigation(true, false, "Select Seats");
 
         // Initialize database
         db = AppDatabase.getDatabase(this);
@@ -162,13 +163,6 @@ public class SeatSelectionActivity extends BaseActivity {
                 ContextCompat.getColor(this, R.color.red)));
         }
         
-        // Handle premium seats
-        if (isPremiumSeat(seatNumber)) {
-            seatButton.setStrokeColor(ColorStateList.valueOf(
-                ContextCompat.getColor(this, R.color.gold)));
-            seatButton.setStrokeWidth(2);
-        }
-        
         seatButton.setOnClickListener(v -> {
             if (selectedButtons.contains(seatButton)) {
                 // Deselect seat
@@ -189,29 +183,25 @@ public class SeatSelectionActivity extends BaseActivity {
             }
             
             // Update selection info with all selected seats
-            updateSelectionInfo(selectedSeats, isPremiumSeat(seatNumber));
+            updateSelectionInfo(selectedSeats);
         });
         
         return seatButton;
     }
 
-    private void updateSelectionInfo(List<String> seatNumbers, boolean isPremium) {
+    private void updateSelectionInfo(List<String> seatNumbers) {
         if (seatNumbers.isEmpty()) {
             selectedSeatText.setText("No seats selected");
             fareText.setText("");
             return;
         }
         
-        String seatType = isPremium ? "Premium Seats" : "Standard Seats";
-        selectedSeatText.setText(String.format("%s: %s", seatType, 
+        selectedSeatText.setText(String.format("Selected Seats: %s", 
             String.join(", ", seatNumbers)));
         
         // Calculate total fare for all selected seats
         final double finalTotalFare = seatNumbers.stream()
-            .mapToDouble(seat -> FareCalculator.calculateFare(
-                selectedBus, 
-                isPremiumSeat(seat) ? "PREMIUM" : "STANDARD"
-            ).totalFare)
+            .mapToDouble(seat -> FareCalculator.calculateFare(selectedBus).totalFare)
             .sum();
         
         // Animate fare update
@@ -228,14 +218,7 @@ public class SeatSelectionActivity extends BaseActivity {
             .start();
     }
 
-    private boolean isPremiumSeat(String seatNumber) {
-        // Implement premium seat logic
-        return seatNumber.startsWith("A") || seatNumber.startsWith("B");
-    }
-
     private String getSeatNumber(int index) {
-        // Organize seats from front to back
-        // First two rows (A, B) are premium
         int row = index / 4;
         int col = index % 4;
         
