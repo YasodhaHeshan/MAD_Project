@@ -22,20 +22,11 @@
             android:textSize="20sp"
             android:textStyle="bold"/>
 
-        <!-- Standard Fare Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Standard Seats"
-            android:textColor="@color/gray"
-            android:textSize="14sp"/>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -55,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="4dp">
+            android:layout_marginTop="8dp">
 
             <TextView
                 android:layout_width="0dp"
@@ -70,71 +61,43 @@
                 android:textColor="@color/white"/>
         </LinearLayout>
 
-        <!-- Premium Fare Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <!-- Total Section -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
             android:layout_marginTop="16dp"
-            android:text="Premium Seats"
-            android:textColor="@color/gray"
-            android:textSize="14sp"/>
+            android:background="@color/gray"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Premium Charge"
-                android:textColor="@color/gray"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"/>
-        </LinearLayout>
-
-        <!-- Total Section -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray"
-            android:layout_marginVertical="16dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Total Fare"
-                android:textStyle="bold"
                 android:textColor="@color/white"
-                android:textSize="16sp"/>
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/totalFareText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:textColor="@color/green_light"
-                android:textSize="16sp"/>
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/bookNowButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="Book Now"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/green_light"/>
+            android:textAllCaps="false"
+            app:cornerRadius="8dp"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

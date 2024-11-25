@@ -4,22 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.BusController;
+import com.google.android.material.appbar.MaterialToolbar;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class DashboardActivity extends BaseActivity {
+public class DashboardActivity extends MainActivity {
     private AutoCompleteTextView fromLocationInput;
     private AutoCompleteTextView toLocationInput;
     private Button searchBusButton;
+    private MaterialToolbar topAppBar;
     private BusController busController;
     private ArrayAdapter<String> fromAdapter;
     private ArrayAdapter<String> toAdapter;
@@ -27,18 +32,15 @@ public class DashboardActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
-        
-        busController = new BusController(this);
-        initializeViews();
-        setupListeners();
-        setupAdapters();
-    }
+        getLayoutInflater().inflate(R.layout.activity_dashboard, contentFrame);
+        setupNavigation(true, true, "Dashboard");
 
-    private void initializeViews() {
+        busController = new BusController(this);
         fromLocationInput = findViewById(R.id.fromLocationInput);
         toLocationInput = findViewById(R.id.toLocationInput);
         searchBusButton = findViewById(R.id.searchBusButton);
+        setupListeners();
+        setupAdapters();
     }
 
     private void setupAdapters() {
@@ -108,5 +110,26 @@ public class DashboardActivity extends BaseActivity {
             @Override
             public void afterTextChanged(Editable s) {}
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_app_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        
+        if (id == R.id.action_notifications) {
+            // TODO: Handle notifications
+            return true;
+        } else if (id == R.id.action_settings) {
+            startActivity(new Intent(this, ProfileActivity.class));
+            return true;
+        }
+        
+        return super.onOptionsItemSelected(item);
     }
 }

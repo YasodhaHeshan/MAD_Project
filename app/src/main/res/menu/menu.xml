@@ -5,17 +5,17 @@
     <item
         android:id="@+id/navigation_home"
         android:title="Home"
-        android:icon="@drawable/home"
+        android:icon="@drawable/baseline_home_24"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/navigation_social"
+        android:id="@+id/navigation_tickets"
         android:title="My Tickets"
         android:icon="@drawable/my_tickets"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/navigation_bus"
+        android:id="@+id/navigation_buses"
         android:title="Buses"
         android:icon="@drawable/baseline_directions_bus_24"
         app:showAsAction="ifRoom" />

@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -12,7 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class RegisterDriverActivity extends BaseActivity {
+public class RegisterDriverActivity extends MainActivity {
 
     private TextInputEditText licenseNumberInput;
     private TextInputEditText experienceInput;
@@ -23,22 +24,16 @@ public class RegisterDriverActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_driver);
+        getLayoutInflater().inflate(R.layout.activity_register_driver, contentFrame);
+        setupNavigation(true, false, "Register as Driver");
 
-        setupActionBar("Register as Driver", true, false, false);
-        initializeViews();
-        setupListeners();
-    }
-
-    private void initializeViews() {
+        // Initialize views and setup listeners
         licenseNumberInput = findViewById(R.id.licenseNumberInput);
         experienceInput = findViewById(R.id.experienceInput);
         expiryDateInput = findViewById(R.id.expiryDateInput);
         registerButton = findViewById(R.id.registerButton);
         calendar = Calendar.getInstance();
-    }
 
-    private void setupListeners() {
         expiryDateInput.setOnClickListener(v -> showDatePicker());
         registerButton.setOnClickListener(v -> attemptRegistration());
     }

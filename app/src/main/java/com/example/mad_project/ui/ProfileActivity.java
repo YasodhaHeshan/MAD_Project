@@ -6,11 +6,12 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 
-public class ProfileActivity extends BaseActivity {
+public class ProfileActivity extends MainActivity {
     private SessionManager sessionManager;
     private MaterialButton logoutButton;
     private Button editProfileButton;
@@ -20,7 +21,8 @@ public class ProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        getLayoutInflater().inflate(R.layout.activity_profile, contentFrame);
+        setupNavigation(true, true, "Profile");
 
         sessionManager = new SessionManager(this);
 
@@ -29,9 +31,6 @@ public class ProfileActivity extends BaseActivity {
         editProfileButton = findViewById(R.id.editProfileButton);
         registerAsDriverButton = findViewById(R.id.registerAsDriverButton);
         registerAsOwnerButton = findViewById(R.id.registerAsOwnerButton);
-
-        // Setup actionbar with title, show back button only
-        setupActionBar("Profile", true, false, false);
 
         setupClickListeners();
     }

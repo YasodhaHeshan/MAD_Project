@@ -1,4 +1,4 @@
-package com.example.mad_project.ui;
+package com.example.mad_project.utils;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
@@ -6,7 +6,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.room.Room;
@@ -25,16 +24,13 @@ import com.example.mad_project.data.Ticket;
 import com.example.mad_project.data.TicketDao;
 import com.example.mad_project.data.User;
 import com.example.mad_project.data.UserDao;
-import com.example.mad_project.utils.HashPassword;
 
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class FillDatabaseActivity extends AppCompatActivity {
+public class FillDatabase extends AppCompatActivity {
     private AppDatabase db;
     private ProgressBar progressBar;
     private TextView statusText;
@@ -106,7 +102,7 @@ public class FillDatabaseActivity extends AppCompatActivity {
                 clearDatabase();
                 startDatabaseFill();
             } catch (Exception e) {
-                Log.e("FillDatabaseActivity", "Error rebuilding database", e);
+                Log.e("FillDatabase", "Error rebuilding database", e);
                 showError("Failed to rebuild database: " + e.getMessage());
             }
         });
@@ -130,7 +126,7 @@ public class FillDatabaseActivity extends AppCompatActivity {
 
                 updateProgress("Database fill completed");
             } catch (Exception e) {
-                Log.e("FillDatabaseActivity", "Error filling database", e);
+                Log.e("FillDatabase", "Error filling database", e);
                 showError("Error: " + e.getMessage());
             }
         });
@@ -177,7 +173,7 @@ public class FillDatabaseActivity extends AppCompatActivity {
 
                 updateProgress("Database fill completed");
             } catch (Exception e) {
-                Log.e("FillDatabaseActivity", "Error filling database", e);
+                Log.e("FillDatabase", "Error filling database", e);
                 showError("Error: " + e.getMessage());
             }
         });
@@ -216,26 +212,39 @@ public class FillDatabaseActivity extends AppCompatActivity {
                 "WiFi, AC, USB Charging, Reclining Seats", true, 
                 "Colombo", "Kandy", 6.9271, 79.8612, 
                 baseTime, baseTime + (3 * 3600000),
-                2500.00, 3500.00), // Base fare: 2500, Premium: 3500
+                2500.00),
 
             new Bus(1, "NC-5678", "Yutong ZK6147H", 53, 
                 "WiFi, AC, Entertainment System", true, 
                 "Kandy", "Colombo", 7.2906, 80.6337,
                 baseTime + (4 * 3600000), baseTime + (7 * 3600000),
-                2300.00, 3200.00), // Base fare: 2300, Premium: 3200
+                2300.00),
 
             // Colombo - Galle Route (Southern Expressway)
             new Bus(2, "NB-9012", "King Long XMQ6129Y", 48, 
                 "WiFi, AC, LCD TV", true, 
                 "Colombo", "Galle", 6.9271, 79.8612,
                 baseTime + (8 * 3600000), baseTime + (10 * 3600000),
-                1800.00, 2500.00), // Base fare: 1800, Premium: 2500
+                2000.00),
 
-            new Bus(2, "ND-3456", "Volvo B8R", 42, 
-                "WiFi, AC, Luxury Seats", true, 
+            new Bus(2, "ND-3456", "Scania K410", 42, 
+                "WiFi, AC, Premium Seats", true, 
                 "Galle", "Colombo", 6.0535, 80.2210,
                 baseTime + (11 * 3600000), baseTime + (13 * 3600000),
-                1800.00, 2500.00)  // Base fare: 1800, Premium: 2500
+                2100.00),
+
+            // Colombo - Jaffna Route (A9 Highway)
+            new Bus(3, "NE-7890", "Mercedes-Benz O500R", 44, 
+                "WiFi, AC, Snack Service", true, 
+                "Colombo", "Jaffna", 6.9271, 79.8612,
+                baseTime + (14 * 3600000), baseTime + (22 * 3600000),
+                4500.00),
+
+            new Bus(3, "NF-1234", "Volvo B8R", 46, 
+                "WiFi, AC, Rest Room", true, 
+                "Jaffna", "Colombo", 9.6615, 80.0255,
+                baseTime + (23 * 3600000), baseTime + (31 * 3600000),
+                4300.00)
         };
 
         for (Bus bus : buses) {

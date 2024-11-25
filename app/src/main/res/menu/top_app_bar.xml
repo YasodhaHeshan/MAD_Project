@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <item
+        android:id="@+id/action_debug"
+        android:icon="@drawable/baseline_bug_report_24"
+        android:title="Debug Menu"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_notifications"
+        android:icon="@drawable/baseline_notifications_24"
+        android:title="Notifications"
+        android:contentDescription="Notifications"
+        app:showAsAction="ifRoom" />
+    
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="Settings"
+        android:contentDescription="Settings"
+        app:showAsAction="ifRoom" />
+</menu>

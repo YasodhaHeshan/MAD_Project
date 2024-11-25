@@ -51,22 +51,15 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         holder.arrivalTimeText.setText(bus.getFormattedArrivalTime());
         
         String basePrice = currencyFormat.format(bus.getBaseFare());
-        String premiumPrice = currencyFormat.format(bus.getPremiumFare());
-        
+
         holder.priceText.setText(basePrice);
         
         holder.baseFareText.setText(basePrice);
-        holder.premiumFareText.setText(premiumPrice);
-        
+
         holder.itemView.setOnClickListener(v -> {
             boolean isExpanded = holder.priceBreakdownLayout.getVisibility() == View.VISIBLE;
             holder.priceBreakdownLayout.setVisibility(isExpanded ? View.GONE : View.VISIBLE);
-            
-            if (!isExpanded && bus.getPremiumFare() > bus.getBaseFare()) {
-                holder.priceText.setText(String.format("%s - %s", basePrice, premiumPrice));
-            } else {
-                holder.priceText.setText(basePrice);
-            }
+            holder.priceText.setText(basePrice);
             
             listener.onBusClick(bus);
         });
@@ -92,7 +85,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         private final TextView arrivalTimeText;
         private final TextView priceText;
         private final TextView baseFareText;
-        private final TextView premiumFareText;
         private final View priceBreakdownLayout;
         private final Button bookButton;
 
@@ -108,7 +100,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
             arrivalTimeText = itemView.findViewById(R.id.arrivalTimeText);
             priceText = itemView.findViewById(R.id.priceText);
             baseFareText = itemView.findViewById(R.id.baseFareText);
-            premiumFareText = itemView.findViewById(R.id.premiumFareText);
             priceBreakdownLayout = itemView.findViewById(R.id.priceBreakdownLayout);
             bookButton = itemView.findViewById(R.id.bookButton);
         }

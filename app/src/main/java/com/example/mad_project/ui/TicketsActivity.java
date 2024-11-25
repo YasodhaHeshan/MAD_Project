@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mad_project.R;
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.adapter.TicketAdapter;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.PaymentDao;
@@ -21,7 +22,7 @@ import java.util.concurrent.Executors;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class TicketsActivity extends BaseActivity {
+public class TicketsActivity extends MainActivity {
     private RecyclerView ticketsRecyclerView;
     private TextView emptyStateText;
     private AppDatabase db;
@@ -30,9 +31,9 @@ public class TicketsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tickets);
-        setupActionBar("My Tickets", true, true, true);
-        
+        getLayoutInflater().inflate(R.layout.activity_tickets, contentFrame);
+        setupNavigation(true, true, "My Tickets");
+
         // Initialize database
         db = AppDatabase.getDatabase(this);
         initializeViews();
