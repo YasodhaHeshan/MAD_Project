@@ -3,10 +3,14 @@ package com.example.mad_project.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.example.mad_project.data.AppDatabase;
+import com.example.mad_project.data.UserDao;
+
 public class SessionManager {
     private static final String PREF_NAME = "UserSession";
     private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
     private static final String KEY_USER_EMAIL = "userEmail";
+    private static final String KEY_USER_ID = "userId";
     
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
@@ -18,7 +22,12 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void setLogin(boolean isLoggedIn, String userEmail) {
+    public static SessionManager getInstance(Context context) {
+        return new SessionManager(context);
+    }
+
+    public void setLogin(boolean isLoggedIn, String userEmail, int userId) {
+        editor.putInt(KEY_USER_ID, userId);
         editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
         editor.putString(KEY_USER_EMAIL, userEmail);
         editor.commit();
@@ -33,11 +42,7 @@ public class SessionManager {
         editor.commit();
     }
 
-    public String getUserEmail() {
-        return pref.getString(KEY_USER_EMAIL, null);
-    }
-
-    public String getUserRole() {
-        return pref.getString("user_role", "USER");
+    public int getUserId() {
+        return pref.getInt(KEY_USER_ID, -1);
     }
 }
