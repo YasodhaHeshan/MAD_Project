@@ -148,7 +148,7 @@ public class SeatSelectionActivity extends MainActivity {
         seatButton.setLayoutParams(params);
         
         // Style the button
-        seatButton.setBackgroundResource(R.drawable.seat_button_background);
+        seatButton.setBackgroundResource(R.drawable.seat_color);
         seatButton.setText(seatNumber);
         seatButton.setTextSize(12);
         seatButton.setTextColor(Color.WHITE);
@@ -168,17 +168,16 @@ public class SeatSelectionActivity extends MainActivity {
                 // Deselect seat
                 selectedButtons.remove(seatButton);
                 selectedSeats.remove(seatNumber);
-                seatButton.setBackgroundResource(R.drawable.seat_button_background);
+                seatButton.setBackgroundResource(R.drawable.seat_available);
                 seatButton.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.colorSecondaryBackground)));
+                    ContextCompat.getColor(this, R.color.green_light)));
                 seatButton.setSelected(false);
             } else {
                 // Select new seat
                 selectedButtons.add(seatButton);
                 selectedSeats.add(seatNumber);
-                seatButton.setBackgroundResource(R.drawable.seat_button_selected_background);
                 seatButton.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.green_light)));
+                    ContextCompat.getColor(this, R.color.accent_blue)));
                 seatButton.setSelected(true);
             }
             
@@ -236,7 +235,7 @@ public class SeatSelectionActivity extends MainActivity {
     private void proceedToPayment() {
         // Clear selections after successful booking
         for (MaterialButton button : selectedButtons) {
-            button.setBackgroundResource(R.drawable.seat_button_background);
+            button.setBackgroundResource(R.drawable.seat_color);
             button.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(this, R.color.colorSecondaryBackground)));
             button.setSelected(false);
