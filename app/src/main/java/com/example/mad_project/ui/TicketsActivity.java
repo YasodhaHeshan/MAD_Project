@@ -1,8 +1,10 @@
 package com.example.mad_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Button;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +16,8 @@ import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.PaymentDao;
 import com.example.mad_project.data.Ticket;
 import com.example.mad_project.data.TicketDao;
+import com.example.mad_project.data.Bus;
+import com.example.mad_project.data.Payment;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.List;
@@ -21,12 +25,18 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import android.graphics.drawable.GradientDrawable;
+import androidx.core.content.ContextCompat;
 
 public class TicketsActivity extends MainActivity {
     private RecyclerView ticketsRecyclerView;
     private TextView emptyStateText;
     private AppDatabase db;
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +90,80 @@ public class TicketsActivity extends MainActivity {
         BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
         View bottomSheetView = getLayoutInflater().inflate(R.layout.ticket_details_sheet, null);
         
-        // Set up ticket details in the bottom sheet
-        // TODO: Add ticket details implementation
+        // Find views in the bottom sheet
+        TextView ticketNumberText = bottomSheetView.findViewById(R.id.ticketNumberText);
+        TextView startLocationText = bottomSheetView.findViewById(R.id.startLocationText);
+        TextView endLocationText = bottomSheetView.findViewById(R.id.endLocationText);
+        TextView journeyDateText = bottomSheetView.findViewById(R.id.journeyDateText);
+        TextView seatNumberText = bottomSheetView.findViewById(R.id.seatNumberText);
+        TextView busDetailsText = bottomSheetView.findViewById(R.id.busDetailsText);
+        TextView ticketFareText = bottomSheetView.findViewById(R.id.ticketFareText);
+        TextView paymentStatusText = bottomSheetView.findViewById(R.id.paymentStatusText);
+        Button swapSeatButton = bottomSheetView.findViewById(R.id.swapSeatButton);
+        
+        // Format date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault());
+        String formattedDate = dateFormat.format(new Date(ticket.getJourneyDate()));
+        
+        // Set ticket details
+        ticketNumberText.setText("Ticket #" + ticket.getId());
+        startLocationText.setText(ticket.getSource());
+        endLocationText.setText(ticket.getDestination());
+        journeyDateText.setText(formattedDate);
+        seatNumberText.setText("Seat: " + ticket.getSeatNumber());
+        
+        // Load bus details and payment info asynchronously
+        executor.execute(() -> {
+            Bus bus = db.busDao().getBusById(ticket.getBusId());
+            Payment payment = ticket.getPaymentId() != null ? 
+                db.paymentDao().getPaymentById(ticket.getPaymentId()) : null;
+            
+            runOnUiThread(() -> {
+                // Set bus details
+                if (bus != null) {
+                    busDetailsText.setText(String.format("%s (%s)", 
+                        bus.getRegistrationNumber(),
+                        bus.getModel()));
+                }
+                
+                // Set payment details
+                if (payment != null) {
+                    ticketFareText.setText(currencyFormat.format(payment.getAmount()));
+                    paymentStatusText.setText(payment.getStatus().toUpperCase());
+                    
+                    // Set payment status color
+                    int statusColor;
+                    switch (payment.getStatus().toLowerCase()) {
+                        case "completed":
+                            statusColor = ContextCompat.getColor(this, R.color.green_dark);
+                            break;
+                        case "pending":
+                            statusColor = ContextCompat.getColor(this, R.color.orange);
+                            break;
+                        default:
+                            statusColor = ContextCompat.getColor(this, R.color.gray);
+                    }
+                    GradientDrawable statusBackground = (GradientDrawable) paymentStatusText.getBackground();
+                    statusBackground.setColor(statusColor);
+                } else {
+                    ticketFareText.setText("N/A");
+                    paymentStatusText.setText("Not Paid");
+                    GradientDrawable statusBackground = (GradientDrawable) paymentStatusText.getBackground();
+                    statusBackground.setColor(ContextCompat.getColor(this, R.color.red));
+                }
+            });
+        });
+        
+        // Handle swap seat button
+        swapSeatButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SeatSelectionActivity.class);
+            intent.putExtra("bus_id", ticket.getBusId());
+            intent.putExtra("is_swap", true);
+            intent.putExtra("current_seat", ticket.getSeatNumber());
+            intent.putExtra("ticket_id", ticket.getId());
+            startActivity(intent);
+            bottomSheet.dismiss();
+        });
         
         bottomSheet.setContentView(bottomSheetView);
         bottomSheet.show();
