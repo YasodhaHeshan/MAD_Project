@@ -2,17 +2,29 @@ package com.example.mad_project.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
+import com.example.mad_project.controller.PaymentController;
+import com.example.mad_project.controller.TicketController;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Ticket;
 import com.example.mad_project.utils.FareCalculator;
 import com.google.android.material.button.MaterialButton;
+import com.example.mad_project.data.Payment;
+import com.example.mad_project.data.User;
+import com.example.mad_project.utils.EmailContentGenerator;
+import com.example.mad_project.utils.EmailSender;
+import com.example.mad_project.utils.SessionManager;
+
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -23,6 +35,7 @@ import java.util.concurrent.Executors;
 import com.example.mad_project.data.AppDatabase;
 import android.content.res.ColorStateList;
 import androidx.core.content.ContextCompat;
+import android.content.Intent;
 
 public class SeatSelectionActivity extends MainActivity {
     private GridLayout leftSeatGrid;
@@ -68,7 +81,7 @@ public class SeatSelectionActivity extends MainActivity {
         confirmButton = findViewById(R.id.confirmButton);
 
         confirmButton.setOnClickListener(v -> {
-            if (selectedSeat != null) {
+            if (!selectedSeats.isEmpty()) {
                 proceedToPayment();
             } else {
                 Toast.makeText(this, "Please select a seat", Toast.LENGTH_SHORT).show();
@@ -233,6 +246,100 @@ public class SeatSelectionActivity extends MainActivity {
     }
 
     private void proceedToPayment() {
+        // Get current user ID from session
+        SessionManager sessionManager = new SessionManager(this);
+        int userId = sessionManager.getUserId();
+        
+        if (userId == -1) {
+            Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Calculate total fare
+        double totalFare = selectedSeats.stream()
+            .mapToDouble(seat -> FareCalculator.calculateFare(selectedBus).totalFare)
+            .sum();
+
+        executor.execute(() -> {
+            try {
+                db.runInTransaction(() -> {
+                    // First create tickets
+                    List<Long> ticketIds = new ArrayList<>();
+                    for (String seatNumber : selectedSeats) {
+                        Ticket ticket = new Ticket(
+                            userId,
+                            selectedBus.getId(),
+                            seatNumber,
+                            selectedBus.getDepartureTime(),
+                            selectedBus.getRouteFrom(),
+                            selectedBus.getRouteTo(),
+                            "booked"
+                        );
+                        long ticketId = db.ticketDao().insert(ticket);
+                        ticketIds.add(ticketId);
+                    }
+
+                    // Then create payment record
+                    Payment payment = new Payment(
+                        0, // ID will be auto-generated
+                        userId,
+                        ticketIds.get(0).intValue(), // Link to first ticket
+                        totalFare,
+                        "CARD",
+                        "TXN" + System.currentTimeMillis(),
+                        "completed"
+                    );
+                    
+                    long paymentId = db.paymentDao().insert(payment);
+
+                    // Update all tickets with the payment ID
+                    for (Long ticketId : ticketIds) {
+                        db.ticketDao().updateTicketPaymentId(ticketId.intValue(), (int)paymentId);
+                    }
+
+                    // Send email confirmation
+                    User user = db.userDao().getUserById(userId);
+                    if (user != null) {
+                        String emailContent = EmailContentGenerator.generateBusTicketEmail(
+                            user.getName(),
+                            String.valueOf(paymentId),
+                            selectedBus.getRegistrationNumber(),
+                            selectedBus.getRouteFrom(),
+                            selectedBus.getRouteTo(),
+                            new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+                                .format(new Date(selectedBus.getDepartureTime())),
+                            new SimpleDateFormat("HH:mm", Locale.getDefault())
+                                .format(new Date(selectedBus.getDepartureTime())),
+                            String.join(", ", selectedSeats)
+                        );
+                        EmailSender emailSender = new EmailSender();
+                        try {
+                            emailSender.sendEmail(user.getEmail(), "Bus Ticket Confirmation", emailContent);
+                        } catch (Exception e) {
+                            Log.e("SeatSelectionActivity", "Failed to send email", e);
+                        }
+                    }
+                });
+
+                // Update UI on success
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Booking successful!", Toast.LENGTH_SHORT).show();
+                    clearSelections();
+                    Intent intent = new Intent(this, TicketsActivity.class);
+                    startActivity(intent);
+                    finish();
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Booking failed. Please try again.", Toast.LENGTH_SHORT).show();
+                    Log.e("SeatSelectionActivity", "Error during booking", e);
+                });
+            }
+        });
+    }
+
+    private void clearSelections() {
         // Clear selections after successful booking
         for (MaterialButton button : selectedButtons) {
             button.setBackgroundResource(R.drawable.seat_color);
@@ -242,8 +349,6 @@ public class SeatSelectionActivity extends MainActivity {
         }
         selectedButtons.clear();
         selectedSeats.clear();
-        
-        // Proceed with payment logic
-        // ...
+        updateSelectionInfo(selectedSeats);
     }
 } 
