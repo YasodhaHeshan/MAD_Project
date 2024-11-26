@@ -64,7 +64,7 @@ public class UserController {
             try {
                 User user = userDao.getUserByEmail(email);
                 if (user != null && Validation.verifyPassword(password, user.getPassword())) {
-                    sessionManager.setLogin(true, email, user.getId(), user.getRole());
+                    sessionManager.setLogin(true, email, user.getId(), user.getRole(), user.getImage());
                     callback.accept(user);
                 } else {
                     callback.accept(null);
@@ -73,67 +73,6 @@ public class UserController {
                 Log.e("UserController", "Error logging in", e);
                 callback.accept(null);
             }
-        });
-    }
-
-    public void registerDriver(String name, String email, String phone, String password,
-                             String licenseNumber, long licenseExpiry, int yearsExperience,
-                             Consumer<Boolean> callback) {
-        register(name, email, phone, password, "driver", user -> {
-            if (user == null) {
-                callback.accept(false);
-                return;
-            }
-
-            executorService.execute(() -> {
-                try {
-                    if (driverDao.isLicenseExists(licenseNumber)) {
-                        // Rollback user creation
-                        userDao.delete(user);
-                        callback.accept(false);
-                        return;
-                    }
-
-                    BusDriver driver = new BusDriver(user.getId(), licenseNumber, licenseExpiry, yearsExperience);
-                    driverDao.insert(driver);
-                    callback.accept(true);
-                } catch (Exception e) {
-                    Log.e("UserController", "Error registering driver", e);
-                    userDao.delete(user);
-                    callback.accept(false);
-                }
-            });
-        });
-    }
-
-    public void registerOwner(String name, String email, String phone, String password,
-                            String companyName, String companyRegistration, String taxId,
-                            Consumer<Boolean> callback) {
-        register(name, email, phone, password, "owner", user -> {
-            if (user == null) {
-                callback.accept(false);
-                return;
-            }
-
-            executorService.execute(() -> {
-                try {
-                    if (ownerDao.isCompanyRegistrationExists(companyRegistration) || 
-                        ownerDao.isTaxIdExists(taxId)) {
-                        // Rollback user creation
-                        userDao.delete(user);
-                        callback.accept(false);
-                        return;
-                    }
-
-                    BusOwner owner = new BusOwner(user.getId(), companyName, companyRegistration, taxId);
-                    ownerDao.insert(owner);
-                    callback.accept(true);
-                } catch (Exception e) {
-                    Log.e("UserController", "Error registering owner", e);
-                    userDao.delete(user);
-                    callback.accept(false);
-                }
-            });
         });
     }
 
@@ -206,6 +145,46 @@ public class UserController {
                 callback.accept(true);
             } catch (Exception e) {
                 Log.e("UserController", "Error upgrading to owner", e);
+                callback.accept(false);
+            }
+        });
+    }
+
+    public void getUserById(int userId, Consumer<User> callback) {
+        executorService.execute(() -> {
+            try {
+                User user = userDao.getUserById(userId);
+                callback.accept(user);
+            } catch (Exception e) {
+                Log.e("UserController", "Error getting user by ID", e);
+                callback.accept(null);
+            }
+        });
+    }
+
+    public void update(User user, Consumer<Boolean> callback) {
+        executorService.execute(() -> {
+            try {
+                // Check if email exists for other users
+                User existingUser = userDao.getUserByEmail(user.getEmail());
+                if (existingUser != null && existingUser.getId() != user.getId()) {
+                    callback.accept(false);
+                    return;
+                }
+
+                user.setUpdatedAt(System.currentTimeMillis());
+                int result = userDao.update(user);
+                
+                if (result > 0) {
+                    // Update session
+                    sessionManager.setLogin(true, user.getEmail(), user.getId(), 
+                        user.getRole(), user.getImage());
+                    callback.accept(true);
+                } else {
+                    callback.accept(false);
+                }
+            } catch (Exception e) {
+                Log.e("UserController", "Error updating user", e);
                 callback.accept(false);
             }
         });

@@ -33,6 +33,9 @@ public class User {
     @ColumnInfo(name = "updated_at")
     private long updatedAt;
 
+    @ColumnInfo(name = "image")
+    private String image;
+
     public User(String name, String email, String phone, String password, String role) {
         this.name = name;
         this.email = email;
@@ -42,6 +45,7 @@ public class User {
         this.isActive = true;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
+        this.image = "";
     }
 
     public int getId() {
@@ -114,5 +118,13 @@ public class User {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

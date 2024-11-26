@@ -9,20 +9,22 @@ public class SessionManager {
     private static final String KEY_EMAIL = "email";
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_ROLE = "role";
+    private static final String KEY_IMAGE = "image";
 
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
+    private final SharedPreferences sharedPreferences;
+    private final SharedPreferences.Editor editor;
 
     public SessionManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
     }
 
-    public void setLogin(boolean isLoggedIn, String email, int userId, String role) {
+    public void setLogin(boolean isLoggedIn, String email, int userId, String role, String image) {
         editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
         editor.putString(KEY_EMAIL, email);
         editor.putInt(KEY_USER_ID, userId);
         editor.putString(KEY_ROLE, role);
+        editor.putString(KEY_IMAGE, image);
         editor.apply();
     }
 
@@ -40,6 +42,10 @@ public class SessionManager {
 
     public String getRole() {
         return sharedPreferences.getString(KEY_ROLE, null);
+    }
+
+    public String getImage() {
+        return sharedPreferences.getString(KEY_IMAGE, null);
     }
 
     public void logout() {
