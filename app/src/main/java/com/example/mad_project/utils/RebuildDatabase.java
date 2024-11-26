@@ -86,15 +86,15 @@ public class RebuildDatabase {
 
             // 4. Insert Buses (depends on Bus Owner)
             Bus bus1 = new Bus((int)busOwnerId, "NB-1234", "Volvo 9400", 40, 
-                "WiFi, AC, USB Charging", true, "Colombo", "Kandy", 
-                6.927079, 79.861244, // Colombo coordinates
+                "WiFi, AC, USB Charging", true, "Colombo", "Kandy",
+                6.933631, 79.855221, // Pettah Bus Station coordinates
                 System.currentTimeMillis() + 3600000, // Departure in 1 hour
                 System.currentTimeMillis() + 18000000, // Arrival in 5 hours
                 2500.00); // Base fare
 
             Bus bus2 = new Bus((int)busOwnerId, "NB-5678", "Volvo 9400", 40,
                 "WiFi, AC, USB Charging, Entertainment", true, "Colombo", "Galle",
-                6.927079, 79.861244,
+                6.933631, 79.855221, // Pettah Bus Station coordinates
                 System.currentTimeMillis() + 7200000, // Departure in 2 hours
                 System.currentTimeMillis() + 14400000, // Arrival in 4 hours
                 2000.00);
