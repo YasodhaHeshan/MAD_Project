@@ -17,11 +17,12 @@ import com.example.mad_project.controller.PaymentController;
 import com.example.mad_project.controller.TicketController;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Ticket;
+import com.example.mad_project.utils.BookingManager;
+import com.example.mad_project.utils.DialogManager;
 import com.example.mad_project.utils.FareCalculator;
 import com.google.android.material.button.MaterialButton;
 import com.example.mad_project.data.Payment;
 import com.example.mad_project.data.User;
-import com.example.mad_project.utils.EmailContentGenerator;
 import com.example.mad_project.utils.EmailSender;
 import com.example.mad_project.utils.SessionManager;
 
@@ -211,23 +212,20 @@ public class SeatSelectionActivity extends MainActivity {
         selectedSeatText.setText(String.format("Selected Seats: %s", 
             String.join(", ", seatNumbers)));
         
-        // Calculate total fare for all selected seats
-        final double finalTotalFare = seatNumbers.stream()
-            .mapToDouble(seat -> FareCalculator.calculateFare(selectedBus).totalFare)
-            .sum();
+        FareCalculator.PointsBreakdown breakdown = FareCalculator.calculatePoints(selectedBus);
+        int totalPoints = seatNumbers.size() * breakdown.totalPoints;
         
-        // Animate fare update
         fareText.animate()
             .alpha(0f)
             .setDuration(150)
             .withEndAction(() -> {
-                fareText.setText("Total Fare: " + currencyFormat.format(finalTotalFare));
+                fareText.setText(String.format("Total Fare: %s", 
+                    NumberFormat.getCurrencyInstance(new Locale("en", "LK")).format(totalPoints)));
                 fareText.animate()
                     .alpha(1f)
                     .setDuration(150)
                     .start();
-            })
-            .start();
+            });
     }
 
     private String getSeatNumber(int index) {
@@ -246,7 +244,6 @@ public class SeatSelectionActivity extends MainActivity {
     }
 
     private void proceedToPayment() {
-        // Get current user ID from session
         SessionManager sessionManager = new SessionManager(this);
         int userId = sessionManager.getUserId();
         
@@ -255,88 +252,36 @@ public class SeatSelectionActivity extends MainActivity {
             return;
         }
 
-        // Calculate total fare
-        double totalFare = selectedSeats.stream()
-            .mapToDouble(seat -> FareCalculator.calculateFare(selectedBus).totalFare)
-            .sum();
+        BookingManager bookingManager = new BookingManager(this);
+        bookingManager.processBooking(userId, selectedBus, selectedSeats, 
+            new BookingManager.BookingCallback() {
+                @Override
+                public void onBookingSuccess(int pointsDeducted) {
+                    runOnUiThread(() -> {
+                        clearSelections();
+                        
+                        // Show success dialog with points info
+                        DialogManager.showBookingSuccess(SeatSelectionActivity.this,
+                            pointsDeducted, () -> {
+                                // Navigate to tickets activity
+                                Intent intent = new Intent(SeatSelectionActivity.this, 
+                                    TicketsActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | 
+                                    Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            });
+                    });
+                }
 
-        executor.execute(() -> {
-            try {
-                db.runInTransaction(() -> {
-                    // First create tickets
-                    List<Long> ticketIds = new ArrayList<>();
-                    for (String seatNumber : selectedSeats) {
-                        Ticket ticket = new Ticket(
-                            userId,
-                            selectedBus.getId(),
-                            seatNumber,
-                            selectedBus.getDepartureTime(),
-                            selectedBus.getRouteFrom(),
-                            selectedBus.getRouteTo(),
-                            "booked"
-                        );
-                        long ticketId = db.ticketDao().insert(ticket);
-                        ticketIds.add(ticketId);
-                    }
-
-                    // Then create payment record
-                    Payment payment = new Payment(
-                        0, // ID will be auto-generated
-                        userId,
-                        ticketIds.get(0).intValue(), // Link to first ticket
-                        totalFare,
-                        "CARD",
-                        "TXN" + System.currentTimeMillis(),
-                        "completed"
-                    );
-                    
-                    long paymentId = db.paymentDao().insert(payment);
-
-                    // Update all tickets with the payment ID
-                    for (Long ticketId : ticketIds) {
-                        db.ticketDao().updateTicketPaymentId(ticketId.intValue(), (int)paymentId);
-                    }
-
-                    // Send email confirmation
-                    User user = db.userDao().getUserById(userId);
-                    if (user != null) {
-                        String emailContent = EmailContentGenerator.generateBusTicketEmail(
-                            user.getName(),
-                            String.valueOf(paymentId),
-                            selectedBus.getRegistrationNumber(),
-                            selectedBus.getRouteFrom(),
-                            selectedBus.getRouteTo(),
-                            new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
-                                .format(new Date(selectedBus.getDepartureTime())),
-                            new SimpleDateFormat("HH:mm", Locale.getDefault())
-                                .format(new Date(selectedBus.getDepartureTime())),
-                            String.join(", ", selectedSeats)
-                        );
-                        EmailSender emailSender = new EmailSender();
-                        try {
-                            emailSender.sendEmail(user.getEmail(), "Bus Ticket Confirmation", emailContent);
-                        } catch (Exception e) {
-                            Log.e("SeatSelectionActivity", "Failed to send email", e);
-                        }
-                    }
-                });
-
-                // Update UI on success
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Booking successful!", Toast.LENGTH_SHORT).show();
-                    clearSelections();
-                    Intent intent = new Intent(this, TicketsActivity.class);
-                    startActivity(intent);
-                    finish();
-                });
-
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Booking failed. Please try again.", Toast.LENGTH_SHORT).show();
-                    Log.e("SeatSelectionActivity", "Error during booking", e);
-                });
-            }
-        });
+                @Override
+                public void onBookingFailure(String error) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(SeatSelectionActivity.this, 
+                            "Booking failed: " + error, Toast.LENGTH_LONG).show();
+                    });
+                }
+            });
     }
 
     private void clearSelections() {

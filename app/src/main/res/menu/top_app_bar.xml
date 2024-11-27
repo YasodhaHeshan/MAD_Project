@@ -6,13 +6,18 @@
         android:id="@+id/action_debug"
         android:icon="@drawable/baseline_bug_report_24"
         android:title="Debug Menu"
-        android:visible="false"
+        android:visible="true"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_reset_db"
         android:title="Reset Database"
         android:visible="true"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_logout"
+        android:title="Logout"
         app:showAsAction="never" />
 
     <item

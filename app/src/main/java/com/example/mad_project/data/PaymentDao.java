@@ -24,12 +24,6 @@ public interface PaymentDao {
     @Query("SELECT * FROM payments WHERE ticket_id = :ticketId AND is_active = 1")
     Payment getPaymentByTicketId(int ticketId);
 
-    @Query("UPDATE payments SET status = :status, updated_at = :timestamp WHERE id = :paymentId")
-    void updatePaymentStatus(int paymentId, String status, long timestamp);
-
-    @Query("SELECT * FROM payments WHERE transaction_id = :transactionId AND is_active = 1")
-    Payment getPaymentByTransactionId(String transactionId);
-
     @Query("SELECT * FROM payments WHERE id = :paymentId AND is_active = 1")
     Payment getPaymentById(Integer paymentId);
 }

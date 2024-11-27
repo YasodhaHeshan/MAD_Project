@@ -36,6 +36,8 @@ import com.google.android.material.button.MaterialButton;
 import java.util.List;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BusActivity extends MainActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -211,24 +213,27 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
 
     private void showBusDetails(Bus bus) {
         BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.fare_breakdown_card, null);
+        View bottomSheetView = getLayoutInflater().inflate(R.layout.bus_details_sheet, null);
         
-        // Calculate fares
-        FareCalculator.FareBreakdown standardFare = FareCalculator.calculateFare(bus);
-        
-        // Format currency
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
-        
-        // Set fare details
+        TextView busNumberText = bottomSheetView.findViewById(R.id.busNumberText);
+        TextView startLocationText = bottomSheetView.findViewById(R.id.startLocationText);
+        TextView endLocationText = bottomSheetView.findViewById(R.id.endLocationText);
+        TextView departureTimeText = bottomSheetView.findViewById(R.id.departureTimeText);
         TextView baseFareText = bottomSheetView.findViewById(R.id.baseFareText);
         TextView totalFareText = bottomSheetView.findViewById(R.id.totalFareText);
-        
-        baseFareText.setText(currencyFormat.format(standardFare.baseFare));
-        totalFareText.setText(String.format("%s",
-            currencyFormat.format(standardFare.totalFare)));
-        
-        // Add booking button handler
         Button bookNowButton = bottomSheetView.findViewById(R.id.bookNowButton);
+        
+        // Calculate points
+        FareCalculator.PointsBreakdown pointsBreakdown = FareCalculator.calculatePoints(bus);
+        
+        // Set bus details
+        busNumberText.setText(bus.getRegistrationNumber());
+        startLocationText.setText(bus.getRouteFrom());
+        endLocationText.setText(bus.getRouteTo());
+        departureTimeText.setText(formatDepartureTime(bus.getDepartureTime()));
+        baseFareText.setText("Base Fare: " + pointsBreakdown.getFormattedBaseFare());
+        totalFareText.setText("Total: " + pointsBreakdown.getFormattedTotalFare());
+        
         bookNowButton.setOnClickListener(v -> {
             startBookingProcess(bus);
             bottomSheet.dismiss();
@@ -248,14 +253,19 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         fromLocation = null;
         toLocation = null;
         
-        // Update title
+        // Update title and count
         TextView titleText = findViewById(R.id.availableBusesTitle);
         titleText.setText("Available Buses");
         
-        // Hide FAB
+        // Hide clear filters button
         clearFiltersButton.setVisibility(View.GONE);
         
         // Reload buses without filters
         setupBusList();
+    }
+
+    private String formatDepartureTime(long timestamp) {
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+        return timeFormat.format(new Date(timestamp));
     }
 }

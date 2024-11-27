@@ -3,26 +3,31 @@ package com.example.mad_project.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.UserController;
 import com.example.mad_project.utils.ImageUtils;
 import com.example.mad_project.utils.SessionManager;
+import com.example.mad_project.utils.TopUpDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.textview.MaterialTextView;
 
 public class ProfileActivity extends MainActivity {
-    private SessionManager sessionManager;
     private MaterialButton logoutButton;
-    private Button editProfileButton;
+    private MaterialButton editProfileButton;
     private MaterialButton registerAsDriverButton;
     private MaterialButton registerAsOwnerButton;
-    private TextView userNameText;
-    private TextView userEmailText;
+    private MaterialTextView userNameText;
+    private MaterialTextView userEmailText;
     private ShapeableImageView profileImage;
+    private MaterialTextView profilePointsText;
+    private MaterialButton topupButton;
+    private SessionManager sessionManager;
     private UserController userController;
+    private int currentPoints = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +40,7 @@ public class ProfileActivity extends MainActivity {
 
         initializeViews();
         setupClickListeners();
+        loadUserPoints();
     }
 
     private void initializeViews() {
@@ -45,6 +51,8 @@ public class ProfileActivity extends MainActivity {
         userNameText = findViewById(R.id.userName);
         userEmailText = findViewById(R.id.userEmail);
         profileImage = findViewById(R.id.profileImage);
+        profilePointsText = findViewById(R.id.profilePointsText);
+        topupButton = findViewById(R.id.topupButton);
 
         // Set visibility based on user role
         String role = sessionManager.getRole();
@@ -91,6 +99,8 @@ public class ProfileActivity extends MainActivity {
             Intent intent = new Intent(ProfileActivity.this, RegisterOwnerActivity.class);
             startActivity(intent);
         });
+
+        topupButton.setOnClickListener(v -> showTopUpDialog());
     }
 
     private void handleLogout() {
@@ -103,5 +113,29 @@ public class ProfileActivity extends MainActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    private void loadUserPoints() {
+        userController.getUserPoints(sessionManager.getUserId(), points -> {
+            currentPoints = points;
+            runOnUiThread(() -> {
+                profilePointsText.setText(String.format("%d Points", points));
+            });
+        });
+    }
+
+    private void showTopUpDialog() {
+        TopUpDialog.show(this, currentPoints, points -> {
+            userController.addPoints(sessionManager.getUserId(), points, success -> {
+                if (success) {
+                    loadUserPoints(); // Refresh points display
+                    Toast.makeText(this, "Points added successfully", 
+                        Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Failed to add points", 
+                        Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 }

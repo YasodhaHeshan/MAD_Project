@@ -39,4 +39,13 @@ public interface UserDao {
 
     @Query("UPDATE users SET name = :name, email = :email, phone = :phone, updated_at = :updatedAt WHERE id = :userId")
     int updateUserProfile(int userId, String name, String email, String phone, long updatedAt);
+
+    @Query("UPDATE users SET points = points - :points WHERE id = :userId")
+    void deductPoints(int userId, int points);
+
+    @Query("UPDATE users SET points = points + :points WHERE id = :userId")
+    void addPoints(int userId, int points);
+
+    @Query("SELECT points FROM users WHERE id = :userId")
+    int getUserPoints(int userId);
 }

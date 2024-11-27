@@ -9,14 +9,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.mad_project.R;
 import com.example.mad_project.data.Bus;
-import java.text.NumberFormat;
+import com.example.mad_project.utils.FareCalculator;
+
 import java.util.List;
-import java.util.Locale;
 
 public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
     private final List<Bus> buses;
     private final OnBusClickListener listener;
-    private final NumberFormat currencyFormat;
 
     public interface OnBusClickListener {
         void onBusClick(Bus bus);
@@ -26,7 +25,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
     public BusAdapter(List<Bus> buses, OnBusClickListener listener) {
         this.buses = buses;
         this.listener = listener;
-        this.currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
     }
 
     @NonNull
@@ -50,16 +48,17 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         holder.departureTimeText.setText(bus.getFormattedDepartureTime());
         holder.arrivalTimeText.setText(bus.getFormattedArrivalTime());
         
-        String basePrice = currencyFormat.format(bus.getBaseFare());
-
-        holder.priceText.setText(basePrice);
+        FareCalculator.PointsBreakdown points = FareCalculator.calculatePoints(bus);
+        holder.priceText.setText(points.getFormattedTotalFare());
         
-        holder.baseFareText.setText(basePrice);
+        holder.baseFareText.setText(String.format("%s (%d Points)",
+            points.basePoints, points.basePoints));
 
         holder.itemView.setOnClickListener(v -> {
             boolean isExpanded = holder.priceBreakdownLayout.getVisibility() == View.VISIBLE;
             holder.priceBreakdownLayout.setVisibility(isExpanded ? View.GONE : View.VISIBLE);
-            holder.priceText.setText(basePrice);
+            holder.priceText.setText(String.format("%s (%d Points)",
+                points.totalPoints, points.totalPoints));
             
             listener.onBusClick(bus);
         });

@@ -1,61 +1,74 @@
 package com.example.mad_project.utils;
 
 import android.util.Log;
-import com.example.mad_project.utils.EmailContentGenerator;
-
+import com.example.mad_project.config.EmailConfig;
 import java.util.Properties;
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 public class EmailSender {
+    private static final String TAG = "EmailSender";
 
-    private final String username;
-    private final String password;
+    public static void sendTicketConfirmation(String toEmail, String userName, 
+            int ticketId, String busNumber, String departure, String destination, 
+            String date, String time, String seatNumber) {
+        
+        new Thread(() -> {
+            try {
+                Properties props = new Properties();
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.starttls.enable", "true");
+                props.put("mail.smtp.host", EmailConfig.HOST);
+                props.put("mail.smtp.port", EmailConfig.PORT);
 
-    public EmailSender() {
-        this.username = "your@email.com";
-        this.password = "user_password";
-    }
+                Session session = Session.getInstance(props, new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                            EmailConfig.USERNAME, 
+                            EmailConfig.PASSWORD
+                        );
+                    }
+                });
 
-    private Session createSession() {
-        Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", "smtp.example.com");
-        props.put("mail.smtp.port", "587");
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(EmailConfig.FROM_EMAIL, EmailConfig.FROM_NAME));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+                message.setSubject("Bus Ticket Confirmation - #" + ticketId);
+                
+                String htmlContent = buildEmailTemplate(userName, ticketId, busNumber, 
+                    departure, destination, date, time, seatNumber);
+                message.setContent(htmlContent, "text/html; charset=utf-8");
 
-        return Session.getInstance(props, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
+                Transport.send(message);
+                Log.d(TAG, "Email sent successfully to " + toEmail);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to send email", e);
             }
-        });
+        }).start();
     }
 
-    public void sendEmail(String recipientEmail, String subject, String body) throws MessagingException {
-        Session session = createSession();
-        EmailContentGenerator.generateBusTicketEmail(
-                "User Name", "12345", "Bus123", "City A",
-                "City B", "2023-10-10", "10:00 AM", "12A"
-        );
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
-            message.setSubject(subject);
-            message.setText(body);
-
-            Transport.send(message);
-        } catch (MessagingException e) {
-            Log.e("EmailSender", "Failed to send email", e);
-            throw new MessagingException("Email sending failed", e);
-        }
+    private static String buildEmailTemplate(String userName, int ticketId, 
+            String busNumber, String departure, String destination, 
+            String date, String time, String seatNumber) {
+        return String.format("""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h1 style="color: #1976D2;">Bus Ticket Confirmation</h1>
+                <p>Dear %s,</p>
+                <p>Your bus ticket has been booked successfully. Here are your ticket details:</p>
+                <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Ticket ID:</strong> %d</p>
+                    <p><strong>Bus Number:</strong> %s</p>
+                    <p><strong>From:</strong> %s</p>
+                    <p><strong>To:</strong> %s</p>
+                    <p><strong>Date:</strong> %s</p>
+                    <p><strong>Time:</strong> %s</p>
+                    <p><strong>Seat Number:</strong> %s</p>
+                </div>
+                <p>Thank you for choosing our service!</p>
+                <p>Best regards,<br>Bus Book Team</p>
+            </div>
+            """,
+            userName, ticketId, busNumber, departure, destination, date, time, seatNumber);
     }
 }

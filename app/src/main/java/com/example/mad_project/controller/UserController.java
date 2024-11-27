@@ -189,4 +189,28 @@ public class UserController {
             }
         });
     }
+
+    public void addPoints(int userId, int points, Consumer<Boolean> callback) {
+        executorService.execute(() -> {
+            try {
+                userDao.addPoints(userId, points);
+                callback.accept(true);
+            } catch (Exception e) {
+                Log.e("UserController", "Error adding points", e);
+                callback.accept(false);
+            }
+        });
+    }
+
+    public void getUserPoints(int userId, Consumer<Integer> callback) {
+        executorService.execute(() -> {
+            try {
+                int points = userDao.getUserPoints(userId);
+                callback.accept(points);
+            } catch (Exception e) {
+                Log.e("UserController", "Error getting user points", e);
+                callback.accept(0);
+            }
+        });
+    }
 }

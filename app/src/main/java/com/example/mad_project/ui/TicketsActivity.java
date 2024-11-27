@@ -97,8 +97,6 @@ public class TicketsActivity extends MainActivity {
         TextView journeyDateText = bottomSheetView.findViewById(R.id.journeyDateText);
         TextView seatNumberText = bottomSheetView.findViewById(R.id.seatNumberText);
         TextView busDetailsText = bottomSheetView.findViewById(R.id.busDetailsText);
-        TextView ticketFareText = bottomSheetView.findViewById(R.id.ticketFareText);
-        TextView paymentStatusText = bottomSheetView.findViewById(R.id.paymentStatusText);
         Button swapSeatButton = bottomSheetView.findViewById(R.id.swapSeatButton);
         
         // Format date
@@ -124,32 +122,6 @@ public class TicketsActivity extends MainActivity {
                     busDetailsText.setText(String.format("%s (%s)", 
                         bus.getRegistrationNumber(),
                         bus.getModel()));
-                }
-                
-                // Set payment details
-                if (payment != null) {
-                    ticketFareText.setText(currencyFormat.format(payment.getAmount()));
-                    paymentStatusText.setText(payment.getStatus().toUpperCase());
-                    
-                    // Set payment status color
-                    int statusColor;
-                    switch (payment.getStatus().toLowerCase()) {
-                        case "completed":
-                            statusColor = ContextCompat.getColor(this, R.color.green_dark);
-                            break;
-                        case "pending":
-                            statusColor = ContextCompat.getColor(this, R.color.orange);
-                            break;
-                        default:
-                            statusColor = ContextCompat.getColor(this, R.color.gray);
-                    }
-                    GradientDrawable statusBackground = (GradientDrawable) paymentStatusText.getBackground();
-                    statusBackground.setColor(statusColor);
-                } else {
-                    ticketFareText.setText("N/A");
-                    paymentStatusText.setText("Not Paid");
-                    GradientDrawable statusBackground = (GradientDrawable) paymentStatusText.getBackground();
-                    statusBackground.setColor(ContextCompat.getColor(this, R.color.red));
                 }
             });
         });

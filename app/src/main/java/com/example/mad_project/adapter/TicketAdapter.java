@@ -1,5 +1,6 @@
 package com.example.mad_project.adapter;
 
+import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,7 +70,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
         private final TextView busDetailsText;
         private final TextView seatNumberText;
         private final TextView ticketFareText;
-        private final TextView paymentStatusText;
+        private final TextView pointsText;
 
         public TicketViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -81,7 +82,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             busDetailsText = itemView.findViewById(R.id.busDetailsText);
             seatNumberText = itemView.findViewById(R.id.seatNumberText);
             ticketFareText = itemView.findViewById(R.id.ticketFareText);
-            paymentStatusText = itemView.findViewById(R.id.paymentStatusText);
+            pointsText = itemView.findViewById(R.id.pointsText);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -102,11 +103,10 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             seatNumberText.setText("Seat: " + ticket.getSeatNumber());
             
             // Set status background color based on ticket status
-            GradientDrawable ticketStatusBackground = (GradientDrawable) ticketStatusText.getBackground();
             int ticketStatusColor;
             switch (ticket.getStatus().toLowerCase()) {
                 case "booked":
-                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.green_dark);
+                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.green_light);
                     break;
                 case "cancelled":
                     ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.red);
@@ -115,7 +115,7 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
                     ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.gray);
                     break;
             }
-            ticketStatusBackground.setColor(ticketStatusColor);
+            ticketStatusText.setBackgroundTintList(ColorStateList.valueOf(ticketStatusColor));
             
             // Load payment info asynchronously
             executor.execute(() -> {
@@ -124,27 +124,9 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
                 
                 itemView.post(() -> {
                     if (payment != null) {
-                        ticketFareText.setText(currencyFormat.format(payment.getAmount()));
-                        paymentStatusText.setText(payment.getStatus().toUpperCase());
-                        
-                        int paymentStatusColor;
-                        switch (payment.getStatus().toLowerCase()) {
-                            case "completed":
-                                paymentStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.green_dark);
-                                break;
-                            case "pending":
-                                paymentStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.orange);
-                                break;
-                            default:
-                                paymentStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.gray);
-                        }
-                        GradientDrawable paymentStatusBackground = (GradientDrawable) paymentStatusText.getBackground();
-                        paymentStatusBackground.setColor(paymentStatusColor);
-                    } else {
-                        ticketFareText.setText("N/A");
-                        paymentStatusText.setText("Not Paid");
-                        GradientDrawable paymentStatusBackground = (GradientDrawable) paymentStatusText.getBackground();
-                        paymentStatusBackground.setColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+                        String currencyValue = currencyFormat.format(payment.getPointsUsed());
+                        ticketFareText.setText(currencyValue);
+                        pointsText.setText(String.format("(%d Points)", payment.getPointsUsed()));
                     }
                 });
             });
