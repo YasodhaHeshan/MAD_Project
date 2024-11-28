@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
+            android:layout_marginTop="10dp"
             android:text="Register as Driver"
             android:textColor="@color/white"
             android:textSize="24sp"
@@ -26,15 +27,15 @@
 
         <ImageButton
             android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_width="49dp"
+            android:layout_height="52dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="8dp"
             android:contentDescription="Back"
-            app:tint="@color/white"
+            android:padding="8dp"
+            android:src="@drawable/baseline_arrow_back_24"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/licenseNumberLayout"
