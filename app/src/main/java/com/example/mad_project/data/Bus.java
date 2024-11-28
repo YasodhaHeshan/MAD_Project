@@ -66,10 +66,10 @@ public class Bus {
     @ColumnInfo(name = "arrival_time")
     private long arrivalTime;
 
-    @ColumnInfo(name = "base_fare")
-    private double baseFare;
+    @ColumnInfo(name = "base_points")
+    private int basePoints;
 
-    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime, double baseFare) {
+    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime, int basePoints) {
         this.ownerId = ownerId;
         this.registrationNumber = registrationNumber;
         this.model = model;
@@ -84,7 +84,7 @@ public class Bus {
         this.updatedAt = System.currentTimeMillis();
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
-        this.baseFare = baseFare;
+        this.basePoints = basePoints;
     }
 
     public int getId() {
@@ -225,11 +225,11 @@ public class Bus {
         this.arrivalTime = arrivalTime;
     }
 
-    public double getBaseFare() {
-        return baseFare;
+    public int getBasePoints() {
+        return basePoints;
     }
 
-    public void setBaseFare(double baseFare) {
-        this.baseFare = baseFare;
+    public void setBasePoints(int basePoints) {
+        this.basePoints = basePoints;
     }
 }

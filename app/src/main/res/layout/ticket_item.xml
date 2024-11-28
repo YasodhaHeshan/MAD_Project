@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Header Section -->
+        <!-- Header with Ticket Number and Status -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,15 +29,18 @@
                 android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            <TextView
+            <Button
                 android:id="@+id/ticketStatusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/status_background"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
+                android:layout_gravity="center_vertical"
+                android:textSize="14sp"
                 android:textColor="@color/white"
-                android:textSize="12sp"/>
+                android:enabled="false"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"/>
         </LinearLayout>
 
         <!-- Journey Details -->
@@ -57,98 +60,102 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="From"
-                    android:textColor="@color/gray"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="12sp"/>
 
                 <TextView
                     android:id="@+id/startLocationText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:textColor="@color/white"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp"
+                    android:layout_marginTop="4dp"/>
             </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/baseline_arrow_forward_24"
+                app:tint="?android:textColorSecondary"/>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="end">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="To"
-                    android:textColor="@color/gray"
+                    android:textColor="?android:textColorSecondary"
                     android:textSize="12sp"/>
 
                 <TextView
                     android:id="@+id/endLocationText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:textColor="@color/white"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp"
+                    android:layout_marginTop="4dp"/>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Date and Seat Info -->
+        <!-- Additional Details -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:id="@+id/journeyDateText"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/gray"
+                android:textColor="@color/white"
                 android:textSize="14sp"/>
+
+            <TextView
+                android:id="@+id/busDetailsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?android:textColorSecondary"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
 
             <TextView
                 android:id="@+id/seatNumberText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/green_light"
-                android:textSize="14sp"/>
+                android:textColor="?android:textColorSecondary"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
         </LinearLayout>
 
-        <!-- Bus Details -->
-        <TextView
-            android:id="@+id/busDetailsText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/white"
-            android:textSize="14sp"/>
-
-        <!-- Payment Information -->
+        <!-- Payment Info -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="12dp">
+            android:layout_marginTop="16dp">
 
             <TextView
                 android:id="@+id/ticketFareText"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/green_light"
+                android:textColor="?attr/colorAccent"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 
             <TextView
-                android:id="@+id/paymentStatusText"
+                android:id="@+id/pointsText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/status_background"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="4dp"
-                android:textColor="@color/white"
-                android:textSize="12sp"/>
+                android:textColor="?android:textColorSecondary"
+                android:layout_marginStart="8dp"
+                android:textSize="14sp"/>
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

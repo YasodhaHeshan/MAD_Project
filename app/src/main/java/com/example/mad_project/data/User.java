@@ -36,6 +36,9 @@ public class User {
     @ColumnInfo(name = "image")
     private String image;
 
+    @ColumnInfo(name = "points")
+    private int points;
+
     public User(String name, String email, String phone, String password, String role) {
         this.name = name;
         this.email = email;
@@ -46,6 +49,7 @@ public class User {
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
         this.image = "";
+        this.points = 100000;
     }
 
     public int getId() {
@@ -126,5 +130,13 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

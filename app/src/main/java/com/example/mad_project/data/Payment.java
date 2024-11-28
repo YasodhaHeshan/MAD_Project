@@ -33,17 +33,8 @@ public class Payment {
     @ColumnInfo(name = "ticket_id")
     private int ticketId;
 
-    @ColumnInfo(name = "amount")
-    private double amount;
-
-    @ColumnInfo(name = "payment_method")
-    private String paymentMethod;
-
-    @ColumnInfo(name = "transaction_id")
-    private String transactionId;
-
-    @ColumnInfo(name = "status")
-    private String status;
+    @ColumnInfo(name = "points_used")
+    private int pointsUsed;
 
     @ColumnInfo(name = "is_active")
     private boolean isActive;
@@ -54,15 +45,11 @@ public class Payment {
     @ColumnInfo(name = "updated_at")
     private long updatedAt;
 
-    public Payment(int id, int userId, int ticketId, double amount, String paymentMethod, 
-                   String transactionId, String status) {
+    public Payment(int id, int userId, int ticketId, int pointsUsed) {
         this.id = id;
         this.userId = userId;
         this.ticketId = ticketId;
-        this.amount = amount;
-        this.paymentMethod = paymentMethod;
-        this.transactionId = transactionId;
-        this.status = status;
+        this.pointsUsed = pointsUsed;
         this.isActive = true;
         this.createdAt = System.currentTimeMillis();
         this.updatedAt = System.currentTimeMillis();
@@ -92,36 +79,12 @@ public class Payment {
         this.ticketId = ticketId;
     }
 
-    public double getAmount() {
-        return amount;
+    public int getPointsUsed() {
+        return pointsUsed;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    public String getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
-    public String getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(String transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setPointsUsed(int pointsUsed) {
+        this.pointsUsed = pointsUsed;
     }
 
     public boolean isActive() {

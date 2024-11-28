@@ -7,6 +7,7 @@ import androidx.room.Room;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Payment;
 import com.example.mad_project.data.PaymentDao;
+import com.example.mad_project.data.UserDao;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,51 +20,38 @@ public class PaymentController {
     private final PaymentDao paymentDao;
     private final ExecutorService executorService;
     private static final String TAG = "PaymentController";
+    private final UserDao userDao;
 
     public PaymentController(Context context) {
         db = Room.databaseBuilder(context.getApplicationContext(), 
             AppDatabase.class, "mad_project_db").build();
         paymentDao = db.paymentDao();
         executorService = Executors.newSingleThreadExecutor();
+        userDao = db.userDao();
     }
 
-    public void processPayment(Payment payment, Consumer<Boolean> callback) {
+    public void processPointsPayment(Payment payment, Consumer<Boolean> callback) {
         executorService.execute(() -> {
             try {
-                // Generate unique transaction ID
-                payment.setTransactionId("TXN" + System.currentTimeMillis());
-                
-                // Insert payment record
-                long paymentId = paymentDao.insert(payment);
-                
-                // Simulate payment processing
-                boolean paymentSuccess = processPaymentWithGateway(payment);
-                
-                if (paymentSuccess) {
-                    payment.setStatus("COMPLETED");
-                } else {
-                    payment.setStatus("FAILED");
+                // Check if user has enough points
+                int userPoints = userDao.getUserPoints(payment.getUserId());
+                if (userPoints < payment.getPointsUsed()) {
+                    callback.accept(false);
+                    return;
                 }
+
+                // Deduct points and create payment record
+                db.runInTransaction(() -> {
+                    userDao.deductPoints(payment.getUserId(), payment.getPointsUsed());
+                    paymentDao.insert(payment);
+                });
                 
-                payment.setUpdatedAt(System.currentTimeMillis());
-                paymentDao.update(payment);
-                
-                callback.accept(paymentSuccess);
+                callback.accept(true);
             } catch (Exception e) {
-                Log.e(TAG, "Error processing payment", e);
+                Log.e(TAG, "Error processing points payment", e);
                 callback.accept(false);
             }
         });
-    }
-
-    private boolean processPaymentWithGateway(Payment payment) {
-        // Simulate payment gateway integration
-        try {
-            Thread.sleep(2000); // Simulate network delay
-            return Math.random() > 0.1; // 90% success rate
-        } catch (InterruptedException e) {
-            return false;
-        }
     }
 
     public void getPaymentHistory(int userId, Consumer<List<Payment>> callback) {
@@ -74,18 +62,6 @@ public class PaymentController {
             } catch (Exception e) {
                 Log.e(TAG, "Error getting payment history", e);
                 callback.accept(Collections.emptyList());
-            }
-        });
-    }
-
-    public void verifyPayment(String transactionId, Consumer<Payment> callback) {
-        executorService.execute(() -> {
-            try {
-                Payment payment = paymentDao.getPaymentByTransactionId(transactionId);
-                callback.accept(payment);
-            } catch (Exception e) {
-                Log.e(TAG, "Error verifying payment", e);
-                callback.accept(null);
             }
         });
     }

@@ -4,30 +4,44 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AutoCompleteTextView;
 
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.BusController;
+import com.example.mad_project.controller.UserController;
+import com.example.mad_project.data.AppDatabase;
+import com.example.mad_project.data.Bus;
+import com.example.mad_project.data.Ticket;
+import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class DashboardActivity extends MainActivity {
     private AutoCompleteTextView fromLocationInput;
     private AutoCompleteTextView toLocationInput;
-    private Button searchBusButton;
-    private MaterialToolbar topAppBar;
+    private MaterialButton searchBusButton;
     private BusController busController;
     private ArrayAdapter<String> fromAdapter;
     private ArrayAdapter<String> toAdapter;
+    private Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +55,9 @@ public class DashboardActivity extends MainActivity {
         searchBusButton = findViewById(R.id.searchBusButton);
         setupListeners();
         setupAdapters();
+        setupPointsCard();
+        setupUpcomingRideCard();
+        setupRoleSpecificFab();
     }
 
     private void setupAdapters() {
@@ -131,5 +148,119 @@ public class DashboardActivity extends MainActivity {
         }
         
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setupPointsCard() {
+        View pointsCard = findViewById(R.id.points_card);
+        TextView pointsBalanceText = pointsCard.findViewById(R.id.pointsBalanceText);
+        TextView pointsValueText = pointsCard.findViewById(R.id.pointsValueText);
+        
+        SessionManager sessionManager = new SessionManager(this);
+        int userId = sessionManager.getUserId();
+        
+        UserController userController = new UserController(this);
+        userController.getUserPoints(userId, points -> {
+            runOnUiThread(() -> {
+                pointsBalanceText.setText(String.format("%d", points));
+                pointsValueText.setText(String.format("Value: %s", 
+                    NumberFormat.getCurrencyInstance(new Locale("en", "LK"))
+                        .format(points)));
+            });
+        });
+    }
+
+    private void setupUpcomingRideCard() {
+        SessionManager sessionManager = new SessionManager(this);
+        int userId = sessionManager.getUserId();
+        
+        View upcomingRideCard = findViewById(R.id.upcoming_ride_card);
+        TextView upcomingRouteText = upcomingRideCard.findViewById(R.id.upcomingRouteText);
+        TextView upcomingDateTimeText = upcomingRideCard.findViewById(R.id.upcomingDateTimeText);
+        TextView upcomingSeatText = upcomingRideCard.findViewById(R.id.upcomingSeatText);
+        TextView noUpcomingRideText = upcomingRideCard.findViewById(R.id.noUpcomingRideText);
+        View upcomingRideContent = upcomingRideCard.findViewById(R.id.upcomingRideContent);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d", Locale.getDefault());
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+
+        // Get database instance outside of executor
+        AppDatabase db = AppDatabase.getDatabase(this);
+
+        executor.execute(() -> {
+            try {
+                // Get upcoming tickets for user
+                List<Ticket> tickets = db.ticketDao().getUpcomingTickets(System.currentTimeMillis());
+                List<Ticket> filteredTickets = tickets.stream()
+                    .filter(t -> t.getUserId() == userId && t.getStatus().equalsIgnoreCase("booked"))
+                    .sorted((t1, t2) -> Long.compare(t1.getJourneyDate(), t2.getJourneyDate()))
+                    .collect(Collectors.toList());
+
+                // Get bus details inside the executor thread
+                Bus bus = null;
+                if (!filteredTickets.isEmpty()) {
+                    bus = db.busDao().getBusById(filteredTickets.get(0).getBusId());
+                }
+
+                final Bus finalBus = bus;
+                final List<Ticket> finalTickets = filteredTickets;
+
+                runOnUiThread(() -> {
+                    if (!finalTickets.isEmpty() && finalBus != null) {
+                        Ticket nextTicket = finalTickets.get(0);
+
+                        upcomingRouteText.setText(String.format("%s → %s", 
+                            nextTicket.getSource(), nextTicket.getDestination()));
+                        upcomingDateTimeText.setText(String.format("%s at %s", 
+                            dateFormat.format(new Date(nextTicket.getJourneyDate())),
+                            timeFormat.format(new Date(finalBus.getDepartureTime()))));
+                        upcomingSeatText.setText("Seat: " + nextTicket.getSeatNumber());
+
+                        noUpcomingRideText.setVisibility(View.GONE);
+                        upcomingRideContent.setVisibility(View.VISIBLE);
+
+                        upcomingRideCard.setOnClickListener(v -> {
+                            Intent intent = new Intent(DashboardActivity.this, TicketsActivity.class);
+                            startActivity(intent);
+                        });
+                    } else {
+                        noUpcomingRideText.setVisibility(View.VISIBLE);
+                        upcomingRideContent.setVisibility(View.GONE);
+                    }
+                });
+            } catch (Exception e) {
+                Log.e("DashboardActivity", "Error loading upcoming ride", e);
+                runOnUiThread(() -> {
+                    noUpcomingRideText.setVisibility(View.VISIBLE);
+                    upcomingRideContent.setVisibility(View.GONE);
+                });
+            }
+        });
+    }
+
+    private void setupRoleSpecificFab() {
+        SessionManager sessionManager = new SessionManager(this);
+        String userRole = sessionManager.getRole();
+        
+        FloatingActionButton ownerFab = findViewById(R.id.ownerFab);
+        FloatingActionButton driverFab = findViewById(R.id.driverFab);
+        
+        if ("owner".equals(userRole)) {
+            ownerFab.setVisibility(View.VISIBLE);
+            driverFab.setVisibility(View.GONE);
+            ownerFab.setOnClickListener(v -> {
+                Intent intent = new Intent(this, BusActivity.class);
+                startActivity(intent);
+            });
+        } else if ("driver".equals(userRole)) {
+            driverFab.setVisibility(View.VISIBLE);
+            ownerFab.setVisibility(View.GONE);
+            driverFab.setOnClickListener(v -> {
+                Intent intent = new Intent(this, BusActivity.class);
+                startActivity(intent);
+            });
+        } else {
+            ownerFab.setVisibility(View.GONE);
+            driverFab.setVisibility(View.GONE);
+        }
     }
 }

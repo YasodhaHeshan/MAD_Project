@@ -3,6 +3,8 @@ package com.example.mad_project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -10,6 +12,7 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.mad_project.ui.BusActivity;
 import com.example.mad_project.ui.DashboardActivity;
@@ -80,8 +83,10 @@ public class MainActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         contentFrame = findViewById(R.id.content_frame);
 
+        // Set up top app bar
+        setSupportActionBar(topAppBar);
+
         // Hide navigation by default for child activities
-        if (appBarLayout != null) appBarLayout.setVisibility(View.GONE);
         if (bottomNavigationView != null) bottomNavigationView.setVisibility(View.GONE);
     }
 
@@ -128,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                Toast.makeText(MainActivity.this, error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Error: " + error, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -223,5 +228,27 @@ public class MainActivity extends AppCompatActivity {
                 bottomNavigationView.setSelectedItemId(selectedItem);
             }
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_app_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_reset_db) {
+            initializeDatabase();
+            redirectToLogin();
+            return true;
+        } else if (itemId == R.id.action_logout) {
+            SessionManager sessionManager = new SessionManager(this);
+            sessionManager.logout();
+            redirectToLogin();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

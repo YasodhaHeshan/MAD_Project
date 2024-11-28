@@ -15,6 +15,9 @@ public interface TicketDao {
     @Update
     void update(Ticket ticket);
 
+    @Query("SELECT * FROM tickets WHERE id = :ticketId")
+    Ticket getTicketById(int ticketId);
+
     @Query("SELECT * FROM tickets WHERE is_active = 1")
     List<Ticket> getAllActiveTickets();
 
