@@ -2,6 +2,7 @@ package com.example.mad_project.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +48,9 @@ public class OwnerRegistrationActivity extends MainActivity {
         registrationNumberInput = findViewById(R.id.registrationNumberInput);
         taxNumberInput = findViewById(R.id.taxNumberInput);
         registerButton = findViewById(R.id.registerButton);
+
+        ImageButton backButton = findViewById(R.id.backButton);
+        backButton.setOnClickListener(v -> finish());
     }
 
     private void setupListeners() {
