@@ -1,5 +1,6 @@
 package com.example.mad_project.ui;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +19,10 @@ import com.example.mad_project.data.Ticket;
 import com.example.mad_project.data.TicketDao;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Payment;
+import com.example.mad_project.utils.DialogManager;
+import com.example.mad_project.utils.TicketManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -29,6 +33,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.graphics.drawable.GradientDrawable;
+import android.widget.Toast;
+
 import androidx.core.content.ContextCompat;
 
 public class TicketsActivity extends MainActivity {
@@ -37,6 +43,7 @@ public class TicketsActivity extends MainActivity {
     private AppDatabase db;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
+    private ProgressDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +105,7 @@ public class TicketsActivity extends MainActivity {
         TextView seatNumberText = bottomSheetView.findViewById(R.id.seatNumberText);
         TextView busDetailsText = bottomSheetView.findViewById(R.id.busDetailsText);
         Button swapSeatButton = bottomSheetView.findViewById(R.id.swapSeatButton);
+        Button cancelTicketButton = bottomSheetView.findViewById(R.id.cancelTicketButton);
         
         // Format date
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault());
@@ -135,6 +143,45 @@ public class TicketsActivity extends MainActivity {
             intent.putExtra("ticket_id", ticket.getId());
             startActivity(intent);
             bottomSheet.dismiss();
+        });
+        
+        // Handle cancel ticket button
+        cancelTicketButton.setOnClickListener(v -> {
+            new MaterialAlertDialogBuilder(this)
+                .setTitle("Cancel Ticket")
+                .setMessage("Are you sure you want to cancel this ticket? Your points will be refunded.")
+                .setPositiveButton("Cancel Ticket", (dialog, which) -> {
+                    TicketManager ticketManager = new TicketManager(this);
+                    loadingDialog = DialogManager.showLoadingDialog(this, "Cancelling ticket...");
+                    
+                    ticketManager.cancelTicket(ticket, new TicketManager.CancellationCallback() {
+                        @Override
+                        public void onCancellationSuccess() {
+                            runOnUiThread(() -> {
+                                if (loadingDialog != null) {
+                                    loadingDialog.dismiss();
+                                }
+                                Toast.makeText(TicketsActivity.this,
+                                    "Ticket cancelled successfully", Toast.LENGTH_SHORT).show();
+                                bottomSheet.dismiss();
+                                loadTickets(); // Refresh ticket list
+                            });
+                        }
+
+                        @Override
+                        public void onCancellationFailure(String error) {
+                            runOnUiThread(() -> {
+                                if (loadingDialog != null) {
+                                    loadingDialog.dismiss();
+                                }
+                                Toast.makeText(TicketsActivity.this,
+                                    "Failed to cancel ticket: " + error, Toast.LENGTH_LONG).show();
+                            });
+                        }
+                    });
+                })
+                .setNegativeButton("Keep Ticket", null)
+                .show();
         });
         
         bottomSheet.setContentView(bottomSheetView);
