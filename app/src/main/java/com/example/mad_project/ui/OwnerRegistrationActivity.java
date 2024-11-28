@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.UserController;
 import com.example.mad_project.utils.Validation;
@@ -13,14 +14,14 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class RegisterOwnerActivity extends AppCompatActivity {
+public class OwnerRegistrationActivity extends MainActivity {
     private TextInputLayout companyNameLayout;
     private TextInputLayout registrationNumberLayout;
-    private TextInputLayout taxIdLayout;
+    private TextInputLayout taxNumberLayout;
 
     private TextInputEditText companyNameInput;
     private TextInputEditText registrationNumberInput;
-    private TextInputEditText taxIdInput;
+    private TextInputEditText taxNumberInput;
     private MaterialButton registerButton;
 
     private UserController userController;
@@ -28,7 +29,8 @@ public class RegisterOwnerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_owner);
+        getLayoutInflater().inflate(R.layout.activity_register_owner, contentFrame);
+        setupNavigation(true, false, "Owner Registration");
 
         initializeViews();
         setupListeners();
@@ -39,11 +41,11 @@ public class RegisterOwnerActivity extends AppCompatActivity {
     private void initializeViews() {
         companyNameLayout = findViewById(R.id.companyNameLayout);
         registrationNumberLayout = findViewById(R.id.registrationNumberLayout);
-        taxIdLayout = findViewById(R.id.taxIdLayout);
+        taxNumberLayout = findViewById(R.id.taxNumberLayout);
 
         companyNameInput = findViewById(R.id.companyNameInput);
         registrationNumberInput = findViewById(R.id.registrationNumberInput);
-        taxIdInput = findViewById(R.id.taxIdInput);
+        taxNumberInput = findViewById(R.id.taxNumberInput);
         registerButton = findViewById(R.id.registerButton);
     }
 
@@ -54,12 +56,12 @@ public class RegisterOwnerActivity extends AppCompatActivity {
     private void attemptRegistration() {
         String companyName = companyNameInput.getText().toString().trim();
         String registrationNumber = registrationNumberInput.getText().toString().trim();
-        String taxId = taxIdInput.getText().toString().trim();
+        String taxId = taxNumberInput.getText().toString().trim();
 
         // Reset errors
         companyNameLayout.setError(null);
         registrationNumberLayout.setError(null);
-        taxIdLayout.setError(null);
+        taxNumberLayout.setError(null);
 
         // Validate inputs
         if (companyName.isEmpty()) {
@@ -67,13 +69,13 @@ public class RegisterOwnerActivity extends AppCompatActivity {
             return;
         }
 
-        if (!Validation.isValidCompanyRegistration(registrationNumber)) {
-            registrationNumberLayout.setError("Please enter a valid registration number (e.g., AB12345)");
+        if (!Validation.isValidBusinessRegistration(registrationNumber)) {
+            registrationNumberLayout.setError("Please enter a valid registration number");
             return;
         }
 
         if (!Validation.isValidTaxId(taxId)) {
-            taxIdLayout.setError("Please enter a valid tax ID (e.g., ABC1234567)");
+            taxNumberLayout.setError("Please enter a valid tax ID");
             return;
         }
 
@@ -88,11 +90,12 @@ public class RegisterOwnerActivity extends AppCompatActivity {
                 registerButton.setText("Register");
 
                 if (success) {
-                    Toast.makeText(this, "Successfully registered as a bus owner", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Successfully registered as an owner", 
+                        Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(this, LoginActivity.class));
                     finishAffinity();
                 } else {
-                    Toast.makeText(this, "Registration failed. Company registration number may already be registered.",
+                    Toast.makeText(this, "Registration failed. Business details may already be registered.", 
                         Toast.LENGTH_LONG).show();
                 }
             })
