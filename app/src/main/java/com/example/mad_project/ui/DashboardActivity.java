@@ -57,7 +57,7 @@ public class DashboardActivity extends MainActivity {
         setupAdapters();
         setupPointsCard();
         setupUpcomingRideCard();
-        setupRoleSpecificFab();
+        setupRoleSpecificButton();
     }
 
     private void setupAdapters() {
@@ -237,30 +237,28 @@ public class DashboardActivity extends MainActivity {
         });
     }
 
-    private void setupRoleSpecificFab() {
+    private void setupRoleSpecificButton() {
         SessionManager sessionManager = new SessionManager(this);
         String userRole = sessionManager.getRole();
-        
-        FloatingActionButton ownerFab = findViewById(R.id.ownerFab);
-        FloatingActionButton driverFab = findViewById(R.id.driverFab);
-        
-        if ("owner".equals(userRole)) {
-            ownerFab.setVisibility(View.VISIBLE);
-            driverFab.setVisibility(View.GONE);
-            ownerFab.setOnClickListener(v -> {
-                Intent intent = new Intent(this, BusActivity.class);
+
+        MaterialButton roleSpecificButton = findViewById(R.id.roleSpecificButton);
+
+        if (userRole.equalsIgnoreCase("owner")) {
+            roleSpecificButton.setText("Manage Buses");
+            roleSpecificButton.setVisibility(View.VISIBLE);
+            roleSpecificButton.setOnClickListener(v -> {
+                Intent intent = new Intent(DashboardActivity.this, BusActivity.class);
                 startActivity(intent);
             });
-        } else if ("driver".equals(userRole)) {
-            driverFab.setVisibility(View.VISIBLE);
-            ownerFab.setVisibility(View.GONE);
-            driverFab.setOnClickListener(v -> {
-                Intent intent = new Intent(this, BusActivity.class);
+        } else if (userRole.equalsIgnoreCase("driver")) {
+            roleSpecificButton.setText("Bus Status");
+            roleSpecificButton.setVisibility(View.VISIBLE);
+            roleSpecificButton.setOnClickListener(v -> {
+                Intent intent = new Intent(DashboardActivity.this, BusActivity.class);
                 startActivity(intent);
             });
         } else {
-            ownerFab.setVisibility(View.GONE);
-            driverFab.setVisibility(View.GONE);
+            roleSpecificButton.setVisibility(View.GONE);
         }
     }
 }
