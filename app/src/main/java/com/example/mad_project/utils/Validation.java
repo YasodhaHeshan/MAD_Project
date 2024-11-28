@@ -74,7 +74,7 @@ public class Validation {
         return licenseNumber != null && licenseNumber.matches("[A-Z]\\d{7}");
     }
 
-    public static boolean isValidCompanyRegistration(String regNumber) {
+    public static boolean isValidBusinessRegistration(String regNumber) {
         return regNumber != null && regNumber.matches("[A-Z]{2}\\d{5}");
     }
 

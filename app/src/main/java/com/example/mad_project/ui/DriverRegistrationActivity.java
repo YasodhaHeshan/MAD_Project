@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.UserController;
 import com.example.mad_project.utils.Validation;
@@ -18,7 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class RegisterDriverActivity extends AppCompatActivity {
+public class DriverRegistrationActivity extends MainActivity {
     private TextInputLayout licenseNumberLayout;
     private TextInputLayout experienceLayout;
     private TextInputLayout expiryDateLayout;
@@ -35,7 +36,8 @@ public class RegisterDriverActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_driver);
+        getLayoutInflater().inflate(R.layout.activity_register_driver, contentFrame);
+        setupNavigation(true, false, "Driver Registration");
 
         initializeViews();
         setupDatePicker();

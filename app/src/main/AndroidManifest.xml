@@ -41,8 +41,8 @@
         <activity android:name=".ui.TicketsActivity" android:exported="true" />
         <activity android:name=".ui.BusActivity" android:exported="true" />
         <activity android:name=".ui.EditProfileActivity" android:exported="true"/>
-        <activity android:name=".ui.RegisterDriverActivity" android:exported="true" />
-        <activity android:name=".ui.RegisterOwnerActivity" android:exported="true" />
+        <activity android:name=".ui.DriverRegistrationActivity" android:exported="true" />
+        <activity android:name=".ui.OwnerRegistrationActivity" android:exported="true" />
         <activity android:name=".ui.RegisterActivity" android:exported="true" />
         <activity android:name=".ui.SeatSelectionActivity" android:exported="true" />
 

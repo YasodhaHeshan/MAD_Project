@@ -91,12 +91,12 @@ public class ProfileActivity extends MainActivity {
         });
 
         registerAsDriverButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, RegisterDriverActivity.class);
+            Intent intent = new Intent(ProfileActivity.this, DriverRegistrationActivity.class);
             startActivity(intent);
         });
 
         registerAsOwnerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ProfileActivity.this, RegisterOwnerActivity.class);
+            Intent intent = new Intent(ProfileActivity.this, OwnerRegistrationActivity.class);
             startActivity(intent);
         });
 
