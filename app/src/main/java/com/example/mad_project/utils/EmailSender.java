@@ -36,7 +36,7 @@ public class EmailSender {
                 message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
                 message.setSubject("Bus Ticket Confirmation - #" + ticketId);
                 
-                String htmlContent = buildEmailTemplate(userName, ticketId, busNumber, 
+                String htmlContent = buildConfirmationEmailTemplate(userName, ticketId, busNumber,
                     departure, destination, date, time, seatNumber);
                 message.setContent(htmlContent, "text/html; charset=utf-8");
 
@@ -48,9 +48,9 @@ public class EmailSender {
         }).start();
     }
 
-    private static String buildEmailTemplate(String userName, int ticketId, 
-            String busNumber, String departure, String destination, 
-            String date, String time, String seatNumber) {
+    private static String buildConfirmationEmailTemplate(String userName, int ticketId,
+                                                         String busNumber, String departure, String destination,
+                                                         String date, String time, String seatNumber) {
         return String.format("""
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                 <h1 style="color: #1976D2;">Bus Ticket Confirmation</h1>
@@ -70,5 +70,60 @@ public class EmailSender {
             </div>
             """,
             userName, ticketId, busNumber, departure, destination, date, time, seatNumber);
+    }
+
+    public static void sendTicketCancellation(String email, String name, int id, String registrationNumber, String source, String destination, String date) {
+        new Thread(() -> {
+            try {
+                Properties props = new Properties();
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.starttls.enable", "true");
+                props.put("mail.smtp.host", EmailConfig.HOST);
+                props.put("mail.smtp.port", EmailConfig.PORT);
+
+                Session session = Session.getInstance(props, new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                            EmailConfig.USERNAME,
+                            EmailConfig.PASSWORD
+                        );
+                    }
+                });
+
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(EmailConfig.FROM_EMAIL, EmailConfig.FROM_NAME));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+                message.setSubject("Bus Ticket Cancellation - #" + id);
+
+                String htmlContent = buildCancellationEmailTemplate(name, id, registrationNumber, source, destination, date);
+                message.setContent(htmlContent, "text/html; charset=utf-8");
+
+                Transport.send(message);
+                Log.d(TAG, "Email sent successfully to " + email);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to send email", e);
+            }
+        }).start();
+    }
+
+    public static String buildCancellationEmailTemplate(String name, int id, String registrationNumber, String source, String destination, String date) {
+        return String.format("""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                <h1 style="color: #1976D2;">Bus Ticket Cancellation</h1>
+                <p>Dear %s,</p>
+                <p>Your bus ticket has been cancelled successfully. Here are your ticket details:</p>
+                <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <p><strong>Ticket ID:</strong> %d</p>
+                    <p><strong>Bus Registration Number:</strong> %s</p>
+                    <p><strong>From:</strong> %s</p>
+                    <p><strong>To:</strong> %s</p>
+                    <p><strong>Date:</strong> %s</p>
+                </div>
+                <p>Thank you for choosing our service!</p>
+                <p>Best regards,<br>Bus Book Team</p>
+            </div>
+            """,
+            name, id, registrationNumber, source, destination, date);
     }
 }

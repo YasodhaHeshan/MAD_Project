@@ -106,13 +106,31 @@
         </LinearLayout>
 
         <!-- Action Button -->
-        <Button
-            android:id="@+id/swapSeatButton"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Swap Seat"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="?attr/colorPrimary"
-            android:textColor="@color/white"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/swapSeatButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Swap Seat"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="?attr/colorPrimary"
+                android:textColor="@color/white"/>
+
+            <Button
+                android:id="@+id/cancelTicketButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cancel Ticket"
+                android:layout_marginStart="8dp"
+                android:backgroundTint="@color/red"
+                android:textColor="@color/white"/>
+        </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView> 
