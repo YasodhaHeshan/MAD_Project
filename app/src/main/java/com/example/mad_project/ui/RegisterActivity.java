@@ -39,7 +39,7 @@ public class RegisterActivity extends MainActivity {
 
         initializeViews();
         setupClickListeners();
-        setupNavigation(true, false, "Register");
+        setupNavigation(false, false, "Register");
 
         userController = new UserController(this);
     }
