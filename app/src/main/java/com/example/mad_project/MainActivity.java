@@ -28,16 +28,18 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
     protected FrameLayout contentFrame;
-    protected DrawerLayout drawerLayout;
     protected BottomNavigationView bottomNav;
     protected SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
         
         sessionManager = new SessionManager(this);
+        
+        contentFrame = findViewById(R.id.content_frame);
+        bottomNav = findViewById(R.id.bottomNavigationView);
         
         // Show welcome screen on first launch
         if (sessionManager.isFirstLaunch()) {
@@ -46,12 +48,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         
-        setContentView(R.layout.activity_main);
-        contentFrame = findViewById(R.id.content_frame);
-        bottomNav = findViewById(R.id.bottomNavigationView);
-
         // Check login status and redirect if needed
-        if (!(this instanceof LoginActivity) && !sessionManager.isLoggedIn()) {
+        if (!(this instanceof LoginActivity || this instanceof RegisterActivity) 
+            && !sessionManager.isLoggedIn()) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -118,23 +117,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return false;
             });
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout != null && drawerLayout.isOpen()) {
-            drawerLayout.close();
-        } else if (this instanceof DashboardActivity) {
-            // Exit app from dashboard
-            finishAffinity();
-        } else if (this instanceof LoginActivity || this instanceof RegisterActivity) {
-            // Allow normal back behavior for login/register screens
-            super.onBackPressed();
-        } else {
-            // For all other screens, go to dashboard instead of previous screen
-            startActivity(new Intent(this, DashboardActivity.class));
-            finish();
         }
     }
 
