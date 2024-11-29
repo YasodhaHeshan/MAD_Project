@@ -25,7 +25,7 @@ public class LoginActivity extends MainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        getLayoutInflater().inflate(R.layout.activity_login, contentFrame);
         
         if (sessionManager.isLoggedIn()) {
             startActivity(new Intent(this, DashboardActivity.class));
@@ -36,6 +36,7 @@ public class LoginActivity extends MainActivity {
         initializeViews();
         userController = new UserController(this);
         setupListeners();
+        setupNavigation(true, false, "Login");
     }
 
     private void initializeViews() {
@@ -49,10 +50,11 @@ public class LoginActivity extends MainActivity {
 
     private void setupListeners() {
         loginButton.setOnClickListener(v -> attemptLogin());
-
+        
         registerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, RegisterActivity.class);
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(intent);
+            finish();
         });
     }
 
