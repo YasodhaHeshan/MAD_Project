@@ -26,4 +26,7 @@ public interface BusDriverDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM bus_drivers WHERE license_number = :licenseNumber)")
     boolean isLicenseExists(String licenseNumber);
+
+    @Query("SELECT * FROM bus_drivers WHERE is_active = 1")
+    List<BusDriver> getAllActiveDrivers();
 }

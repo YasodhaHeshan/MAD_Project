@@ -3,4 +3,11 @@
     <string name="MAPS_API_KEY">AIzaSyAxdiBmFJTWxBqgR-IhvIN4cfB0CB5_3OQ</string>
     <string name="close_text">Close</string>
     <string name="confirm_booking">Confirm Booking</string>
+
+    <string-array name="locations">
+        <item>Location 1</item>
+        <item>Location 2</item>
+        <item>Location 3</item>
+        <!-- Add more locations as needed -->
+    </string-array>
 </resources>
