@@ -43,13 +43,13 @@ public class RebuildDatabase {
         return mainHandler;
     }
 
-    public interface DatabaseCallback {
+    public interface RebuildCallback {
         void onSuccess(String message);
         void onError(String error);
     }
 
-    public static void clearAndRebuildDatabase(Context context, boolean showLogs, DatabaseCallback callback) {
-        executor.execute(() -> {
+    public static void clearAndRebuildDatabase(Context context, boolean async, RebuildCallback callback) {
+        Runnable rebuildTask = () -> {
             try {
                 // Close existing database connection
                 AppDatabase.closeDatabase();
@@ -78,7 +78,13 @@ public class RebuildDatabase {
                         callback.onError(e.getMessage()));
                 }
             }
-        });
+        };
+
+        if (async) {
+            executor.execute(rebuildTask);
+        } else {
+            rebuildTask.run();
+        }
     }
 
     private static void insertSampleData(AppDatabase db) {

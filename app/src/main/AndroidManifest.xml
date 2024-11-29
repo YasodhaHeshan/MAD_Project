@@ -45,6 +45,7 @@
         <activity android:name=".ui.OwnerRegistrationActivity" android:exported="true" />
         <activity android:name=".ui.RegisterActivity" android:exported="true" />
         <activity android:name=".ui.SeatSelectionActivity" android:exported="true" />
+        <activity android:name=".ui.WelcomeActivity" android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"

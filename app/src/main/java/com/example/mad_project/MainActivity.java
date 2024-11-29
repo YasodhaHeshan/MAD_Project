@@ -3,7 +3,6 @@ package com.example.mad_project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,7 +11,7 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AlertDialog;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.mad_project.ui.BusActivity;
 import com.example.mad_project.ui.DashboardActivity;
@@ -20,235 +19,134 @@ import com.example.mad_project.ui.LoginActivity;
 import com.example.mad_project.ui.ProfileActivity;
 import com.example.mad_project.ui.RegisterActivity;
 import com.example.mad_project.ui.TicketsActivity;
-import com.example.mad_project.utils.RebuildDatabase;
+import com.example.mad_project.ui.WelcomeActivity;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
-    protected SessionManager sessionManager;
-    protected MaterialToolbar topAppBar;
-    protected BottomNavigationView bottomNavigationView;
-    protected AppBarLayout appBarLayout;
     protected FrameLayout contentFrame;
+    protected DrawerLayout drawerLayout;
+    protected BottomNavigationView bottomNav;
+    protected SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        // Initialize SessionManager
+        
         sessionManager = new SessionManager(this);
         
-        // Register back press callback
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                // If this is a main screen, finish the activity
-                if (MainActivity.this instanceof DashboardActivity ||
-                    MainActivity.this instanceof TicketsActivity ||
-                    MainActivity.this instanceof BusActivity ||
-                    MainActivity.this instanceof ProfileActivity) {
-                    finish();
-                } else {
-                    // Remove this callback and let the system handle back
-                    this.remove();
-                    getOnBackPressedDispatcher().onBackPressed();
-                }
-            }
-        });
+        // Show welcome screen on first launch
+        if (sessionManager.isFirstLaunch()) {
+            startActivity(new Intent(this, WelcomeActivity.class));
+            finish();
+            return;
+        }
+        
+        setContentView(R.layout.activity_main);
+        contentFrame = findViewById(R.id.content_frame);
+        bottomNav = findViewById(R.id.bottomNavigationView);
 
-        // Only handle welcome screen logic if we're actually in MainActivity
+        // Check login status and redirect if needed
+        if (!(this instanceof LoginActivity) && !sessionManager.isLoggedIn()) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+        
+        // Only redirect to Dashboard if this is the main activity itself
         if (getClass() == MainActivity.class) {
-            if (!sessionManager.isLoggedIn()) {
-                Log.d("MainActivity", "Setting welcome screen layout");
-                setContentView(R.layout.activity_main);
-                setupWelcomeScreen();
-                return;
-            }
-            setContentView(R.layout.activity_base);
-            setupBaseViews();
-            redirectToDashboard();
-        } else {
-            // For child activities, just set up the base layout
-            setContentView(R.layout.activity_base);
-            setupBaseViews();
+            startActivity(new Intent(this, DashboardActivity.class));
+            finish();
         }
     }
 
-    protected void setupBaseViews() {
-        // Initialize views
-        appBarLayout = findViewById(R.id.appBarLayout);
-        topAppBar = findViewById(R.id.topAppBar);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        contentFrame = findViewById(R.id.content_frame);
+    protected void setupNavigation(boolean showBackButton, boolean showBottomNav, String title) {
+        MaterialToolbar topAppBar = findViewById(R.id.topAppBar);
+        if (topAppBar != null) {
+            topAppBar.setTitle(title);
+            setSupportActionBar(topAppBar);
+            
+            if (showBackButton) {
+                topAppBar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
+                topAppBar.setNavigationOnClickListener(v -> onBackPressed());
+            }
+        }
 
-        // Set up top app bar
-        setSupportActionBar(topAppBar);
-
-        // Hide navigation by default for child activities
-        if (bottomNavigationView != null) bottomNavigationView.setVisibility(View.GONE);
+        if (bottomNav != null) {
+            bottomNav.setVisibility(showBottomNav ? View.VISIBLE : View.GONE);
+            if (showBottomNav) {
+                setupBottomNavigation();
+            }
+        }
     }
 
-    protected void redirectToDashboard() {
-        // If logged in, redirect to Dashboard
-        Intent intent = new Intent(this, DashboardActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
-        finish();
+    protected void setupBottomNavigation() {
+        if (bottomNav != null) {
+            // Set the current item based on activity first
+            if (this instanceof DashboardActivity) {
+                bottomNav.setSelectedItemId(R.id.navigation_home);
+            } else if (this instanceof TicketsActivity) {
+                bottomNav.setSelectedItemId(R.id.navigation_tickets);
+            } else if (this instanceof BusActivity) {
+                bottomNav.setSelectedItemId(R.id.navigation_buses);
+            } else if (this instanceof ProfileActivity) {
+                bottomNav.setSelectedItemId(R.id.navigation_profile);
+            }
+
+            bottomNav.setOnItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                Intent intent = null;
+
+                if (itemId == R.id.navigation_home && !(this instanceof DashboardActivity)) {
+                    intent = new Intent(this, DashboardActivity.class);
+                } else if (itemId == R.id.navigation_tickets && !(this instanceof TicketsActivity)) {
+                    intent = new Intent(this, TicketsActivity.class);
+                } else if (itemId == R.id.navigation_buses && !(this instanceof BusActivity)) {
+                    intent = new Intent(this, BusActivity.class);
+                } else if (itemId == R.id.navigation_profile && !(this instanceof ProfileActivity)) {
+                    intent = new Intent(this, ProfileActivity.class);
+                }
+
+                if (intent != null) {
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    return true;
+                }
+                return false;
+            });
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout != null && drawerLayout.isOpen()) {
+            drawerLayout.close();
+        } else if (this instanceof DashboardActivity) {
+            // Exit app from dashboard
+            finishAffinity();
+        } else if (this instanceof LoginActivity || this instanceof RegisterActivity) {
+            // Allow normal back behavior for login/register screens
+            super.onBackPressed();
+        } else {
+            // For all other screens, go to dashboard instead of previous screen
+            startActivity(new Intent(this, DashboardActivity.class));
+            finish();
+        }
     }
 
     protected void redirectToLogin() {
-        // If not logged in, redirect to Login
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        SessionManager sessionManager = new SessionManager(this);
+        sessionManager.logout();
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 
-    private void setupWelcomeScreen() {
-        // Initialize database in background
-        initializeDatabase();
-
-        View loginButton = findViewById(R.id.btnLogin);
-        View registerButton = findViewById(R.id.btnRegister);
-
-        loginButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-        });
-
-        registerButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-            startActivity(intent);
-        });
-    }
-
-    private void initializeDatabase() {
-        RebuildDatabase.clearAndRebuildDatabase(this, true, new RebuildDatabase.DatabaseCallback() {
-            @Override
-            public void onSuccess(String message) {
-                Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onError(String error) {
-                Toast.makeText(MainActivity.this, "Error: " + error, Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
-    protected void setupNavigation(boolean showToolbar, boolean showBottomNav, String title) {
-        if (showToolbar && topAppBar != null && appBarLayout != null) {
-            appBarLayout.setVisibility(View.VISIBLE);
-                topAppBar.setTitle(title);
-                
-                // Show back button if not on main screens
-                if (!(this instanceof DashboardActivity) && 
-                    !(this instanceof TicketsActivity) && 
-                    !(this instanceof BusActivity) && 
-                    !(this instanceof ProfileActivity)) {
-                    topAppBar.setNavigationIcon(R.drawable.baseline_arrow_back_24);
-                    topAppBar.setNavigationOnClickListener(v -> 
-                        getOnBackPressedDispatcher().onBackPressed()
-                    );
-                } else {
-                    topAppBar.setNavigationIcon(null);
-                }
-            }
-            
-        if (bottomNavigationView != null) {
-            bottomNavigationView.setVisibility(showBottomNav ? View.VISIBLE : View.GONE);
-            if (showBottomNav) {
-                setupBottomNavigationListener();
-            }
-        }
-    }
-
-    private void setupBottomNavigationListener() {
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            Intent intent = null;
-            
-            // Don't create new activity if we're already on it
-            if (this.getClass().equals(getDestinationActivity(item.getItemId()))) {
-                return true;
-            }
-
-            if (item.getItemId() == R.id.navigation_home) {
-                intent = new Intent(this, DashboardActivity.class);
-            } else if (item.getItemId() == R.id.navigation_tickets) {
-                intent = new Intent(this, TicketsActivity.class);
-            } else if (item.getItemId() == R.id.navigation_buses) {
-                intent = new Intent(this, BusActivity.class);
-            } else if (item.getItemId() == R.id.navigation_profile) {
-                intent = new Intent(this, ProfileActivity.class);
-            }
-
-            if (intent != null) {
-                // Clear back stack when switching main tabs
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private Class<?> getDestinationActivity(int itemId) {
-        if (itemId == R.id.navigation_home) {
-            return DashboardActivity.class;
-        } else if (itemId == R.id.navigation_tickets) {
-            return TicketsActivity.class;
-        } else if (itemId == R.id.navigation_buses) {
-            return BusActivity.class;
-        } else if (itemId == R.id.navigation_profile) {
-            return ProfileActivity.class;
-        }
-        return null;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // Update bottom navigation selection based on current activity
-        if (bottomNavigationView != null) {
-            int selectedItem;
-            if (this instanceof DashboardActivity) {
-                selectedItem = R.id.navigation_home;
-            } else if (this instanceof TicketsActivity) {
-                selectedItem = R.id.navigation_tickets;
-            } else if (this instanceof BusActivity) {
-                selectedItem = R.id.navigation_buses;
-            } else if (this instanceof ProfileActivity) {
-                selectedItem = R.id.navigation_profile;
-            } else {
-                selectedItem = -1;
-            }
-            if (selectedItem != -1) {
-                bottomNavigationView.setSelectedItemId(selectedItem);
-            }
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_app_bar, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int itemId = item.getItemId();
-        if (itemId == R.id.action_reset_db) {
-            initializeDatabase();
-            redirectToLogin();
-            return true;
-        } else if (itemId == R.id.action_logout) {
-            SessionManager sessionManager = new SessionManager(this);
-            sessionManager.logout();
-            redirectToLogin();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+    protected void redirectToDashboard() {
+        startActivity(new Intent(this, DashboardActivity.class));
+        finish();
     }
 }
