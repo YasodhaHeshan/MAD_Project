@@ -52,4 +52,13 @@ public class SessionManager {
         editor.clear();
         editor.apply();
     }
+
+    public boolean isFirstLaunch() {
+        return sharedPreferences.getBoolean("is_first_launch", true);
+    }
+
+    public void setFirstLaunchComplete() {
+        editor.putBoolean("is_first_launch", false);
+        editor.apply();
+    }
 }

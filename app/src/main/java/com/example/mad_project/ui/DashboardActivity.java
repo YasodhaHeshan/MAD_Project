@@ -21,9 +21,7 @@ import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Ticket;
 import com.example.mad_project.utils.SessionManager;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -47,7 +45,7 @@ public class DashboardActivity extends MainActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_dashboard, contentFrame);
-        setupNavigation(true, true, "Dashboard");
+        setupNavigation(false, true, "Dashboard");
 
         busController = new BusController(this);
         fromLocationInput = findViewById(R.id.fromLocationInput);
@@ -131,7 +129,7 @@ public class DashboardActivity extends MainActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_app_bar, menu);
+        getMenuInflater().inflate(R.menu.top_menu, menu);
         return true;
     }
 

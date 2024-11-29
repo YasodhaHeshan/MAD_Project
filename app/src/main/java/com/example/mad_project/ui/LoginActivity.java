@@ -4,8 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.UserController;
 import com.example.mad_project.utils.Validation;
@@ -13,7 +12,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends MainActivity {
 
     private TextInputLayout emailLayout;
     private TextInputLayout passwordLayout;
@@ -27,13 +26,15 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        
+        if (sessionManager.isLoggedIn()) {
+            startActivity(new Intent(this, DashboardActivity.class));
+            finish();
+            return;
+        }
 
         initializeViews();
-
         userController = new UserController(this);
-
-        //TODO: check if user is already logged in
-
         setupListeners();
     }
 
