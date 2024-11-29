@@ -2,6 +2,7 @@ package com.example.mad_project.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mad_project.R;
@@ -20,20 +21,24 @@ public class WelcomeActivity extends AppCompatActivity {
         sessionManager = new SessionManager(this);
         MaterialButton getStartedButton = findViewById(R.id.getStartedButton);
 
+        getStartedButton.setOnClickListener(v -> {
+            startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+            finish();
+        });
+
         RebuildDatabase.clearAndRebuildDatabase(this, true, new RebuildDatabase.RebuildCallback() {
             @Override
             public void onSuccess(String message) {
                 sessionManager.setFirstLaunchComplete();
-                getStartedButton.setOnClickListener(v -> {
-                    startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
-                    finish();
-                });
             }
 
             @Override
             public void onError(String error) {
-                getStartedButton.setOnClickListener(v -> {
-                    recreate();
+                // Handle error if database rebuild fails
+                runOnUiThread(() -> {
+                    Toast.makeText(WelcomeActivity.this, 
+                        "Error initializing app: " + error, 
+                        Toast.LENGTH_LONG).show();
                 });
             }
         });

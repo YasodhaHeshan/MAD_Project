@@ -24,6 +24,7 @@ import com.example.mad_project.utils.TicketManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -57,6 +58,12 @@ public class TicketsActivity extends MainActivity {
         loadTickets();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadTickets(); // Refresh the tickets list
+    }
+
     private void initializeViews() {
         ticketsRecyclerView = findViewById(R.id.ticketsRecyclerView);
         emptyStateText = findViewById(R.id.emptyStateText);
@@ -66,15 +73,14 @@ public class TicketsActivity extends MainActivity {
 
     private void loadTickets() {
         executor.execute(() -> {
-            TicketDao ticketDao = db.ticketDao();
-            PaymentDao paymentDao = db.paymentDao();
-            List<Ticket> tickets = ticketDao.getAllTickets();
-
+            int currentUserId = sessionManager.getUserId();
+            List<Ticket> tickets = db.ticketDao().getTicketsByUserId(currentUserId);
+            
             runOnUiThread(() -> {
                 if (tickets.isEmpty()) {
                     showEmptyState();
                 } else {
-                    displayTickets(tickets, paymentDao);
+                    displayTickets(tickets);
                 }
             });
         });
@@ -85,11 +91,12 @@ public class TicketsActivity extends MainActivity {
         emptyStateText.setVisibility(View.VISIBLE);
     }
 
-    private void displayTickets(List<Ticket> tickets, PaymentDao paymentDao) {
+    private void displayTickets(List<Ticket> tickets) {
         ticketsRecyclerView.setVisibility(View.VISIBLE);
         emptyStateText.setVisibility(View.GONE);
         
-        TicketAdapter adapter = new TicketAdapter(tickets, this::showTicketDetails, paymentDao);
+        // Update adapter to show ticket status
+        TicketAdapter adapter = new TicketAdapter(tickets, this::showTicketDetails, db.paymentDao());
         ticketsRecyclerView.setAdapter(adapter);
     }
 
@@ -117,6 +124,19 @@ public class TicketsActivity extends MainActivity {
         endLocationText.setText(ticket.getDestination());
         journeyDateText.setText(formattedDate);
         seatNumberText.setText("Seat: " + ticket.getSeatNumber());
+        
+        // Show/hide action buttons based on ticket status
+        boolean isBooked = ticket.getStatus().equalsIgnoreCase("booked");
+        swapSeatButton.setVisibility(isBooked ? View.VISIBLE : View.GONE);
+        cancelTicketButton.setVisibility(isBooked ? View.VISIBLE : View.GONE);
+        
+        // Add status indicator
+        TextView statusText = bottomSheetView.findViewById(R.id.statusText);
+        statusText.setText("Status: " + ticket.getStatus().toUpperCase());
+        int statusColor = ticket.getStatus().equalsIgnoreCase("booked") ? 
+            ContextCompat.getColor(this, R.color.green_light) : 
+            ContextCompat.getColor(this, R.color.red);
+        statusText.setTextColor(statusColor);
         
         // Load bus details and payment info asynchronously
         executor.execute(() -> {

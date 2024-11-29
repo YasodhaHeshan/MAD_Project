@@ -10,7 +10,7 @@ public class SessionManager {
     private static final String KEY_USER_ID = "user_id";
     private static final String KEY_ROLE = "role";
     private static final String KEY_IMAGE = "image";
-
+    private static final String KEY_NAME = "name";
     private final SharedPreferences sharedPreferences;
     private final SharedPreferences.Editor editor;
 
@@ -19,13 +19,18 @@ public class SessionManager {
         editor = sharedPreferences.edit();
     }
 
-    public void setLogin(boolean isLoggedIn, String email, int userId, String role, String image) {
+    public void setLogin(boolean isLoggedIn, String name, String email, int userId, String role, String image) {
         editor.putBoolean(KEY_IS_LOGGED_IN, isLoggedIn);
+        editor.putString(KEY_NAME, name);
         editor.putString(KEY_EMAIL, email);
         editor.putInt(KEY_USER_ID, userId);
         editor.putString(KEY_ROLE, role);
         editor.putString(KEY_IMAGE, image);
         editor.apply();
+    }
+
+    public String getUsername() {
+        return sharedPreferences.getString(KEY_NAME, null);
     }
 
     public boolean isLoggedIn() {
@@ -50,6 +55,16 @@ public class SessionManager {
 
     public void logout() {
         editor.clear();
+        editor.apply();
+    }
+
+    public void logoutKeepData() {
+        editor.remove(KEY_IS_LOGGED_IN);
+        editor.remove(KEY_USER_ID);
+        editor.remove(KEY_NAME);
+        editor.remove(KEY_EMAIL);
+        editor.remove(KEY_ROLE);
+        editor.remove(KEY_IMAGE);
         editor.apply();
     }
 

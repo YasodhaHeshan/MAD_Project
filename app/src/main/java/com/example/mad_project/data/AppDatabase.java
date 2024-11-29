@@ -6,10 +6,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.example.mad_project.ui.TicketsActivity;
 import com.example.mad_project.utils.Converters;
 
-@Database(entities = {User.class, BusOwner.class, BusDriver.class, Bus.class, Payment.class, Ticket.class}, version = 1, exportSchema = false)
+@Database(entities = {User.class, BusOwner.class, BusDriver.class, Bus.class, Payment.class, Ticket.class, Notification.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
@@ -25,6 +24,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract TicketDao ticketDao();
 
     public abstract PaymentDao paymentDao();
+
+    public abstract NotificationDao notificationDao();
 
     public static AppDatabase getDatabase(Context context) {
         if (INSTANCE == null) {

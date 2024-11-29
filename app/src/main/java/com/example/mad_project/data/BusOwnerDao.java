@@ -29,4 +29,7 @@ public interface BusOwnerDao {
 
     @Query("SELECT EXISTS(SELECT 1 FROM bus_owners WHERE tax_id = :taxId)")
     boolean isTaxIdExists(String taxId);
+
+    @Query("SELECT * FROM bus_owners WHERE id = :ownerId")
+    BusOwner getBusOwnerById(int ownerId);
 }

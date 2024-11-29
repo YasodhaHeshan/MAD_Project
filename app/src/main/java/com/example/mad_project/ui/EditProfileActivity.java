@@ -164,7 +164,7 @@ public class EditProfileActivity extends MainActivity {
                 userController.update(user, success -> runOnUiThread(() -> {
                     showLoadingState(false);
                     if (success) {
-                        sessionManager.setLogin(true, user.getEmail(), user.getId(), 
+                        sessionManager.setLogin(true, user.getName(), user.getEmail(), user.getId(),
                             user.getRole(), savedImagePath);
                         ImageUtils.loadProfileImage(this, profileImage, savedImagePath);
                         Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show();

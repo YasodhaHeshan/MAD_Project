@@ -127,27 +127,6 @@ public class DashboardActivity extends MainActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        
-        if (id == R.id.action_notifications) {
-            // TODO: Handle notifications
-            return true;
-        } else if (id == R.id.action_settings) {
-            startActivity(new Intent(this, ProfileActivity.class));
-            return true;
-        }
-        
-        return super.onOptionsItemSelected(item);
-    }
-
     private void setupPointsCard() {
         View pointsCard = findViewById(R.id.points_card);
         TextView pointsBalanceText = pointsCard.findViewById(R.id.pointsBalanceText);
@@ -240,20 +219,23 @@ public class DashboardActivity extends MainActivity {
         String userRole = sessionManager.getRole();
 
         MaterialButton roleSpecificButton = findViewById(R.id.roleSpecificButton);
+        
+        if (userRole == null) {
+            roleSpecificButton.setVisibility(View.GONE);
+            return;
+        }
 
         if (userRole.equalsIgnoreCase("owner")) {
             roleSpecificButton.setText("Manage Buses");
             roleSpecificButton.setVisibility(View.VISIBLE);
             roleSpecificButton.setOnClickListener(v -> {
-                Intent intent = new Intent(DashboardActivity.this, BusActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, BusActivity.class));
             });
         } else if (userRole.equalsIgnoreCase("driver")) {
-            roleSpecificButton.setText("Bus Status");
+            roleSpecificButton.setText("My Assignments");
             roleSpecificButton.setVisibility(View.VISIBLE);
             roleSpecificButton.setOnClickListener(v -> {
-                Intent intent = new Intent(DashboardActivity.this, BusActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, BusActivity.class));
             });
         } else {
             roleSpecificButton.setVisibility(View.GONE);

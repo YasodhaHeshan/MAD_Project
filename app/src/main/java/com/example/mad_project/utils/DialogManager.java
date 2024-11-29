@@ -3,6 +3,8 @@ package com.example.mad_project.utils;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+
+import com.example.mad_project.ui.SeatSelectionActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class DialogManager {
@@ -34,4 +36,13 @@ public class DialogManager {
         dialog.show();
         return dialog;
     }
-} 
+
+    public static void showSwapConfirmationDialog(Context context, String title, String message, Runnable onConfirm) {
+        new AlertDialog.Builder(context)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Confirm", (dialog, which) -> onConfirm.run())
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+}

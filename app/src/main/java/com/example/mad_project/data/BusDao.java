@@ -29,4 +29,7 @@ public interface BusDao {
 
     @Query("SELECT * FROM buses WHERE id = :busId")
     Bus getBusById(int busId);
+
+    @Query("SELECT * FROM buses WHERE registration_number = :regNumber AND is_active = 1")
+    Bus getBusByRegistration(String regNumber);
 }
