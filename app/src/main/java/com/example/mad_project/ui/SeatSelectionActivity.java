@@ -116,6 +116,7 @@ public class SeatSelectionActivity extends MainActivity {
             
             // Get booked seats for this bus
             List<Ticket> tickets = db.ticketDao().getTicketsByBusId(busId);
+            bookedSeats.clear(); // Clear existing booked seats
             for (Ticket ticket : tickets) {
                 if (ticket.getStatus().equalsIgnoreCase("booked")) {
                     bookedSeats.add(ticket.getSeatNumber());
@@ -201,7 +202,7 @@ public class SeatSelectionActivity extends MainActivity {
         } else {
             button.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(this, R.color.green_light)));
-            button.setOnClickListener(v -> handleBookedSeatClick(seatNumber));
+            button.setOnClickListener(v -> handleSeatSelection(button, seatNumber));
         }
         
         if (isSwapRequest && seatNumber.equals(currentSeat)) {
@@ -305,6 +306,35 @@ public class SeatSelectionActivity extends MainActivity {
         selectedButtons.clear();
         selectedSeats.clear();
         updateSelectionInfo(selectedSeats);
+    }
+
+    private void handleSeatSelection(MaterialButton seatButton, String seatNumber) {
+        if (bookedSeats.contains(seatNumber)) {
+            if (isSwapRequest) {
+                handleBookedSeatClick(seatNumber);
+            } else {
+                Toast.makeText(this, "This seat is already booked", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
+        // Handle normal seat selection
+        if (!isSwapRequest) {
+            if (selectedButtons.contains(seatButton)) {
+                // Deselect seat
+                selectedButtons.remove(seatButton);
+                selectedSeats.remove(seatNumber);
+                seatButton.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.colorSecondaryBackground)));
+            } else {
+                // Select seat
+                selectedButtons.add(seatButton);
+                selectedSeats.add(seatNumber);
+                seatButton.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.colorPrimary)));
+            }
+            updateSelectionInfo(selectedSeats);
+        }
     }
 
     private void handleBookedSeatClick(String seatNumber) {
