@@ -176,17 +176,17 @@ public class SeatSelectionActivity extends MainActivity {
         
         // Set layout parameters with fixed size
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = 80; // Increased width
-        params.height = 80; // Increased height
+        params.width = 90;
+        params.height = 90;
         params.setMargins(8, 8, 8, 8);
         button.setLayoutParams(params);
         
         // Set button appearance
         button.setText(seatNumber);
-        button.setTextSize(16); // Increased text size
+        button.setTextSize(16);
         button.setTextColor(Color.WHITE);
         button.setBackgroundResource(R.drawable.seat_color);
-        button.setPadding(0, 0, 0, 0); // Remove padding
+        button.setPadding(0, 0, 0, 0);
         button.setInsetTop(0);
         button.setInsetBottom(0);
         
@@ -325,13 +325,13 @@ public class SeatSelectionActivity extends MainActivity {
                 selectedButtons.remove(seatButton);
                 selectedSeats.remove(seatNumber);
                 seatButton.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.colorSecondaryBackground)));
+                    ContextCompat.getColor(this, R.color.green_light)));
             } else {
                 // Select seat
                 selectedButtons.add(seatButton);
                 selectedSeats.add(seatNumber);
                 seatButton.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.colorPrimary)));
+                    ContextCompat.getColor(this, R.color.accent_blue)));
             }
             updateSelectionInfo(selectedSeats);
         }
