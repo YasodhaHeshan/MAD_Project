@@ -36,7 +36,7 @@ public class LoginActivity extends MainActivity {
         initializeViews();
         userController = new UserController(this);
         setupListeners();
-        setupNavigation(true, false, "Login");
+        setupNavigation(false, false, "Login");
     }
 
     private void initializeViews() {
