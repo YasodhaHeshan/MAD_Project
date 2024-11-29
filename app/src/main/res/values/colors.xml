@@ -28,4 +28,7 @@
     <color name="colorPrimary">#1E1E1E</color>
     <color name="colorAccent">#C7DE99</color>
     <color name="background">#1E1E1E</color>
+
+    <!-- New colors -->
+    <color name="your_seat">#FF9800</color>
 </resources>

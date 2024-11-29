@@ -73,4 +73,58 @@ public class TicketController {
             }
         });
     }
+
+    public void swapSeats(int ticket1Id, int ticket2Id, SwapCallback callback) {
+        executorService.execute(() -> {
+            try {
+                db.runInTransaction(() -> {
+                    // Get tickets
+                    Ticket ticket1 = db.ticketDao().getTicketById(ticket1Id);
+                    Ticket ticket2 = db.ticketDao().getTicketById(ticket2Id);
+                    
+                    // Validate tickets
+                    if (ticket1 == null || ticket2 == null) {
+                        throw new IllegalStateException("One or both tickets not found");
+                    }
+                    if (!ticket1.getStatus().equals("booked") || !ticket2.getStatus().equals("booked")) {
+                        throw new IllegalStateException("One or both tickets are not in valid state for swapping");
+                    }
+                    
+                    // Store original seat numbers
+                    String seat1 = ticket1.getSeatNumber();
+                    String seat2 = ticket2.getSeatNumber();
+                    
+                    // Update seat numbers
+                    ticket1.setSeatNumber(seat2);
+                    ticket2.setSeatNumber(seat1);
+                    
+                    // Update timestamps
+                    long currentTime = System.currentTimeMillis();
+                    ticket1.setUpdatedAt(currentTime);
+                    ticket2.setUpdatedAt(currentTime);
+                    
+                    // Update both tickets in the database
+                    db.ticketDao().update(ticket1);
+                    db.ticketDao().update(ticket2);
+                    
+                    // Log the swap for debugging
+                    Log.d("TicketController", String.format(
+                        "Swapped seats - Ticket %d: %s → %s, Ticket %d: %s → %s",
+                        ticket1.getId(), seat1, seat2,
+                        ticket2.getId(), seat2, seat1
+                    ));
+                });
+                
+                callback.onSuccess();
+            } catch (Exception e) {
+                Log.e("TicketController", "Error swapping seats", e);
+                callback.onError(e.getMessage());
+            }
+        });
+    }
+
+    public interface SwapCallback {
+        void onSuccess();
+        void onError(String message);
+    }
 }

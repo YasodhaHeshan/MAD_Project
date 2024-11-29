@@ -27,7 +27,11 @@ public class LoginActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_login, contentFrame);
         
-        if (sessionManager.isLoggedIn()) {
+        // Check if we're switching users
+        boolean isSwitchingUser = getIntent().getBooleanExtra("switching_user", false);
+        
+        // Only check logged in status if not switching users
+        if (!isSwitchingUser && sessionManager.isLoggedIn()) {
             startActivity(new Intent(this, DashboardActivity.class));
             finish();
             return;

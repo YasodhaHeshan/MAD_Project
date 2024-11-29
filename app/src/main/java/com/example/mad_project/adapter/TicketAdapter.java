@@ -83,13 +83,6 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             seatNumberText = itemView.findViewById(R.id.seatNumberText);
             ticketFareText = itemView.findViewById(R.id.ticketFareText);
             pointsText = itemView.findViewById(R.id.pointsText);
-
-            itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
-                if (position != RecyclerView.NO_POSITION) {
-                    listener.onTicketClick(tickets.get(position));
-                }
-            });
         }
 
         public void bind(Ticket ticket) {
@@ -98,24 +91,27 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
             ticketNumberText.setText("Ticket #" + ticket.getId());
             startLocationText.setText(ticket.getSource());
             endLocationText.setText(ticket.getDestination());
-            ticketStatusText.setText(ticket.getStatus());
             journeyDateText.setText(dateFormat.format(new Date(ticket.getJourneyDate())));
             seatNumberText.setText("Seat: " + ticket.getSeatNumber());
             
-            // Set status background color based on ticket status
-            int ticketStatusColor;
+            // Set status text and style
+            ticketStatusText.setText(ticket.getStatus().toUpperCase());
+            
+            // Set status background color
+            int statusColor;
             switch (ticket.getStatus().toLowerCase()) {
                 case "booked":
-                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.green_light);
+                    statusColor = ContextCompat.getColor(itemView.getContext(), R.color.green_light);
                     break;
                 case "cancelled":
-                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.red);
+                    statusColor = ContextCompat.getColor(itemView.getContext(), R.color.red);
                     break;
                 default:
-                    ticketStatusColor = ContextCompat.getColor(itemView.getContext(), R.color.gray);
+                    statusColor = ContextCompat.getColor(itemView.getContext(), R.color.gray);
                     break;
             }
-            ticketStatusText.setBackgroundTintList(ColorStateList.valueOf(ticketStatusColor));
+            
+            ticketStatusText.setBackgroundTintList(ColorStateList.valueOf(statusColor));
             
             // Load payment info asynchronously
             executor.execute(() -> {
@@ -130,6 +126,9 @@ public class TicketAdapter extends RecyclerView.Adapter<TicketAdapter.TicketView
                     }
                 });
             });
+            
+            // Set click listener
+            itemView.setOnClickListener(v -> listener.onTicketClick(ticket));
         }
     }
 }

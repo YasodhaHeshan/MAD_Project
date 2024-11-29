@@ -3,28 +3,24 @@ package com.example.mad_project;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.mad_project.ui.BusActivity;
 import com.example.mad_project.ui.DashboardActivity;
 import com.example.mad_project.ui.LoginActivity;
+import com.example.mad_project.ui.NotificationActivity;
 import com.example.mad_project.ui.ProfileActivity;
 import com.example.mad_project.ui.RegisterActivity;
 import com.example.mad_project.ui.TicketsActivity;
 import com.example.mad_project.ui.WelcomeActivity;
 import com.example.mad_project.utils.SessionManager;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity {
     protected FrameLayout contentFrame;
@@ -41,16 +37,23 @@ public class MainActivity extends AppCompatActivity {
         contentFrame = findViewById(R.id.content_frame);
         bottomNav = findViewById(R.id.bottomNavigationView);
         
-        // Show welcome screen on first launch
+        // Check if we're switching users
+        boolean isSwitchingUser = getIntent().getBooleanExtra("switching_user", false);
+        
+        // First check if it's first launch
         if (sessionManager.isFirstLaunch()) {
             startActivity(new Intent(this, WelcomeActivity.class));
             finish();
             return;
         }
         
-        // Check login status and redirect if needed
-        if (!(this instanceof LoginActivity || this instanceof RegisterActivity) 
-            && !sessionManager.isLoggedIn()) {
+        // Check if this is LoginActivity or RegisterActivity
+        if (this instanceof LoginActivity || this instanceof RegisterActivity) {
+            return;
+        }
+        
+        // Then check login status (skip if switching users)
+        if (!isSwitchingUser && !sessionManager.isLoggedIn()) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
@@ -130,5 +133,26 @@ public class MainActivity extends AppCompatActivity {
     protected void redirectToDashboard() {
         startActivity(new Intent(this, DashboardActivity.class));
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.top_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        
+        if (id == R.id.action_notifications) {
+            startActivity(new Intent(this, NotificationActivity.class));
+            return true;
+        } else if (id == R.id.action_settings) {
+            startActivity(new Intent(this, ProfileActivity.class));
+            return true;
+        }
+        
+        return super.onOptionsItemSelected(item);
     }
 }

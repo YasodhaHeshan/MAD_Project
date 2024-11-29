@@ -14,6 +14,7 @@ import com.example.mad_project.utils.TopUpDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class ProfileActivity extends MainActivity {
     private MaterialButton logoutButton;
@@ -104,15 +105,25 @@ public class ProfileActivity extends MainActivity {
     }
 
     private void handleLogout() {
-        // Clear the session
-        sessionManager.logout();
-
-        // Navigate to login screen
-        Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
-        // Clear the activity stack so user can't go back
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+        new MaterialAlertDialogBuilder(this)
+            .setTitle("Logout Options")
+            .setMessage("Would you like to switch to another user or completely logout?")
+            .setPositiveButton("Switch User", (dialog, which) -> {
+                sessionManager.logoutKeepData();
+                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                intent.putExtra("switching_user", true);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finishAffinity();
+            })
+            .setNegativeButton("Complete Logout", (dialog, which) -> {
+                sessionManager.logout();
+                Intent intent = new Intent(ProfileActivity.this, WelcomeActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finishAffinity();
+            })
+            .show();
     }
 
     private void loadUserPoints() {

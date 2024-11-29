@@ -3,6 +3,7 @@ package com.example.mad_project.ui;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import java.util.Date;
 
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
+import com.example.mad_project.controller.NotificationController;
 import com.example.mad_project.controller.PaymentController;
 import com.example.mad_project.controller.TicketController;
 import com.example.mad_project.data.Bus;
@@ -52,6 +54,10 @@ public class SeatSelectionActivity extends MainActivity {
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<MaterialButton> selectedButtons = new ArrayList<>();
     private List<String> selectedSeats = new ArrayList<>();
+    private boolean isSwapRequest = false;
+    private String currentSeat = null;
+    private int ticketId = -1;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +76,12 @@ public class SeatSelectionActivity extends MainActivity {
             return;
         }
 
+        isSwapRequest = getIntent().getBooleanExtra("is_swap", false);
+        if (isSwapRequest) {
+            currentSeat = getIntent().getStringExtra("current_seat");
+            ticketId = getIntent().getIntExtra("ticket_id", -1);
+        }
+
         initializeViews();
         loadBusDetails(busId);
     }
@@ -81,13 +93,20 @@ public class SeatSelectionActivity extends MainActivity {
         fareText = findViewById(R.id.fareText);
         confirmButton = findViewById(R.id.confirmButton);
 
-        confirmButton.setOnClickListener(v -> {
-            if (!selectedSeats.isEmpty()) {
-                proceedToPayment();
-            } else {
-                Toast.makeText(this, "Please select a seat", Toast.LENGTH_SHORT).show();
-            }
-        });
+        // Set appropriate button visibility based on mode
+        if (isSwapRequest) {
+            confirmButton.setVisibility(View.GONE); // Hide confirm button in swap mode
+            fareText.setVisibility(View.GONE); // Hide fare for swap requests
+        } else {
+            confirmButton.setText("Confirm Booking");
+            confirmButton.setOnClickListener(v -> {
+                if (!selectedSeats.isEmpty()) {
+                    proceedToPayment();
+                } else {
+                    Toast.makeText(this, "Please select a seat", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void loadBusDetails(int busId) {
@@ -150,56 +169,47 @@ public class SeatSelectionActivity extends MainActivity {
         }
     }
 
-    private MaterialButton createSeatButton(int index, int buttonSize, final MaterialButton[] selectedButtonHolder) {
-        MaterialButton seatButton = new MaterialButton(this);
-        String seatNumber = getSeatNumber(index);
+    private MaterialButton createSeatButton(int position, int size, MaterialButton[] selectedButtonHolder) {
+        MaterialButton button = new MaterialButton(this);
+        String seatNumber = String.format("%c%d", (char)('A' + position / 4), (position % 4) + 1);
         
-        // Set button size and margins
+        // Set layout parameters with fixed size
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = buttonSize;
-        params.height = buttonSize;
-        params.setMargins(4, 4, 4, 4);
-        seatButton.setLayoutParams(params);
+        params.width = 80; // Increased width
+        params.height = 80; // Increased height
+        params.setMargins(8, 8, 8, 8);
+        button.setLayoutParams(params);
         
-        // Style the button
-        seatButton.setBackgroundResource(R.drawable.seat_color);
-        seatButton.setText(seatNumber);
-        seatButton.setTextSize(12);
-        seatButton.setTextColor(Color.WHITE);
-        seatButton.setInsetTop(0);
-        seatButton.setInsetBottom(0);
-        seatButton.setPadding(0, 0, 0, 0);
+        // Set button appearance
+        button.setText(seatNumber);
+        button.setTextSize(16); // Increased text size
+        button.setTextColor(Color.WHITE);
+        button.setBackgroundResource(R.drawable.seat_color);
+        button.setPadding(0, 0, 0, 0); // Remove padding
+        button.setInsetTop(0);
+        button.setInsetBottom(0);
         
-        // Handle booked seats
         if (bookedSeats.contains(seatNumber)) {
-            seatButton.setEnabled(false);
-            seatButton.setBackgroundTintList(ColorStateList.valueOf(
+            button.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(this, R.color.red)));
+            if (isSwapRequest) {
+                button.setEnabled(true);
+                button.setOnClickListener(v -> handleBookedSeatClick(seatNumber));
+            } else {
+                button.setEnabled(false);
+            }
+        } else {
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.green_light)));
+            button.setOnClickListener(v -> handleBookedSeatClick(seatNumber));
         }
         
-        seatButton.setOnClickListener(v -> {
-            if (selectedButtons.contains(seatButton)) {
-                // Deselect seat
-                selectedButtons.remove(seatButton);
-                selectedSeats.remove(seatNumber);
-                seatButton.setBackgroundResource(R.drawable.seat_available);
-                seatButton.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.green_light)));
-                seatButton.setSelected(false);
-            } else {
-                // Select new seat
-                selectedButtons.add(seatButton);
-                selectedSeats.add(seatNumber);
-                seatButton.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.accent_blue)));
-                seatButton.setSelected(true);
-            }
-            
-            // Update selection info with all selected seats
-            updateSelectionInfo(selectedSeats);
-        });
+        if (isSwapRequest && seatNumber.equals(currentSeat)) {
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(this, R.color.accent_blue)));
+        }
         
-        return seatButton;
+        return button;
     }
 
     private void updateSelectionInfo(List<String> seatNumbers) {
@@ -295,5 +305,57 @@ public class SeatSelectionActivity extends MainActivity {
         selectedButtons.clear();
         selectedSeats.clear();
         updateSelectionInfo(selectedSeats);
+    }
+
+    private void handleBookedSeatClick(String seatNumber) {
+        executor.execute(() -> {
+            try {
+                SessionManager sessionManager = new SessionManager(this);
+                AppDatabase db = AppDatabase.getDatabase(this);
+                
+                // Get current user and their ticket
+                User currentUser = db.userDao().getUserById(sessionManager.getUserId());
+                Ticket currentTicket = db.ticketDao().getTicketById(ticketId);
+                Ticket targetTicket = db.ticketDao().getTicketBySeatAndBus(seatNumber, selectedBus.getId());
+                
+                if (targetTicket != null && currentUser != null && currentTicket != null) {
+                    runOnUiThread(() -> {
+                        String title = "Confirm Seat Swap";
+                        String message = String.format("Do you want to request to swap your seat %s with seat %s?", 
+                            currentTicket.getSeatNumber(), seatNumber);
+                        
+                        DialogManager.showSwapConfirmationDialog(this, title, message, () -> {
+                            // Create and send notification after confirmation
+                            NotificationController controller = new NotificationController(this);
+                            controller.createSeatSwapNotification(
+                                targetTicket.getUserId(),
+                                currentUser.getName(),
+                                currentTicket.getSeatNumber(),
+                                seatNumber,
+                                currentTicket.getId(),
+                                targetTicket.getId()
+                            );
+                            
+                            Toast.makeText(this, "Seat swap request sent", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        String errorMessage = "Could not find ";
+                        if (currentTicket == null) errorMessage += "your ticket";
+                        else if (targetTicket == null) errorMessage += "target seat ticket";
+                        else errorMessage += "user information";
+                        
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                    });
+                }
+            } catch (Exception e) {
+                Log.e("SeatSelectionActivity", "Error sending swap request", e);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Error sending seat swap request", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 } 

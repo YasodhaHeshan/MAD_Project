@@ -142,7 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Confirm Booking"
+                android:text="@string/confirm_booking"
                 android:textColor="@color/white"
                 android:backgroundTint="@color/green_light"/>
 

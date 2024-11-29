@@ -64,7 +64,7 @@ public class UserController {
             try {
                 User user = userDao.getUserByEmail(email);
                 if (user != null && Validation.verifyPassword(password, user.getPassword())) {
-                    sessionManager.setLogin(true, email, user.getId(), user.getRole(), user.getImage());
+                    sessionManager.setLogin(true, user.getName(), email, user.getId(), user.getRole(), user.getImage());
                     callback.accept(user);
                 } else {
                     callback.accept(null);
@@ -177,7 +177,7 @@ public class UserController {
                 
                 if (result > 0) {
                     // Update session
-                    sessionManager.setLogin(true, user.getEmail(), user.getId(), 
+                    sessionManager.setLogin(true, user.getName(), user.getEmail(), user.getId(),
                         user.getRole(), user.getImage());
                     callback.accept(true);
                 } else {

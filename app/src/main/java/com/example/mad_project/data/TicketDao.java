@@ -22,7 +22,7 @@ public interface TicketDao {
     @Query("SELECT * FROM tickets WHERE is_active = 1")
     List<Ticket> getAllActiveTickets();
 
-    @Query("SELECT * FROM tickets WHERE user_id = :userId AND is_active = 1")
+    @Query("SELECT * FROM tickets WHERE user_id = :userId ORDER BY journey_date DESC")
     List<Ticket> getTicketsByUserId(int userId);
 
     @Query("SELECT * FROM tickets WHERE bus_id = :busId AND is_active = 1")
@@ -45,4 +45,7 @@ public interface TicketDao {
 
     @Delete
     void delete(Ticket ticket);
+
+    @Query("SELECT * FROM tickets WHERE seat_number = :seatNumber AND bus_id = :busId AND status = 'booked'")
+    Ticket getTicketBySeatAndBus(String seatNumber, int busId);
 }

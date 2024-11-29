@@ -34,11 +34,12 @@ public class TicketManager {
                     if (payment != null) {
                         // Refund points to user
                         db.userDao().addPoints(ticket.getUserId(), payment.getPointsUsed());
-                        // Delete payment
-                        db.paymentDao().delete(payment);
                     }
-                    // Delete ticket
-                    db.ticketDao().delete(ticket);
+                    
+                    // Update ticket status to cancelled instead of deleting
+                    ticket.setStatus("cancelled");
+                    ticket.setUpdatedAt(System.currentTimeMillis());
+                    db.ticketDao().update(ticket);
                 });
                 
                 // Send cancellation email
