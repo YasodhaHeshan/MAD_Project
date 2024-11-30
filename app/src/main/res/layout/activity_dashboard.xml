@@ -7,7 +7,6 @@
     android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -30,9 +29,7 @@
                 tools:visibility="visible"
                 tools:text="Manage Buses"/>
 
-            <include
-                android:id="@+id/searchBusCard"
-                layout="@layout/search_bus_card"/>
+            <include layout="@layout/search_bus_card"/>
 
             <include
                 android:id="@+id/upcoming_ride_card"
