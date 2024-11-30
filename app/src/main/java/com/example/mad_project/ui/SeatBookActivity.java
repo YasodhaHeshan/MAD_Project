@@ -1,5 +1,6 @@
 package com.example.mad_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,22 +11,30 @@ import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.SeatBookingController;
 import com.example.mad_project.data.Bus;
+import com.example.mad_project.utils.BookingManager;
+import com.example.mad_project.utils.DialogManager;
 import com.example.mad_project.utils.SeatLayoutManager;
 import com.example.mad_project.ui.fragments.SeatSelectionFragment;
+import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class SeatBookActivity extends MainActivity {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class SeatBookActivity extends MainActivity implements SeatSelectionFragment.OnSeatSelectionListener {
     private SeatBookingController bookingController;
     private SeatLayoutManager layoutManager;
     private TextView fareText;
-    private Button confirm;
+    private Button confirmButton;
     private BottomSheetBehavior<View> bottomSheetBehavior;
     private boolean isSwapRequest;
     private String currentSeat;
     private int ticketId;
     private Bus selectedBus;
+    private List<Integer> selectedSeats = new ArrayList<>();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,9 +56,9 @@ public class SeatBookActivity extends MainActivity {
     
     private void initializeViews() {
         fareText = findViewById(R.id.fareText);
-        confirm = findViewById(R.id.confirm);
+        confirmButton = findViewById(R.id.confirmButton);
         
-        confirm.setOnClickListener(v -> {
+        confirmButton.setOnClickListener(v -> {
             if (isSwapRequest) {
                 bookingController.handleSeatSwap(currentSeat, ticketId, selectedBus,
                     new SeatBookingController.SwapCallback() {
@@ -64,7 +73,7 @@ public class SeatBookActivity extends MainActivity {
                         }
                     });
             } else {
-                bookingController.proceedToPayment();
+                handleBookingConfirmation();
             }
         });
     }
@@ -101,6 +110,56 @@ public class SeatBookActivity extends MainActivity {
                     finish();
                 }
             });
+        }
+    }
+    
+    private void handleBookingConfirmation() {
+        if (selectedBus == null || selectedSeats.isEmpty()) {
+            Toast.makeText(this, "Please select seats to continue", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<String> seatNumbers = selectedSeats.stream()
+            .map(String::valueOf)
+            .collect(Collectors.toList());
+
+        bookingController.processBooking(
+            new SessionManager(this).getUserId(),
+            selectedBus,
+            seatNumbers,
+            new BookingManager.BookingCallback() {
+                @Override
+                public void onBookingSuccess(int pointsDeducted) {
+                    DialogManager.showBookingSuccess(SeatBookActivity.this, 
+                        pointsDeducted,
+                        () -> {
+                            Intent intent = new Intent(SeatBookActivity.this, TicketsActivity.class);
+                            startActivity(intent);
+                            finish();
+                        });
+                }
+
+                @Override
+                public void onBookingFailure(String error) {
+                    Toast.makeText(SeatBookActivity.this, 
+                        "Booking failed: " + error, Toast.LENGTH_LONG).show();
+                }
+            }
+        );
+    }
+    
+    @Override
+    public void onSeatsSelected(List<Integer> seats) {
+        this.selectedSeats = new ArrayList<>(seats);
+        
+        // Update bottom sheet UI
+        if (selectedSeats.isEmpty()) {
+            fareText.setText(String.format("Base fare: %d points per seat", selectedBus.getBasePoints()));
+            confirmButton.setEnabled(false);
+        } else {
+            int totalPoints = selectedSeats.size() * selectedBus.getBasePoints();
+            fareText.setText(String.format("Total: %d points", totalPoints));
+            confirmButton.setEnabled(true);
         }
     }
 } 

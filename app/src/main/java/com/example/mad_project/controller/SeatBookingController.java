@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -83,6 +84,11 @@ public class SeatBookingController {
     public void proceedToPayment() {
         // Reference to BookingManager's processBooking method
         // See lines 37-60 in BookingManager.java
+    }
+
+    public void processBooking(int userId, Bus selectedBus, List<String> selectedSeats,
+                              BookingManager.BookingCallback callback) {
+        bookingManager.processBooking(userId, selectedBus, selectedSeats, callback);
     }
 
     private void postToMainThread(Runnable runnable) {

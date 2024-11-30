@@ -8,6 +8,9 @@ import com.example.mad_project.data.*;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class NotificationHandler {
     private final Context context;
@@ -20,43 +23,6 @@ public class NotificationHandler {
         this.db = AppDatabase.getDatabase(context);
         this.executor = Executors.newSingleThreadExecutor();
         this.sessionManager = new SessionManager(context);
-    }
-
-    public void handleSeatSwapRequest(User requestingUser, Ticket currentTicket, Ticket targetTicket) {
-        executor.execute(() -> {
-            try {
-                // Create notification for target user
-                Notification targetNotification = new Notification(
-                    targetTicket.getUserId(),
-                    NotificationType.SEAT_SWAP,
-                    "Seat Swap Request",
-                    String.format("%s wants to swap their seat %s with your seat %s",
-                        requestingUser.getName(),
-                        currentTicket.getSeatNumber(),
-                        targetTicket.getSeatNumber())
-                );
-                targetNotification.setAdditionalData(String.format("%d:%d", currentTicket.getId(), targetTicket.getId()));
-                targetNotification.setStatus("PENDING");
-                db.notificationDao().insert(targetNotification);
-
-                // Create notification for requester
-                Notification requesterNotification = new Notification(
-                    requestingUser.getId(),
-                    NotificationType.SEAT_SWAP,
-                    "Seat Swap Request Sent",
-                    String.format("You requested to swap your seat %s with seat %s",
-                        currentTicket.getSeatNumber(),
-                        targetTicket.getSeatNumber())
-                );
-                requesterNotification.setAdditionalData(String.format("%d:%d", currentTicket.getId(), targetTicket.getId()));
-                requesterNotification.setStatus("PENDING");
-                db.notificationDao().insert(requesterNotification);
-
-                Log.d("NotificationHandler", "Created seat swap notifications successfully");
-            } catch (Exception e) {
-                Log.e("NotificationHandler", "Error creating seat swap request", e);
-            }
-        });
     }
 
     public void handleSeatSwapResponse(Notification notification, boolean accepted, TicketController.SwapCallback callback) {
@@ -176,5 +142,43 @@ public class NotificationHandler {
         notification.setAdditionalData(bus.getRegistrationNumber());
         notification.setStatus("PENDING");
         db.notificationDao().insert(notification);
+    }
+
+    public void sendSwapConfirmationEmails(Ticket ticket1, Ticket ticket2, Bus bus) {
+        try {
+            User user1 = db.userDao().getUserById(ticket1.getUserId());
+            User user2 = db.userDao().getUserById(ticket2.getUserId());
+            
+            SimpleDateFormat dateFormat = new SimpleDateFormat("MMMM d, yyyy", Locale.getDefault());
+            String date = dateFormat.format(new Date(ticket1.getJourneyDate()));
+            
+            // Send email to first user
+            EmailSender.sendSeatSwapConfirmation(
+                user1.getEmail(),
+                user1.getName(),
+                ticket1.getId(),
+                bus.getRegistrationNumber(),
+                ticket1.getSource(),
+                ticket1.getDestination(),
+                date,
+                String.valueOf(ticket2.getSeatNumber()),  // old seat
+                String.valueOf(ticket1.getSeatNumber())   // new seat
+            );
+            
+            // Send email to second user
+            EmailSender.sendSeatSwapConfirmation(
+                user2.getEmail(),
+                user2.getName(),
+                ticket2.getId(),
+                bus.getRegistrationNumber(),
+                ticket2.getSource(),
+                ticket2.getDestination(),
+                date,
+                String.valueOf(ticket1.getSeatNumber()),  // old seat
+                String.valueOf(ticket2.getSeatNumber())   // new seat
+            );
+        } catch (Exception e) {
+            Log.e("NotificationHandler", "Error sending swap confirmation emails", e);
+        }
     }
 }
