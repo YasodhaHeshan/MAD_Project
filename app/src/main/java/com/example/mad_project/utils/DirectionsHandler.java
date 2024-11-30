@@ -1,6 +1,5 @@
 package com.example.mad_project.utils;
 
-import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -24,6 +23,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class DirectionsHandler {
 
@@ -31,11 +34,13 @@ public class DirectionsHandler {
     private final GoogleMap mMap;
     private final FragmentActivity context;
     private final String apiKey;
+    private final ExecutorService executorService;
 
     public DirectionsHandler(GoogleMap map, FragmentActivity context, String apiKey) {
         this.mMap = map;
         this.context = context;
         this.apiKey = apiKey;
+        this.executorService = Executors.newSingleThreadExecutor();
     }
 
     public void displayRoute(String origin, String destination) {
@@ -43,13 +48,56 @@ public class DirectionsHandler {
                 "&destination=" + destination +
                 "&key=" + apiKey;
 
-        new FetchDirectionsTask().execute(urlString);
+        FetchDirectionsTask fetchDirectionsTask = new FetchDirectionsTask(urlString);
+        Future<List<LatLng>> future = executorService.submit(fetchDirectionsTask);
+
+        executorService.execute(() -> {
+            try {
+                List<LatLng> routePoints = future.get();
+                context.runOnUiThread(() -> onPostExecute(routePoints));
+            } catch (Exception e) {
+                Log.e(TAG, "Error fetching directions: ", e);
+            }
+        });
     }
 
-    private class FetchDirectionsTask extends AsyncTask<String, Void, List<LatLng>> {
+    private void onPostExecute(List<LatLng> routePoints) {
+        if (!routePoints.isEmpty()) {
+            PolylineOptions polylineOptions = new PolylineOptions()
+                    .addAll(routePoints)
+                    .color(0xFF0A84FF)
+                    .width(10);
+            mMap.addPolyline(polylineOptions);
+
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (LatLng point : routePoints) {
+                builder.include(point);
+            }
+            LatLngBounds bounds = builder.build();
+            int padding = 100; // Padding around the route
+            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
+
+            // Add markers for origin and destination with unique identifiers
+            LatLng originLatLng = routePoints.get(0);
+            LatLng destinationLatLng = routePoints.get(routePoints.size() - 1);
+            mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+
+            Toast.makeText(context, "Route displayed", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "No route found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class FetchDirectionsTask implements Callable<List<LatLng>> {
+        private final String urlString;
+
+        public FetchDirectionsTask(String urlString) {
+            this.urlString = urlString;
+        }
+
         @Override
-        protected List<LatLng> doInBackground(String... params) {
-            String urlString = params[0];
+        public List<LatLng> call() {
             List<LatLng> routePoints = new ArrayList<>();
 
             try {
@@ -86,35 +134,6 @@ public class DirectionsHandler {
             }
 
             return routePoints;
-        }
-
-        @Override
-        protected void onPostExecute(List<LatLng> routePoints) {
-            if (!routePoints.isEmpty()) {
-                PolylineOptions polylineOptions = new PolylineOptions()
-                        .addAll(routePoints)
-                        .color(0xFF0A84FF)
-                        .width(10);
-                mMap.addPolyline(polylineOptions);
-
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (LatLng point : routePoints) {
-                    builder.include(point);
-                }
-                LatLngBounds bounds = builder.build();
-                int padding = 100; // Padding around the route
-                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
-
-                // Add markers for origin and destination with unique identifiers
-                LatLng originLatLng = routePoints.get(0);
-                LatLng destinationLatLng = routePoints.get(routePoints.size() - 1);
-                mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-
-                Toast.makeText(context, "Route displayed", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "No route found", Toast.LENGTH_SHORT).show();
-            }
         }
 
         private List<LatLng> decodePolyline(String encodedPath) {
