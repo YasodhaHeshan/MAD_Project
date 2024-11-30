@@ -40,7 +40,7 @@ public class Ticket {
     private Integer paymentId;
 
     @ColumnInfo(name = "seat_number")
-    private String seatNumber;
+    private int seatNumber;
 
     @ColumnInfo(name = "journey_date")
     private long journeyDate;
@@ -63,7 +63,7 @@ public class Ticket {
     @ColumnInfo(name = "updated_at")
     private long updatedAt;
 
-    public Ticket(int userId, int busId, String seatNumber, 
+    public Ticket(int userId, int busId, int seatNumber, 
                  long journeyDate, String source, String destination, String status) {
         this.userId = userId;
         this.busId = busId;
@@ -110,11 +110,11 @@ public class Ticket {
         this.paymentId = paymentId;
     }
 
-    public String getSeatNumber() {
+    public int getSeatNumber() {
         return seatNumber;
     }
 
-    public void setSeatNumber(String seatNumber) {
+    public void setSeatNumber(int seatNumber) {
         this.seatNumber = seatNumber;
     }
 

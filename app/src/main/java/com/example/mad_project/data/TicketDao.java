@@ -47,5 +47,5 @@ public interface TicketDao {
     void delete(Ticket ticket);
 
     @Query("SELECT * FROM tickets WHERE seat_number = :seatNumber AND bus_id = :busId AND status = 'booked'")
-    Ticket getTicketBySeatAndBus(String seatNumber, int busId);
+    Ticket getTicketBySeatAndBus(int seatNumber, int busId);
 }

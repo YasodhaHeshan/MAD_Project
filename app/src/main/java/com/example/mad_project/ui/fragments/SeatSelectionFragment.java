@@ -36,21 +36,65 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
     private SeatBookingController bookingController;
     private Bus selectedBus;
     private boolean isSwapRequest;
-    private String currentSeat;
-    private List<String> selectedSeats = new ArrayList<>();
-    private List<String> bookedSeats = new ArrayList<>();
-    private List<String> myBookedSeats = new ArrayList<>();
+    private int currentSeat;
+    private List<Integer> selectedSeats = new ArrayList<>();
+    private List<Integer> bookedSeats = new ArrayList<>();
+    private List<Integer> myBookedSeats = new ArrayList<>();
     private Executor executor = Executors.newSingleThreadExecutor();
     private AppDatabase db;
 
-    public static SeatSelectionFragment newInstance(int busId, boolean isSwapRequest, String currentSeat) {
+    public static SeatSelectionFragment newInstance(int busId, boolean isSwapRequest, int currentSeat) {
         SeatSelectionFragment fragment = new SeatSelectionFragment();
         Bundle args = new Bundle();
         args.putInt("bus_id", busId);
         args.putBoolean("is_swap", isSwapRequest);
-        args.putString("current_seat", currentSeat);
+        args.putInt("current_seat", currentSeat);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        db = AppDatabase.getDatabase(requireContext());
+        if (getArguments() != null) {
+            int busId = getArguments().getInt("bus_id");
+            isSwapRequest = getArguments().getBoolean("is_swap", false);
+            currentSeat = getArguments().getInt("current_seat", -1);
+            loadBusDetails(busId, isSwapRequest);
+        }
+    }
+
+    private void loadBusDetails(int busId, boolean isSwap) {
+        executor.execute(() -> {
+            try {
+                // Load bus details first
+                selectedBus = db.busDao().getBusById(busId);
+                
+                // Then load tickets
+                List<Ticket> tickets = db.ticketDao().getTicketsByBusId(busId);
+                bookedSeats.clear();
+                for (Ticket ticket : tickets) {
+                    if (ticket.getStatus().equalsIgnoreCase("booked")) {
+                        bookedSeats.add(ticket.getSeatNumber());
+                    }
+                }
+                
+                // Update UI on main thread
+                requireActivity().runOnUiThread(() -> {
+                    if (selectedBus != null) {
+                        setupSeatAdapter();
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to load bus details", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Exception e) {
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Error loading bus details: " + e.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     @Override
@@ -58,7 +102,6 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
         View view = inflater.inflate(R.layout.fragment_seat_selection, container, false);
         initializeViews(view);
         setupController();
-        loadBusDetails();
         return view;
     }
 
@@ -72,36 +115,11 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
         db = AppDatabase.getDatabase(requireContext());
     }
 
-    private void loadBusDetails() {
-        int busId = getArguments().getInt("bus_id", -1);
-        isSwapRequest = getArguments().getBoolean("is_swap", false);
-        currentSeat = getArguments().getString("current_seat");
-
-        bookingController.loadBusDetails(busId, new SeatBookingController.BusLoadCallback() {
-            @Override
-            public void onBusLoaded(Bus bus) {
-                selectedBus = bus;
-                // Load booked seats
-                executor.execute(() -> {
-                    List<Ticket> tickets = db.ticketDao().getTicketsByBusId(busId);
-                    bookedSeats.clear();
-                    for (Ticket ticket : tickets) {
-                        if (ticket.getStatus().equalsIgnoreCase("booked")) {
-                            bookedSeats.add(ticket.getSeatNumber());
-                        }
-                    }
-                    requireActivity().runOnUiThread(() -> setupSeatAdapter());
-                });
-            }
-
-            @Override
-            public void onLoadFailure(String error) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
     private void setupSeatAdapter() {
+        if (selectedBus == null) {
+            return;
+        }
+        
         // Clear existing views
         leftSeatGrid.removeAllViews();
         rightSeatGrid.removeAllViews();
@@ -156,26 +174,7 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
         button.setBackgroundTintList(ColorStateList.valueOf(
             ContextCompat.getColor(requireContext(), R.color.green_light)));
         
-        button.setOnClickListener(v -> {
-            if (bookedSeats.contains(seatNumber)) {
-                if (isSwapRequest) {
-                    onBookedSeatClick(seatNumber);
-                }
-                return;
-            }
-            
-            if (selectedSeats.contains(seatNumber)) {
-                selectedSeats.remove(seatNumber);
-                button.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.green_light)));
-            } else {
-                selectedSeats.add(seatNumber);
-                button.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(requireContext(), R.color.accent_blue)));
-            }
-            
-            updateSeatAppearance(button, seatNumber);
-        });
+        button.setOnClickListener(v -> handleSeatClick((MaterialButton) v, seatNumber));
         
         // Set container layout params for GridLayout
         GridLayout.LayoutParams containerParams = new GridLayout.LayoutParams();
@@ -189,20 +188,43 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
         return seatContainer;
     }
 
+    private void handleSeatClick(MaterialButton button, String seatNumber) {
+        int seatNum = Integer.parseInt(seatNumber);
+        if (bookedSeats.contains(seatNum)) {
+            if (isSwapRequest) {
+                onBookedSeatClick(seatNumber);
+            }
+            return;
+        }
+        
+        if (selectedSeats.contains(seatNum)) {
+            selectedSeats.remove(Integer.valueOf(seatNum));
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.green_light)));
+        } else {
+            selectedSeats.add(seatNum);
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.accent_blue)));
+        }
+        
+        updateSeatAppearance(button, seatNumber);
+    }
+
     private void updateSeatAppearance(MaterialButton button, String seatNumber) {
         Context context = requireContext();
-        if (myBookedSeats.contains(seatNumber)) {
-            // Seat booked by current user
+        int seatNum = Integer.parseInt(seatNumber);
+        
+        if (myBookedSeats.contains(seatNum)) {
             button.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(context, R.color.yellow_light)));
-        } else if (bookedSeats.contains(seatNumber)) {
+        } else if (bookedSeats.contains(seatNum)) {
             // Seat booked by others
             button.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(context, R.color.red)));
-        } else if (seatNumber.equals(currentSeat)) {
+        } else if (seatNum == currentSeat) {
             button.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(context, R.color.accent_blue)));
-        } else if (selectedSeats.contains(seatNumber)) {
+        } else if (selectedSeats.contains(seatNum)) {
             button.setBackgroundTintList(ColorStateList.valueOf(
                 ContextCompat.getColor(context, R.color.accent_blue)));
         } else {
@@ -213,26 +235,36 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
 
     @Override
     public void onSeatSelected(String seatNumber) {
-        if (isSwapRequest) {
-            // Handle swap selection
-            selectedSeats.clear();
-            selectedSeats.add(seatNumber);
-        } else {
-            // Handle normal booking selection
-            if (selectedSeats.contains(seatNumber)) {
-                selectedSeats.remove(seatNumber);
+        try {
+            int seatNum = Integer.parseInt(seatNumber);
+            if (isSwapRequest) {
+                // Handle swap selection
+                selectedSeats.clear();
+                selectedSeats.add(seatNum);
             } else {
-                selectedSeats.add(seatNumber);
+                // Handle normal booking selection
+                if (selectedSeats.contains(seatNum)) {
+                    selectedSeats.remove(Integer.valueOf(seatNum));
+                } else {
+                    selectedSeats.add(seatNum);
+                }
             }
+            updateUI();
+        } catch (NumberFormatException e) {
+            Toast.makeText(requireContext(), "Invalid seat number", Toast.LENGTH_SHORT).show();
         }
-        updateUI();
     }
 
     @Override
     public void onBookedSeatClick(String seatNumber) {
         if (isSwapRequest) {
-            // Handle booked seat click for swap
-            // Show confirmation dialog
+            try {
+                int seatNum = Integer.parseInt(seatNumber);
+                // Handle booked seat click for swap
+                // Show confirmation dialog
+            } catch (NumberFormatException e) {
+                Toast.makeText(requireContext(), "Invalid seat number", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

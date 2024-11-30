@@ -238,16 +238,16 @@ public class RebuildDatabase {
 
             // 6. Create Tickets and Payments for various scenarios
             // Completed bookings for Passenger 1
-            createTicketAndPayment(db, (int)p1Id, (int)bus1Id, "A1", 2625, "booked");
-            createTicketAndPayment(db, (int)p1Id, (int)bus2Id, "B3", 2100, "booked");
+            createTicketAndPayment(db, (int)p1Id, (int)bus1Id, 1, 2625, "booked");
+            createTicketAndPayment(db, (int)p1Id, (int)bus2Id, 7, 2100, "booked");
 
             // Completed bookings for Passenger 2
-            createTicketAndPayment(db, (int)p2Id, (int)bus2Id, "C2", 2100, "booked");
-            createTicketAndPayment(db, (int)p2Id, (int)bus3Id, "D4", 3675, "cancelled");
+            createTicketAndPayment(db, (int)p2Id, (int)bus2Id, 10, 2100, "booked");
+            createTicketAndPayment(db, (int)p2Id, (int)bus3Id, 16, 3675, "cancelled");
 
             // Completed bookings for Passenger 3
-            createTicketAndPayment(db, (int)p3Id, (int)bus1Id, "B2", 2625, "booked");
-            createTicketAndPayment(db, (int)p3Id, (int)bus3Id, "A3", 3675, "booked");
+            createTicketAndPayment(db, (int)p3Id, (int)bus1Id, 6, 2625, "booked");
+            createTicketAndPayment(db, (int)p3Id, (int)bus3Id, 3, 3675, "booked");
 
             // 7. Create Notifications for various scenarios
             createNotifications(db, (int)driver1Id, (int)driver2Id, (int)p1Id, (int)p2Id, (int)p3Id);
@@ -255,7 +255,7 @@ public class RebuildDatabase {
     }
 
     private static void createTicketAndPayment(AppDatabase db, int userId, int busId, 
-        String seatNumber, int points, String status) {
+        int seatNumber, int points, String status) {
         
         Ticket ticket = new Ticket(userId, busId, seatNumber,
             System.currentTimeMillis() + 86400000, // Journey tomorrow
@@ -339,7 +339,7 @@ public class RebuildDatabase {
             // Create notification for the target user
             Notification notification = new Notification(targetId, "SEAT_SWAP",
                 "Seat Swap Request",
-                String.format("%s would like to swap their seat %s with your seat %s", 
+                String.format("%s would like to swap their seat %d with your seat %d", 
                     requester.getName(), 
                     requesterTicket.getSeatNumber(), 
                     targetTicket.getSeatNumber()));
@@ -350,7 +350,7 @@ public class RebuildDatabase {
             // Also create a notification for the requester to track their request
             Notification requesterNotification = new Notification(requesterId, "SEAT_SWAP",
                 "Seat Swap Request Sent",
-                String.format("You have requested to swap your seat %s with seat %s", 
+                String.format("You have requested to swap your seat %d with seat %d", 
                     requesterTicket.getSeatNumber(), 
                     targetTicket.getSeatNumber()));
             requesterNotification.setAdditionalData(requesterTicket.getId() + ":" + targetTicket.getId());

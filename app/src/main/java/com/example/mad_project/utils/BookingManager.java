@@ -102,7 +102,8 @@ public class BookingManager {
     private List<Long> createTickets(int userId, Bus bus, List<String> seats) {
         List<Long> ticketIds = new ArrayList<>();
         for (String seatNumber : seats) {
-            Ticket ticket = new Ticket(userId, bus.getId(), seatNumber,
+            int seatNum = Integer.parseInt(seatNumber);
+            Ticket ticket = new Ticket(userId, bus.getId(), seatNum,
                 bus.getDepartureTime(), bus.getRouteFrom(), bus.getRouteTo(), "booked");
             long ticketId = db.ticketDao().insert(ticket);
             ticketIds.add(ticketId);
@@ -141,7 +142,7 @@ public class BookingManager {
             ticket.getDestination(),
             date,
             time,
-            ticket.getSeatNumber()
+            String.valueOf(ticket.getSeatNumber())
         );
     }
 

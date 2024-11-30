@@ -91,8 +91,8 @@ public class TicketController {
                     }
                     
                     // Store original seat numbers
-                    String seat1 = ticket1.getSeatNumber();
-                    String seat2 = ticket2.getSeatNumber();
+                    int seat1 = ticket1.getSeatNumber();
+                    int seat2 = ticket2.getSeatNumber();
                     
                     // Update seat numbers
                     ticket1.setSeatNumber(seat2);
@@ -109,7 +109,7 @@ public class TicketController {
                     
                     // Log the swap for debugging
                     Log.d("TicketController", String.format(
-                        "Swapped seats - Ticket %d: %s → %s, Ticket %d: %s → %s",
+                        "Swapped seats - Ticket %d: %d → %d, Ticket %d: %d → %d",
                         ticket1.getId(), seat1, seat2,
                         ticket2.getId(), seat2, seat1
                     ));

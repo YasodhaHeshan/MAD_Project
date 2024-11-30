@@ -77,7 +77,7 @@ public class SeatBookActivity extends MainActivity {
     private void handleIntentData() {
         int busId = getIntent().getIntExtra("bus_id", -1);
         isSwapRequest = getIntent().getBooleanExtra("is_swap", false);
-        currentSeat = getIntent().getStringExtra("current_seat");
+        currentSeat = String.valueOf(getIntent().getIntExtra("current_seat", -1));
         ticketId = getIntent().getIntExtra("ticket_id", -1);
         
         if (busId != -1) {
@@ -88,7 +88,10 @@ public class SeatBookActivity extends MainActivity {
                     getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.seatSelectionContainer, 
-                            SeatSelectionFragment.newInstance(bus.getId(), isSwapRequest, currentSeat))
+                            SeatSelectionFragment.newInstance(
+                                bus.getId(), 
+                                isSwapRequest, 
+                                Integer.parseInt(currentSeat)))
                         .commit();
                 }
                 
