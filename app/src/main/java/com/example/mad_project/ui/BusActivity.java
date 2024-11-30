@@ -14,7 +14,6 @@ import com.example.mad_project.adapter.BusAdapter;
 import com.example.mad_project.controller.BusController;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
-import com.example.mad_project.utils.FareCalculator;
 import com.example.mad_project.utils.DirectionsHandler;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -27,15 +26,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.core.widget.NestedScrollView;
 
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
-import java.text.NumberFormat;
-import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -268,7 +264,7 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
     }
 
     private void startBookingProcess(Bus bus) {
-        Intent intent = new Intent(this, SeatSelectionActivity.class);
+        Intent intent = new Intent(this, SeatBookActivity.class);
         intent.putExtra("bus_id", bus.getId());
         startActivity(intent);
     }

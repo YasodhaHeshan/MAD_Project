@@ -14,9 +14,7 @@ import com.example.mad_project.R;
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.adapter.TicketAdapter;
 import com.example.mad_project.data.AppDatabase;
-import com.example.mad_project.data.PaymentDao;
 import com.example.mad_project.data.Ticket;
-import com.example.mad_project.data.TicketDao;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Payment;
 import com.example.mad_project.utils.DialogManager;
@@ -24,7 +22,6 @@ import com.example.mad_project.utils.TicketManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -33,7 +30,6 @@ import java.util.Locale;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.graphics.drawable.GradientDrawable;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -156,7 +152,7 @@ public class TicketsActivity extends MainActivity {
         
         // Handle swap seat button
         swapSeatButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SeatSelectionActivity.class);
+            Intent intent = new Intent(this, SeatBookActivity.class);
             intent.putExtra("bus_id", ticket.getBusId());
             intent.putExtra("is_swap", true);
             intent.putExtra("current_seat", ticket.getSeatNumber());
