@@ -3,7 +3,6 @@ package com.example.mad_project.utils;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -120,7 +119,6 @@ public class DirectionsHandler {
                 return routePoints;
             }
 
-        @NonNull
         private JSONArray getJsonArray() throws IOException, JSONException {
             URL url = new URL(urlString);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
