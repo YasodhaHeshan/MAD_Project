@@ -53,6 +53,11 @@ public class SessionManager {
         return sharedPreferences.getString(KEY_IMAGE, null);
     }
 
+    public void updateRole(String role) {
+        editor.putString(KEY_ROLE, role);
+        editor.apply();
+    }
+
     public void logout() {
         editor.clear();
         editor.apply();

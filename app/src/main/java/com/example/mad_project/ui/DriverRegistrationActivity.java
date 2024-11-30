@@ -128,6 +128,7 @@ public class DriverRegistrationActivity extends MainActivity {
                 if (success) {
                     Toast.makeText(this, "Successfully registered as a driver", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(this, LoginActivity.class));
+                    sessionManager.updateRole("driver");
                     finishAffinity();
                 } else {
                     Toast.makeText(this, "Registration failed. License number may already be registered.", 

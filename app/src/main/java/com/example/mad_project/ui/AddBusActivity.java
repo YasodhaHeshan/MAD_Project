@@ -1,6 +1,7 @@
 package com.example.mad_project.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.AutoCompleteTextView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -133,8 +134,10 @@ public class AddBusActivity extends MainActivity {
         executor.execute(() -> {
             try {
                 long busId = db.busDao().insert(newBus);
+                Log.e("Bus Added", "Bus ID: " + busId);
                 // Create notification for the selected driver
                 createDriverAssignmentNotification(selectedDriver.getUserId(), newBus);
+                Log.e("Driver Assignment", "Driver ID: " + selectedDriver.getUserId());
                 
                 runOnUiThread(() -> {
                     Toast.makeText(this, "Bus added successfully", Toast.LENGTH_SHORT).show();

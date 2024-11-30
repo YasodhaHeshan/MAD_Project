@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.UserController;
+import com.example.mad_project.utils.SessionManager;
 import com.example.mad_project.utils.Validation;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -89,10 +90,13 @@ public class OwnerRegistrationActivity extends MainActivity {
                 registerButton.setEnabled(true);
                 registerButton.setText("Register");
 
+                SessionManager sessionManager = new SessionManager(this);
+
                 if (success) {
                     Toast.makeText(this, "Successfully registered as an owner", 
                         Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(this, LoginActivity.class));
+                    sessionManager.updateRole("owner");
                     finishAffinity();
                 } else {
                     Toast.makeText(this, "Registration failed. Business details may already be registered.", 
