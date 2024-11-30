@@ -1,4 +1,4 @@
-package com.example.mad_project.controllers;
+package com.example.mad_project.controller;
 
 import android.content.Context;
 import com.example.mad_project.data.AppDatabase;

@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
+import com.example.mad_project.controller.LocationController;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDriver;
@@ -84,7 +85,7 @@ public class AddBusActivity extends MainActivity {
     }
 
     private void setupLocationAdapters() {
-        com.example.mad_project.controllers.LocationController locationController = new com.example.mad_project.controllers.LocationController(this);
+        LocationController locationController = new LocationController(this);
         locationController.getAllLocations(locations -> {
             runOnUiThread(() -> {
                 ArrayAdapter<Location> adapter = new ArrayAdapter<>(
@@ -227,13 +228,7 @@ public class AddBusActivity extends MainActivity {
             );
 
             // Use transaction to ensure data consistency
-            db.runInTransaction(() -> {
-                long busId = db.busDao().insert(newBus);
-                if (busId > 0) {
-                    // Create notification for the selected driver
-                    createDriverAssignmentNotification(selectedDriver.getUserId(), newBus);
-                }
-            });
+            db.runInTransaction(() -> { db.busDao().insert(newBus); });
 
             runOnUiThread(() -> {
                 Toast.makeText(this, "Bus added successfully", Toast.LENGTH_SHORT).show();
@@ -262,10 +257,5 @@ public class AddBusActivity extends MainActivity {
             }
         }
         return -1;
-    }
-
-    private void createDriverAssignmentNotification(int driverId, Bus bus) {
-        // Create notification for driver assignment
-        // Implementation referenced from NotificationController.java
     }
 } 

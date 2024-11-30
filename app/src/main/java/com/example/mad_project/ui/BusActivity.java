@@ -18,28 +18,26 @@ import com.example.mad_project.utils.DirectionsHandler;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.core.widget.NestedScrollView;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.List;
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class BusActivity extends MainActivity implements OnMapReadyCallback {
+    private MapView mapView;
     private GoogleMap mMap;
     private RecyclerView busRecyclerView;
     private BusController busController;
@@ -55,13 +53,47 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         getLayoutInflater().inflate(R.layout.activity_bus, contentFrame);
         setupNavigation(true, true, "Bus Details");
 
+        // Initialize MapView
+        mapView = findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+
         // Get route filter if coming from search
         fromLocation = getIntent().getStringExtra("from");
         toLocation = getIntent().getStringExtra("to");
 
         initializeViews();
-        setupMap();
         setupBusList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
     private void initializeViews() {
@@ -105,14 +137,6 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         clearFiltersButton.setOnClickListener(v -> clearFilters());
     }
 
-    private void setupMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
-    }
-
     private void setupBusList() {
         busController = new BusController(this);
         
@@ -136,7 +160,30 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
             BusAdapter adapter = new BusAdapter(buses, new BusAdapter.OnBusClickListener() {
                 @Override
                 public void onBusClick(Bus bus) {
-                    showBusDetails(bus);
+                    // Collapse bottom sheet to peek height
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                    
+                    // Clear previous routes
+                    mMap.clear();
+                    
+                    // Add bus marker
+                    LatLng busLocation = new LatLng(bus.getLatitude(), bus.getLongitude());
+                    mMap.addMarker(new MarkerOptions()
+                            .position(busLocation)
+                            .title(bus.getRegistrationNumber())
+                            .snippet(String.format("%s to %s", bus.getRouteFrom(), bus.getRouteTo()))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                    
+                    // Display route for selected bus
+                    directionsHandler.displayRoute(bus.getRouteFrom(), bus.getRouteTo());
+                    
+                    // Animate camera to show the route
+                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
+                    builder.include(busLocation);
+                    LatLngBounds bounds = builder.build();
+                    int padding = 100;
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                    mMap.animateCamera(cu);
                 }
 
                 @Override
@@ -211,38 +258,6 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         }
     }
 
-    private void showBusDetails(Bus bus) {
-        BottomSheetDialog bottomSheet = new BottomSheetDialog(this);
-        View bottomSheetView = getLayoutInflater().inflate(R.layout.bus_details_sheet, null);
-        
-        TextView busNumberText = bottomSheetView.findViewById(R.id.busNumberText);
-        TextView startLocationText = bottomSheetView.findViewById(R.id.startLocationText);
-        TextView endLocationText = bottomSheetView.findViewById(R.id.endLocationText);
-        TextView departureTimeText = bottomSheetView.findViewById(R.id.departureTimeText);
-        TextView baseFareText = bottomSheetView.findViewById(R.id.baseFareText);
-        TextView totalFareText = bottomSheetView.findViewById(R.id.totalFareText);
-        Button bookNowButton = bottomSheetView.findViewById(R.id.bookNowButton);
-        
-        // Calculate points
-        FareCalculator.PointsBreakdown pointsBreakdown = FareCalculator.calculatePoints(bus);
-        
-        // Set bus details
-        busNumberText.setText(bus.getRegistrationNumber());
-        startLocationText.setText(bus.getRouteFrom());
-        endLocationText.setText(bus.getRouteTo());
-        departureTimeText.setText(formatDepartureTime(bus.getDepartureTime()));
-        baseFareText.setText("Base Fare: " + pointsBreakdown.getFormattedBaseFare());
-        totalFareText.setText("Total: " + pointsBreakdown.getFormattedTotalFare());
-        
-        bookNowButton.setOnClickListener(v -> {
-            startBookingProcess(bus);
-            bottomSheet.dismiss();
-        });
-        
-        bottomSheet.setContentView(bottomSheetView);
-        bottomSheet.show();
-    }
-
     private void startBookingProcess(Bus bus) {
         Intent intent = new Intent(this, SeatSelectionActivity.class);
         intent.putExtra("bus_id", bus.getId());
@@ -262,10 +277,5 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         
         // Reload buses without filters
         setupBusList();
-    }
-
-    private String formatDepartureTime(long timestamp) {
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-        return timeFormat.format(new Date(timestamp));
     }
 }

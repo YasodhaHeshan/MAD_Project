@@ -55,11 +55,6 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
             points.basePoints, points.basePoints));
 
         holder.itemView.setOnClickListener(v -> {
-            boolean isExpanded = holder.priceBreakdownLayout.getVisibility() == View.VISIBLE;
-            holder.priceBreakdownLayout.setVisibility(isExpanded ? View.GONE : View.VISIBLE);
-            holder.priceText.setText(String.format("%s (%d Points)",
-                points.totalPoints, points.totalPoints));
-            
             listener.onBusClick(bus);
         });
         
