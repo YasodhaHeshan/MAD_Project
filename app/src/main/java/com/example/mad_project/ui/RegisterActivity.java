@@ -151,8 +151,8 @@ public class RegisterActivity extends MainActivity {
         }
     }
 
-    @Override
     protected void redirectToLogin() {
-        super.redirectToLogin();
+        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
 }
