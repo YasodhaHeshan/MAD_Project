@@ -51,13 +51,3 @@ A comprehensive mobile application for booking highway bus seats, developed as p
 1. Clone the repository
 ```bash
 git clone https://github.com/adithyasean/highway-bus-booking.git
-```
-
-2. Open the project in Android Studio
-
-3. Configure your Google Maps API key in `local.properties`:
-```properties
-MAPS_API_KEY=your_api_key_here
-```
-
-4. Build and run the application
