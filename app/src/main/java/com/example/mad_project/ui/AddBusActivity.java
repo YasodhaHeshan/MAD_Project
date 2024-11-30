@@ -12,6 +12,7 @@ import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDriver;
 import com.example.mad_project.data.BusOwner;
+import com.example.mad_project.data.Location;
 import com.example.mad_project.data.User;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.textfield.TextInputEditText;
@@ -83,12 +84,18 @@ public class AddBusActivity extends MainActivity {
     }
 
     private void setupLocationAdapters() {
-        String[] locations = getResources().getStringArray(R.array.locations);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-            this, android.R.layout.simple_dropdown_item_1line, locations
-        );
-        fromLocationInput.setAdapter(adapter);
-        toLocationInput.setAdapter(adapter);
+        com.example.mad_project.controllers.LocationController locationController = new com.example.mad_project.controllers.LocationController(this);
+        locationController.getAllLocations(locations -> {
+            runOnUiThread(() -> {
+                ArrayAdapter<Location> adapter = new ArrayAdapter<>(
+                    this, 
+                    android.R.layout.simple_dropdown_item_1line, 
+                    locations
+                );
+                fromLocationInput.setAdapter(adapter);
+                toLocationInput.setAdapter(adapter);
+            });
+        });
     }
 
     private void setupAddBusButton() {
@@ -188,6 +195,20 @@ public class AddBusActivity extends MainActivity {
                 return;
             }
 
+            Location fromLocation = db.locationDao().getLocationByName(
+                fromLocationInput.getText().toString().trim()
+            );
+            Location toLocation = db.locationDao().getLocationByName(
+                toLocationInput.getText().toString().trim()
+            );
+
+            if (fromLocation == null || toLocation == null) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Please select valid locations", Toast.LENGTH_SHORT).show();
+                });
+                return;
+            }
+
             // Create new bus with proper owner ID
             Bus newBus = new Bus(
                 busOwner.getId(),
@@ -196,9 +217,10 @@ public class AddBusActivity extends MainActivity {
                 Integer.parseInt(seatsInput.getText().toString().trim()),
                 "WiFi, AC",
                 true,
-                fromLocationInput.getText().toString().trim(),
-                toLocationInput.getText().toString().trim(),
-                0.0, 0.0,
+                fromLocation.getName(),
+                toLocation.getName(),
+                fromLocation.getLatitude(),
+                fromLocation.getLongitude(),
                 System.currentTimeMillis(),
                 System.currentTimeMillis() + 3600000,
                 Integer.parseInt(basePointsInput.getText().toString().trim())

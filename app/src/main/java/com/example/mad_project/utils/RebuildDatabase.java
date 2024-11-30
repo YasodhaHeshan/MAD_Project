@@ -15,6 +15,7 @@ import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Ticket;
 import com.example.mad_project.data.Payment;
 import com.example.mad_project.data.Notification;
+import com.example.mad_project.data.Location;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -145,18 +146,52 @@ public class RebuildDatabase {
             db.busDriverDao().insert(driver1);
             db.busDriverDao().insert(driver2);
 
-            // 4. Create Buses with various routes and amenities
+            // 4. Create Locations
+            Location colombo = new Location("Colombo", 6.927079, 79.861243);
+            Location kandy = new Location("Kandy", 7.290572, 80.633728);
+            Location galle = new Location("Galle", 6.053519, 80.220978);
+            Location jaffna = new Location("Jaffna", 9.661302, 80.025513);
+            Location anuradhapura = new Location("Anuradhapura", 8.311338, 80.403656);
+            Location trincomalee = new Location("Trincomalee", 8.578132, 81.233040);
+            Location batticaloa = new Location("Batticaloa", 7.717935, 81.700088);
+            Location kurunegala = new Location("Kurunegala", 7.486842, 80.362439);
+            Location matara = new Location("Matara", 5.948853, 80.535888);
+            Location negombo = new Location("Negombo", 7.189464, 79.858734);
+            Location ratnapura = new Location("Ratnapura", 6.693813, 80.405845);
+            Location badulla = new Location("Badulla", 6.989821, 81.054276);
+            Location polonnaruwa = new Location("Polonnaruwa", 7.940576, 81.018193);
+            Location hambantota = new Location("Hambantota", 6.127064, 81.111197);
+            Location dambulla = new Location("Dambulla", 7.868039, 80.650698);
+
+            // Insert locations
+            db.locationDao().insert(colombo);
+            db.locationDao().insert(kandy);
+            db.locationDao().insert(galle);
+            db.locationDao().insert(jaffna);
+            db.locationDao().insert(anuradhapura);
+            db.locationDao().insert(trincomalee);
+            db.locationDao().insert(batticaloa);
+            db.locationDao().insert(kurunegala);
+            db.locationDao().insert(matara);
+            db.locationDao().insert(negombo);
+            db.locationDao().insert(ratnapura);
+            db.locationDao().insert(badulla);
+            db.locationDao().insert(polonnaruwa);
+            db.locationDao().insert(hambantota);
+            db.locationDao().insert(dambulla);
+
+            // 5. Create Buses with various routes and amenities
             // Owner 1's buses
             Bus bus1 = new Bus((int)busOwner1Id, "NB-1234", "Volvo 9400", 40, 
                 "WiFi, AC, USB Charging", true, "Colombo", "Kandy",
-                6.933631, 79.855221,
+                colombo.getLatitude(), colombo.getLongitude(),
                 System.currentTimeMillis() + 3600000,
                 System.currentTimeMillis() + 18000000,
                 2500);
 
             Bus bus2 = new Bus((int)busOwner1Id, "NB-5678", "Volvo 9400", 40,
                 "WiFi, AC, USB Charging, Entertainment", true, "Colombo", "Galle",
-                6.933631, 79.855221,
+                colombo.getLatitude(), colombo.getLongitude(),
                 System.currentTimeMillis() + 7200000,
                 System.currentTimeMillis() + 14400000,
                 2000);
@@ -164,7 +199,7 @@ public class RebuildDatabase {
             // Owner 2's buses
             Bus bus3 = new Bus((int)busOwner2Id, "NB-9012", "Mercedes-Benz O303", 45,
                 "WiFi, AC, USB Charging, Refreshments", true, "Colombo", "Jaffna",
-                6.933631, 79.855221,
+                colombo.getLatitude(), colombo.getLongitude(),
                 System.currentTimeMillis() + 10800000,
                 System.currentTimeMillis() + 36000000,
                 3500);
@@ -173,7 +208,7 @@ public class RebuildDatabase {
             long bus2Id = db.busDao().insert(bus2);
             long bus3Id = db.busDao().insert(bus3);
 
-            // 5. Create Tickets and Payments for various scenarios
+            // 6. Create Tickets and Payments for various scenarios
             // Completed bookings for Passenger 1
             createTicketAndPayment(db, (int)p1Id, (int)bus1Id, "A1", 2625, "booked");
             createTicketAndPayment(db, (int)p1Id, (int)bus2Id, "B3", 2100, "booked");
@@ -186,7 +221,7 @@ public class RebuildDatabase {
             createTicketAndPayment(db, (int)p3Id, (int)bus1Id, "B2", 2625, "booked");
             createTicketAndPayment(db, (int)p3Id, (int)bus3Id, "A3", 3675, "booked");
 
-            // 6. Create Notifications for various scenarios
+            // 7. Create Notifications for various scenarios
             createNotifications(db, (int)driver1Id, (int)driver2Id, (int)p1Id, (int)p2Id, (int)p3Id);
         });
     }
