@@ -22,6 +22,7 @@ import com.example.mad_project.controller.SeatBookingController;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Ticket;
+import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -74,9 +75,18 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
                 // Then load tickets
                 List<Ticket> tickets = db.ticketDao().getTicketsByBusId(busId);
                 bookedSeats.clear();
+                myBookedSeats.clear();
+                
+                // Get current user ID
+                SessionManager sessionManager = new SessionManager(requireContext());
+                int currentUserId = sessionManager.getUserId();
+                
                 for (Ticket ticket : tickets) {
                     if (ticket.getStatus().equalsIgnoreCase("booked")) {
                         bookedSeats.add(ticket.getSeatNumber());
+                        if (ticket.getUserId() == currentUserId) {
+                            myBookedSeats.add(ticket.getSeatNumber());
+                        }
                     }
                 }
                 
@@ -171,8 +181,18 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
         button.setMaxLines(1);
         button.setGravity(Gravity.CENTER);
         
-        button.setBackgroundTintList(ColorStateList.valueOf(
-            ContextCompat.getColor(requireContext(), R.color.green_light)));
+        // Set initial color based on booking status
+        int seatNum = Integer.parseInt(seatNumber);
+        if (myBookedSeats.contains(seatNum)) {
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.yellow_light)));
+        } else if (bookedSeats.contains(seatNum)) {
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.red)));
+        } else {
+            button.setBackgroundTintList(ColorStateList.valueOf(
+                ContextCompat.getColor(requireContext(), R.color.green_light)));
+        }
         
         button.setOnClickListener(v -> handleSeatClick((MaterialButton) v, seatNumber));
         
