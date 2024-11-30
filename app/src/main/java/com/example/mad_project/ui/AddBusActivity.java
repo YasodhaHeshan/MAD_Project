@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
+import com.example.mad_project.controller.LocationController;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDriver;
@@ -84,7 +85,7 @@ public class AddBusActivity extends MainActivity {
     }
 
     private void setupLocationAdapters() {
-        com.example.mad_project.controllers.LocationController locationController = new com.example.mad_project.controllers.LocationController(this);
+        LocationController locationController = new LocationController(this);
         locationController.getAllLocations(locations -> {
             runOnUiThread(() -> {
                 ArrayAdapter<Location> adapter = new ArrayAdapter<>(

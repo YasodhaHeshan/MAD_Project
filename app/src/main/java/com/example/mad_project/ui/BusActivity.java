@@ -18,15 +18,14 @@ import com.example.mad_project.utils.DirectionsHandler;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import android.widget.Button;
 import android.widget.TextView;
 import androidx.core.widget.NestedScrollView;
 
@@ -40,6 +39,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class BusActivity extends MainActivity implements OnMapReadyCallback {
+    private MapView mapView;
     private GoogleMap mMap;
     private RecyclerView busRecyclerView;
     private BusController busController;
@@ -55,13 +55,47 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         getLayoutInflater().inflate(R.layout.activity_bus, contentFrame);
         setupNavigation(true, true, "Bus Details");
 
+        // Initialize MapView
+        mapView = findViewById(R.id.map);
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync(this);
+
         // Get route filter if coming from search
         fromLocation = getIntent().getStringExtra("from");
         toLocation = getIntent().getStringExtra("to");
 
         initializeViews();
-        setupMap();
         setupBusList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mapView.onDestroy();
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        mapView.onLowMemory();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
     }
 
     private void initializeViews() {
@@ -103,14 +137,6 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         
         // Setup click listener
         clearFiltersButton.setOnClickListener(v -> clearFilters());
-    }
-
-    private void setupMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(this);
-        }
     }
 
     private void setupBusList() {
@@ -221,7 +247,7 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         TextView departureTimeText = bottomSheetView.findViewById(R.id.departureTimeText);
         TextView baseFareText = bottomSheetView.findViewById(R.id.baseFareText);
         TextView totalFareText = bottomSheetView.findViewById(R.id.totalFareText);
-        Button bookNowButton = bottomSheetView.findViewById(R.id.bookNowButton);
+        MaterialButton bookNowButton = bottomSheetView.findViewById(R.id.bookNowButton);
         
         // Calculate points
         FareCalculator.PointsBreakdown pointsBreakdown = FareCalculator.calculatePoints(bus);
