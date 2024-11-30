@@ -11,6 +11,7 @@ import com.example.mad_project.R;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDriver;
+import com.example.mad_project.data.BusOwner;
 import com.example.mad_project.data.User;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.textfield.TextInputEditText;
@@ -91,64 +92,139 @@ public class AddBusActivity extends MainActivity {
     }
 
     private void setupAddBusButton() {
+        addBusButton = findViewById(R.id.addBusButton);
         addBusButton.setOnClickListener(v -> {
-            if (validateInputs()) {
-                addBus();
-            }
+            executor.execute(() -> {
+                if (validateInputs()) {
+                    addBus();
+                }
+            });
         });
     }
 
     private boolean validateInputs() {
-        // Add validation logic here
-        return true;
+        boolean isValid = true;
+        
+        if (registrationInput.getText().toString().trim().isEmpty()) {
+            registrationInput.setError("Registration number is required");
+            isValid = false;
+        }
+        
+        if (modelInput.getText().toString().trim().isEmpty()) {
+            modelInput.setError("Model is required");
+            isValid = false;
+        }
+        
+        try {
+            int seats = Integer.parseInt(seatsInput.getText().toString().trim());
+            if (seats <= 0) {
+                seatsInput.setError("Number of seats must be greater than 0");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            seatsInput.setError("Invalid number of seats");
+            isValid = false;
+        }
+        
+        if (fromLocationInput.getText().toString().trim().isEmpty()) {
+            fromLocationInput.setError("From location is required");
+            isValid = false;
+        }
+        
+        if (toLocationInput.getText().toString().trim().isEmpty()) {
+            toLocationInput.setError("To location is required");
+            isValid = false;
+        }
+        
+        try {
+            int points = Integer.parseInt(basePointsInput.getText().toString().trim());
+            if (points <= 0) {
+                basePointsInput.setError("Base points must be greater than 0");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            basePointsInput.setError("Invalid base points");
+            isValid = false;
+        }
+        
+        return isValid;
     }
 
     private void addBus() {
         SessionManager sessionManager = new SessionManager(this);
-        int ownerId = sessionManager.getUserId();
+        int userId = sessionManager.getUserId();
 
         // Get selected driver
         int selectedPosition = getSelectedDriverPosition();
         if (selectedPosition == -1) {
-            Toast.makeText(this, "Please select a driver", Toast.LENGTH_SHORT).show();
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Please select a driver", Toast.LENGTH_SHORT).show();
+            });
             return;
         }
 
         BusDriver selectedDriver = availableDrivers.get(selectedPosition);
 
-        Bus newBus = new Bus(
-            ownerId,
-            registrationInput.getText().toString(),
-            modelInput.getText().toString(),
-            Integer.parseInt(seatsInput.getText().toString()),
-            "WiFi, AC", // Default amenities
-            true,
-            fromLocationInput.getText().toString(),
-            toLocationInput.getText().toString(),
-            0.0, 0.0, // Default coordinates
-            System.currentTimeMillis(),
-            System.currentTimeMillis() + 3600000,
-            Integer.parseInt(basePointsInput.getText().toString())
-        );
-
-        executor.execute(() -> {
-            try {
-                long busId = db.busDao().insert(newBus);
-                Log.e("Bus Added", "Bus ID: " + busId);
-                // Create notification for the selected driver
-                createDriverAssignmentNotification(selectedDriver.getUserId(), newBus);
-                Log.e("Driver Assignment", "Driver ID: " + selectedDriver.getUserId());
-                
+        try {
+            // First get the bus owner ID using user ID
+            BusOwner busOwner = db.busOwnerDao().getBusOwnerByUserId(userId);
+            
+            if (busOwner == null) {
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Bus added successfully", Toast.LENGTH_SHORT).show();
-                    finish();
+                    Toast.makeText(this, "You are not registered as a bus owner", Toast.LENGTH_SHORT).show();
                 });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Failed to add bus", Toast.LENGTH_SHORT).show();
-                });
+                return;
             }
-        });
+
+            // Check if registration number already exists
+            Bus existingBus = db.busDao().getBusByRegistration(
+                registrationInput.getText().toString().trim()
+            );
+            
+            if (existingBus != null) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Bus registration number already exists", Toast.LENGTH_SHORT).show();
+                });
+                return;
+            }
+
+            // Create new bus with proper owner ID
+            Bus newBus = new Bus(
+                busOwner.getId(),
+                registrationInput.getText().toString().trim(),
+                modelInput.getText().toString().trim(),
+                Integer.parseInt(seatsInput.getText().toString().trim()),
+                "WiFi, AC",
+                true,
+                fromLocationInput.getText().toString().trim(),
+                toLocationInput.getText().toString().trim(),
+                0.0, 0.0,
+                System.currentTimeMillis(),
+                System.currentTimeMillis() + 3600000,
+                Integer.parseInt(basePointsInput.getText().toString().trim())
+            );
+
+            // Use transaction to ensure data consistency
+            db.runInTransaction(() -> {
+                long busId = db.busDao().insert(newBus);
+                if (busId > 0) {
+                    // Create notification for the selected driver
+                    createDriverAssignmentNotification(selectedDriver.getUserId(), newBus);
+                }
+            });
+
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Bus added successfully", Toast.LENGTH_SHORT).show();
+                finish();
+            });
+
+        } catch (Exception e) {
+            Log.e("AddBusActivity", "Error adding bus", e);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Failed to add bus: " + e.getMessage(), 
+                    Toast.LENGTH_SHORT).show();
+            });
+        }
     }
 
     private int getSelectedDriverPosition() {
