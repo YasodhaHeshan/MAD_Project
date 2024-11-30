@@ -228,13 +228,7 @@ public class AddBusActivity extends MainActivity {
             );
 
             // Use transaction to ensure data consistency
-            db.runInTransaction(() -> {
-                long busId = db.busDao().insert(newBus);
-                if (busId > 0) {
-                    // Create notification for the selected driver
-                    createDriverAssignmentNotification(selectedDriver.getUserId(), newBus);
-                }
-            });
+            db.runInTransaction(() -> { db.busDao().insert(newBus); });
 
             runOnUiThread(() -> {
                 Toast.makeText(this, "Bus added successfully", Toast.LENGTH_SHORT).show();
@@ -263,10 +257,5 @@ public class AddBusActivity extends MainActivity {
             }
         }
         return -1;
-    }
-
-    private void createDriverAssignmentNotification(int driverId, Bus bus) {
-        // Create notification for driver assignment
-        // Implementation referenced from NotificationController.java
     }
 } 
