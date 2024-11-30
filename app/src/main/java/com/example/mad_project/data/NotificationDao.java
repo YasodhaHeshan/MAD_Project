@@ -14,7 +14,7 @@ public interface NotificationDao {
     long insert(Notification notification);
 
     @Query("SELECT * FROM notifications WHERE userId = :userId ORDER BY timestamp DESC")
-    List<Notification> getAllForUser(int userId);
+    List<Notification> getNotificationsByUserId(int userId);
 
     @Query("SELECT * FROM notifications WHERE userId = :userId AND status = 'PENDING' ORDER BY timestamp DESC")
     List<Notification> getPendingForUser(int userId);

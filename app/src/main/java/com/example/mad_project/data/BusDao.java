@@ -32,4 +32,22 @@ public interface BusDao {
 
     @Query("SELECT * FROM buses WHERE registration_number = :regNumber AND is_active = 1")
     Bus getBusByRegistration(String regNumber);
+
+    @Query("SELECT * FROM buses WHERE owner_id = :ownerId AND is_active = 1")
+    List<Bus> getBusesByOwnerId(int ownerId);
+
+    @Query("UPDATE buses SET driver_id = :driverId, updated_at = :timestamp WHERE id = :busId")
+    void assignDriver(int busId, Integer driverId, long timestamp);
+
+    @Query("SELECT * FROM buses WHERE driver_id = :driverId AND is_active = 1")
+    List<Bus> getBusesByDriverId(int driverId);
+
+    @Query("SELECT * FROM buses WHERE driver_id IS NULL AND is_active = 1")
+    List<Bus> getBusesWithoutDriver();
+
+    @Query("UPDATE buses SET is_active = :isActive, updated_at = :timestamp WHERE id = :busId")
+    void updateBusActiveStatus(int busId, boolean isActive, long timestamp);
+
+    @Query("DELETE FROM buses WHERE id = :busId")
+    void deleteById(int busId);
 }

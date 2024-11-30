@@ -229,7 +229,7 @@ public class DashboardActivity extends MainActivity {
             roleSpecificButton.setText("Manage Buses");
             roleSpecificButton.setVisibility(View.VISIBLE);
             roleSpecificButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AddBusActivity.class);
+                Intent intent = new Intent(this, ManageBusesActivity.class);
                 startActivity(intent);
             });
         } else if (userRole.equalsIgnoreCase("driver")) {

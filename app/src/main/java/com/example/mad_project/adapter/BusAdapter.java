@@ -1,5 +1,8 @@
 package com.example.mad_project.adapter;
 
+import androidx.recyclerview.widget.RecyclerView;
+import com.example.mad_project.data.Bus;
+import java.util.List;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,15 +19,17 @@ import java.util.List;
 public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
     private final List<Bus> buses;
     private final OnBusClickListener listener;
+    private final boolean isOwnerView;
 
     public interface OnBusClickListener {
         void onBusClick(Bus bus);
         void onBookClick(Bus bus);
     }
 
-    public BusAdapter(List<Bus> buses, OnBusClickListener listener) {
+    public BusAdapter(List<Bus> buses, OnBusClickListener listener, boolean isOwnerView) {
         this.buses = buses;
         this.listener = listener;
+        this.isOwnerView = isOwnerView;
     }
 
     @NonNull
@@ -50,17 +55,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         
         FareCalculator.PointsBreakdown points = FareCalculator.calculatePoints(bus);
         holder.priceText.setText(points.getFormattedTotalFare());
-        
         holder.baseFareText.setText(String.format("%s (%d Points)",
             points.basePoints, points.basePoints));
 
-        holder.itemView.setOnClickListener(v -> {
-            listener.onBusClick(bus);
-        });
+        holder.itemView.setOnClickListener(v -> listener.onBusClick(bus));
         
-        holder.bookButton.setOnClickListener(v -> {
-            listener.onBookClick(bus);
-        });
+        if (isOwnerView) {
+            holder.bookButton.setText("Edit Bus");
+            holder.bookButton.setOnClickListener(v -> listener.onBusClick(bus));
+        } else {
+            holder.bookButton.setText("Book Now");
+            holder.bookButton.setOnClickListener(v -> listener.onBookClick(bus));
+        }
     }
 
     @Override
@@ -68,7 +74,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         return buses.size();
     }
 
-    class BusViewHolder extends RecyclerView.ViewHolder {
+    static class BusViewHolder extends RecyclerView.ViewHolder {
         private final TextView busNumberText;
         private final TextView startLocationText;
         private final TextView endLocationText;
@@ -99,3 +105,4 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         }
     }
 }
+ 

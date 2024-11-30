@@ -22,6 +22,7 @@ import com.example.mad_project.data.Ticket;
 import com.example.mad_project.utils.BookingManager;
 import com.example.mad_project.utils.DialogManager;
 import com.example.mad_project.utils.FareCalculator;
+import com.example.mad_project.utils.NotificationHandler;
 import com.google.android.material.button.MaterialButton;
 import com.example.mad_project.data.Payment;
 import com.example.mad_project.data.User;
@@ -343,7 +344,6 @@ public class SeatSelectionActivity extends MainActivity {
                 SessionManager sessionManager = new SessionManager(this);
                 AppDatabase db = AppDatabase.getDatabase(this);
                 
-                // Get current user and their ticket
                 User currentUser = db.userDao().getUserById(sessionManager.getUserId());
                 Ticket currentTicket = db.ticketDao().getTicketById(ticketId);
                 Ticket targetTicket = db.ticketDao().getTicketBySeatAndBus(seatNumber, selectedBus.getId());
@@ -355,36 +355,17 @@ public class SeatSelectionActivity extends MainActivity {
                             currentTicket.getSeatNumber(), seatNumber);
                         
                         DialogManager.showSwapConfirmationDialog(this, title, message, () -> {
-                            // Create and send notification after confirmation
-                            NotificationController controller = new NotificationController(this);
-                            controller.createSeatSwapNotification(
-                                targetTicket.getUserId(),
-                                currentUser.getName(),
-                                currentTicket.getSeatNumber(),
-                                seatNumber,
-                                currentTicket.getId(),
-                                targetTicket.getId()
-                            );
-                            
-                            Toast.makeText(this, "Seat swap request sent", Toast.LENGTH_SHORT).show();
-                            finish();
+                            NotificationHandler notificationHandler = new NotificationHandler(this);
+                            notificationHandler.handleSeatSwapRequest(currentUser, currentTicket, targetTicket);
+                            runOnUiThread(() -> {
+                                Toast.makeText(this, "Seat swap request sent", Toast.LENGTH_SHORT).show();
+                                finish();
+                            });
                         });
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        String errorMessage = "Could not find ";
-                        if (currentTicket == null) errorMessage += "your ticket";
-                        else if (targetTicket == null) errorMessage += "target seat ticket";
-                        else errorMessage += "user information";
-                        
-                        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
                     });
                 }
             } catch (Exception e) {
-                Log.e("SeatSelectionActivity", "Error sending swap request", e);
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Error sending seat swap request", Toast.LENGTH_SHORT).show();
-                });
+                Log.e("SeatSelection", "Error handling seat swap", e);
             }
         });
     }

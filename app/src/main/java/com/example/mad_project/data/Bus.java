@@ -15,10 +15,15 @@ import java.util.Locale;
                 @ForeignKey(entity = BusOwner.class,
                         parentColumns = "id",
                         childColumns = "owner_id",
-                        onDelete = ForeignKey.CASCADE)
+                        onDelete = ForeignKey.CASCADE),
+                @ForeignKey(entity = BusDriver.class,
+                        parentColumns = "id",
+                        childColumns = "driver_id",
+                        onDelete = ForeignKey.SET_NULL)
         },
         indices = {
-                @Index(value = "owner_id")
+                @Index(value = "owner_id"),
+                @Index(value = "driver_id")
         })
 public class Bus {
     @PrimaryKey(autoGenerate = true)
@@ -26,6 +31,9 @@ public class Bus {
 
     @ColumnInfo(name = "owner_id")
     private int ownerId;
+
+    @ColumnInfo(name = "driver_id", defaultValue = "NULL")
+    private Integer driverId;
 
     @ColumnInfo(name = "registration_number")
     private String registrationNumber;
@@ -69,8 +77,9 @@ public class Bus {
     @ColumnInfo(name = "base_points")
     private int basePoints;
 
-    public Bus(int ownerId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime, int basePoints) {
+    public Bus(int ownerId, Integer driverId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime, int basePoints) {
         this.ownerId = ownerId;
+        this.driverId = driverId;
         this.registrationNumber = registrationNumber;
         this.model = model;
         this.totalSeats = totalSeats;
@@ -80,11 +89,11 @@ public class Bus {
         this.routeTo = routeTo;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.createdAt = System.currentTimeMillis();
-        this.updatedAt = System.currentTimeMillis();
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
         this.basePoints = basePoints;
+        this.createdAt = System.currentTimeMillis();
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public int getId() {
@@ -101,6 +110,15 @@ public class Bus {
 
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
+    }
+
+    public Integer getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(Integer driverId) {
+        this.driverId = driverId;
+        this.updatedAt = System.currentTimeMillis();
     }
 
     public String getRegistrationNumber() {

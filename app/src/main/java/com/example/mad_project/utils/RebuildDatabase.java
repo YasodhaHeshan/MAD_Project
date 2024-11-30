@@ -137,14 +137,14 @@ public class RebuildDatabase {
             long busOwner1Id = db.busOwnerDao().insert(busOwner1);
             long busOwner2Id = db.busOwnerDao().insert(busOwner2);
 
-            // 3. Create Bus Drivers with different experience levels
+            // 3. Create Bus Drivers and wait for successful insertion
             BusDriver driver1 = new BusDriver((int)driver1Id, "DL123456", 
                 System.currentTimeMillis() + 31536000000L, 5);
             BusDriver driver2 = new BusDriver((int)driver2Id, "DL789012", 
                 System.currentTimeMillis() + 63072000000L, 8);
             
-            db.busDriverDao().insert(driver1);
-            db.busDriverDao().insert(driver2);
+            long driver1DbId = db.busDriverDao().insert(driver1);
+            long driver2DbId = db.busDriverDao().insert(driver2);
 
             // 4. Create Locations
             Location colombo = new Location("Colombo", 6.927079, 79.861243);
@@ -180,29 +180,57 @@ public class RebuildDatabase {
             db.locationDao().insert(hambantota);
             db.locationDao().insert(dambulla);
 
-            // 5. Create Buses with various routes and amenities
-            // Owner 1's buses
-            Bus bus1 = new Bus((int)busOwner1Id, "NB-1234", "Volvo 9400", 40, 
-                "WiFi, AC, USB Charging", true, "Colombo", "Kandy",
-                colombo.getLatitude(), colombo.getLongitude(),
+            // 5. Now create Buses with confirmed driver IDs
+            Bus bus1 = new Bus(
+                (int)busOwner1Id,
+                (int)driver1DbId,  // Use the actual database ID
+                "NB-1234",
+                "Volvo 9400",
+                40,
+                "WiFi, AC, USB Charging",
+                true,
+                "Colombo",
+                "Kandy",
+                colombo.getLatitude(),
+                colombo.getLongitude(),
                 System.currentTimeMillis() + 3600000,
                 System.currentTimeMillis() + 18000000,
-                2500);
+                2500
+            );
 
-            Bus bus2 = new Bus((int)busOwner1Id, "NB-5678", "Volvo 9400", 40,
-                "WiFi, AC, USB Charging, Entertainment", true, "Colombo", "Galle",
-                colombo.getLatitude(), colombo.getLongitude(),
+            Bus bus2 = new Bus(
+                (int)busOwner1Id,
+                (int)driver1DbId,
+                "NB-5678",
+                "Volvo 9400",
+                40,
+                "WiFi, AC, USB Charging, Entertainment",
+                true,
+                "Colombo",
+                "Galle",
+                colombo.getLatitude(),
+                colombo.getLongitude(),
                 System.currentTimeMillis() + 7200000,
                 System.currentTimeMillis() + 14400000,
-                2000);
+                3500
+            );
 
-            // Owner 2's buses
-            Bus bus3 = new Bus((int)busOwner2Id, "NB-9012", "Mercedes-Benz O303", 45,
-                "WiFi, AC, USB Charging, Refreshments", true, "Colombo", "Jaffna",
-                colombo.getLatitude(), colombo.getLongitude(),
+            Bus bus3 = new Bus(
+                (int)busOwner2Id,
+                (int)driver2DbId,
+                "NB-9012",
+                "Mercedes-Benz O303",
+                45,
+                "WiFi, AC, USB Charging, Entertainment, Refreshments",
+                true,
+                "Colombo",
+                "Jaffna",
+                colombo.getLatitude(),
+                colombo.getLongitude(),
                 System.currentTimeMillis() + 10800000,
-                System.currentTimeMillis() + 36000000,
-                3500);
+                System.currentTimeMillis() + 28800000,
+                5000
+            );
 
             long bus1Id = db.busDao().insert(bus1);
             long bus2Id = db.busDao().insert(bus2);

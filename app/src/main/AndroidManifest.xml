@@ -47,7 +47,12 @@
         <activity android:name=".ui.SeatSelectionActivity" android:exported="true" />
         <activity android:name=".ui.WelcomeActivity" android:exported="true" />
         <activity android:name=".ui.NotificationActivity" android:exported="true" />
-        <activity android:name=".ui.AddBusActivity" android:exported="true" />
+        <activity android:name=".ui.ManageBusesActivity" android:exported="true" />
+        <activity android:name=".ui.AddBusActivity" android:exported="false" android:parentActivityName=".ui.ManageBusesActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.ManageBusesActivity" />
+        </activity>
 
         <meta-data
             android:name="preloaded_fonts"

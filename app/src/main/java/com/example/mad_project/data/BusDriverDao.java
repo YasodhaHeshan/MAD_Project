@@ -10,7 +10,7 @@ import java.util.List;
 @Dao
 public interface BusDriverDao {
     @Insert
-    void insert(BusDriver busDriver);
+    long insert(BusDriver busDriver);
 
     @Update
     void update(BusDriver busDriver);
@@ -29,4 +29,7 @@ public interface BusDriverDao {
 
     @Query("SELECT * FROM bus_drivers WHERE is_active = 1")
     List<BusDriver> getAllActiveDrivers();
+
+    @Query("SELECT * FROM bus_drivers WHERE user_id = :userId")
+    BusDriver getBusDriverByUserId(int userId);
 }

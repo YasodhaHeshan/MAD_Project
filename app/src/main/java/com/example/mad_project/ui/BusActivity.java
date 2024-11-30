@@ -12,6 +12,7 @@ import com.example.mad_project.MainActivity;
 import com.example.mad_project.R;
 import com.example.mad_project.adapter.BusAdapter;
 import com.example.mad_project.controller.BusController;
+import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.utils.FareCalculator;
 import com.example.mad_project.utils.DirectionsHandler;
@@ -35,6 +36,8 @@ import com.google.android.material.button.MaterialButton;
 import java.util.List;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class BusActivity extends MainActivity implements OnMapReadyCallback {
     private MapView mapView;
@@ -46,6 +49,7 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
     private String toLocation;
     private MaterialButton clearFiltersButton;
     private DirectionsHandler directionsHandler;
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,16 +57,27 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         getLayoutInflater().inflate(R.layout.activity_bus, contentFrame);
         setupNavigation(true, true, "Bus Details");
 
-        // Initialize MapView
+        // Initialize database
+        db = AppDatabase.getDatabase(this);
+        
+        // Initialize views and map
         mapView = findViewById(R.id.map);
+        busRecyclerView = findViewById(R.id.busRecyclerView);
+        busRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        
+        // Initialize bottom sheet
+        NestedScrollView bottomSheet = findViewById(R.id.bottomSheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
+        
+        // Get route filters from intent
+        fromLocation = getIntent().getStringExtra("from_location");
+        toLocation = getIntent().getStringExtra("to_location");
+        
+        // Setup map
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-
-        // Get route filter if coming from search
-        fromLocation = getIntent().getStringExtra("from");
-        toLocation = getIntent().getStringExtra("to");
-
-        initializeViews();
+        
+        // Load buses
         setupBusList();
     }
 
@@ -138,65 +153,59 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
     }
 
     private void setupBusList() {
-        busController = new BusController(this);
-        
-        if (fromLocation != null && toLocation != null) {
-            busController.getBusesByRoute(fromLocation, toLocation, this::updateBusList);
-        } else {
-            busController.getAllBuses(this::updateBusList);
-        }
-    }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            List<Bus> buses = db.busDao().getAllBuses();
+            runOnUiThread(() -> {
+                BusAdapter adapter = new BusAdapter(buses, new BusAdapter.OnBusClickListener() {
+                    @Override
+                    public void onBusClick(Bus bus) {
+                        // Collapse bottom sheet to peek height
+                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        
+                        // Clear previous routes
+                        mMap.clear();
+                        
+                        // Add bus marker
+                        LatLng busLocation = new LatLng(bus.getLatitude(), bus.getLongitude());
+                        mMap.addMarker(new MarkerOptions()
+                                .position(busLocation)
+                                .title(bus.getRegistrationNumber())
+                                .snippet(String.format("%s to %s", bus.getRouteFrom(), bus.getRouteTo()))
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+                        
+                        // Display route for selected bus
+                        directionsHandler.displayRoute(bus.getRouteFrom(), bus.getRouteTo());
+                        
+                        try {
+                            // Get route bounds from DirectionsHandler
+                            LatLngBounds routeBounds = directionsHandler.getRouteBounds();
+                            if (routeBounds != null) {
+                                int padding = 100;
+                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(routeBounds, padding);
+                                mMap.animateCamera(cu);
+                            } else {
+                                // Fallback to just showing the bus location
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(busLocation, 12f));
+                            }
+                        } catch (Exception e) {
+                            // Fallback to just showing the bus location
+                            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(busLocation, 12f));
+                        }
+                    }
 
-    private void updateBusList(List<Bus> buses) {
-        runOnUiThread(() -> {
-            // Update bus count
-            TextView busCountText = findViewById(R.id.busCountText);
-            String countText = fromLocation != null && toLocation != null ?
-                String.format("%d buses found for this route", buses.size()) :
-                String.format("Total %d buses available", buses.size());
-            busCountText.setText(countText);
-
-            // Update bus list
-            BusAdapter adapter = new BusAdapter(buses, new BusAdapter.OnBusClickListener() {
-                @Override
-                public void onBusClick(Bus bus) {
-                    // Collapse bottom sheet to peek height
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    
-                    // Clear previous routes
-                    mMap.clear();
-                    
-                    // Add bus marker
-                    LatLng busLocation = new LatLng(bus.getLatitude(), bus.getLongitude());
-                    mMap.addMarker(new MarkerOptions()
-                            .position(busLocation)
-                            .title(bus.getRegistrationNumber())
-                            .snippet(String.format("%s to %s", bus.getRouteFrom(), bus.getRouteTo()))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-                    
-                    // Display route for selected bus
-                    directionsHandler.displayRoute(bus.getRouteFrom(), bus.getRouteTo());
-                    
-                    // Animate camera to show the route
-                    LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                    builder.include(busLocation);
-                    LatLngBounds bounds = builder.build();
-                    int padding = 100;
-                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                    mMap.animateCamera(cu);
-                }
-
-                @Override
-                public void onBookClick(Bus bus) {
-                    startBookingProcess(bus);
+                    @Override
+                    public void onBookClick(Bus bus) {
+                        startBookingProcess(bus);
+                    }
+                }, false);  // false for passenger view
+                busRecyclerView.setAdapter(adapter);
+                
+                // Update map markers
+                if (mMap != null) {
+                    updateMapMarkers(buses);
                 }
             });
-            busRecyclerView.setAdapter(adapter);
-            
-            // Update map markers
-            if (mMap != null) {
-                updateMapMarkers(buses);
-            }
         });
     }
 

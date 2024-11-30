@@ -14,7 +14,9 @@ import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.BusDriver;
 import com.example.mad_project.data.BusOwner;
 import com.example.mad_project.data.Location;
+import com.example.mad_project.data.Notification;
 import com.example.mad_project.data.User;
+import com.example.mad_project.utils.NotificationHandler;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.button.MaterialButton;
@@ -40,11 +42,32 @@ public class AddBusActivity extends MainActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getLayoutInflater().inflate(R.layout.activity_add_bus, contentFrame);
-        setupNavigation(true, false, "Add New Bus");
+        setContentView(R.layout.activity_add_bus);
 
         db = AppDatabase.getDatabase(this);
         initializeViews();
+        
+        boolean isEditMode = getIntent().getBooleanExtra("EDIT_MODE", false);
+        
+        if (isEditMode) {
+            setTitle("Edit Bus");
+            addBusButton.setText("Update Bus");
+            
+            // Populate fields with existing bus data
+            registrationInput.setText(getIntent().getStringExtra("BUS_REGISTRATION"));
+            modelInput.setText(getIntent().getStringExtra("BUS_MODEL"));
+            seatsInput.setText(String.valueOf(getIntent().getIntExtra("BUS_SEATS", 0)));
+            fromLocationInput.setText(getIntent().getStringExtra("BUS_FROM"));
+            toLocationInput.setText(getIntent().getStringExtra("BUS_TO"));
+            basePointsInput.setText(String.valueOf(getIntent().getIntExtra("BUS_BASE_POINTS", 0)));
+            
+            // Disable registration number editing
+            registrationInput.setEnabled(false);
+        } else {
+            setTitle("Add New Bus");
+            addBusButton.setText("Add Bus");
+        }
+
         loadDrivers();
         setupLocationAdapters();
         setupAddBusButton();
@@ -161,6 +184,7 @@ public class AddBusActivity extends MainActivity {
     private void addBus() {
         SessionManager sessionManager = new SessionManager(this);
         int userId = sessionManager.getUserId();
+        boolean isEditMode = getIntent().getBooleanExtra("EDIT_MODE", false);
 
         // Get selected driver
         int selectedPosition = getSelectedDriverPosition();
@@ -174,7 +198,6 @@ public class AddBusActivity extends MainActivity {
         BusDriver selectedDriver = availableDrivers.get(selectedPosition);
 
         try {
-            // First get the bus owner ID using user ID
             BusOwner busOwner = db.busOwnerDao().getBusOwnerByUserId(userId);
             
             if (busOwner == null) {
@@ -184,16 +207,18 @@ public class AddBusActivity extends MainActivity {
                 return;
             }
 
-            // Check if registration number already exists
-            Bus existingBus = db.busDao().getBusByRegistration(
-                registrationInput.getText().toString().trim()
-            );
-            
-            if (existingBus != null) {
-                runOnUiThread(() -> {
-                    Toast.makeText(this, "Bus registration number already exists", Toast.LENGTH_SHORT).show();
-                });
-                return;
+            // Check registration only in add mode
+            if (!isEditMode) {
+                Bus existingBus = db.busDao().getBusByRegistration(
+                    registrationInput.getText().toString().trim()
+                );
+                
+                if (existingBus != null) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Bus registration number already exists", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
             }
 
             Location fromLocation = db.locationDao().getLocationByName(
@@ -205,40 +230,62 @@ public class AddBusActivity extends MainActivity {
 
             if (fromLocation == null || toLocation == null) {
                 runOnUiThread(() -> {
-                    Toast.makeText(this, "Please select valid locations", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Invalid locations selected", Toast.LENGTH_SHORT).show();
                 });
                 return;
             }
 
-            // Create new bus with proper owner ID
-            Bus newBus = new Bus(
-                busOwner.getId(),
-                registrationInput.getText().toString().trim(),
-                modelInput.getText().toString().trim(),
-                Integer.parseInt(seatsInput.getText().toString().trim()),
-                "WiFi, AC",
-                true,
-                fromLocation.getName(),
-                toLocation.getName(),
-                fromLocation.getLatitude(),
-                fromLocation.getLongitude(),
-                System.currentTimeMillis(),
-                System.currentTimeMillis() + 3600000,
-                Integer.parseInt(basePointsInput.getText().toString().trim())
-            );
-
-            // Use transaction to ensure data consistency
-            db.runInTransaction(() -> { db.busDao().insert(newBus); });
-
-            runOnUiThread(() -> {
-                Toast.makeText(this, "Bus added successfully", Toast.LENGTH_SHORT).show();
-                finish();
-            });
+            if (isEditMode) {
+                // Update existing bus
+                int busId = getIntent().getIntExtra("BUS_ID", -1);
+                Bus bus = db.busDao().getBusById(busId);
+                if (bus != null) {
+                    bus.setModel(modelInput.getText().toString().trim());
+                    bus.setTotalSeats(Integer.parseInt(seatsInput.getText().toString().trim()));
+                    bus.setDriverId(selectedDriver.getId());
+                    bus.setRouteFrom(fromLocation.getName());
+                    bus.setRouteTo(toLocation.getName());
+                    bus.setLatitude(fromLocation.getLatitude());
+                    bus.setLongitude(fromLocation.getLongitude());
+                    bus.setBasePoints(Integer.parseInt(basePointsInput.getText().toString().trim()));
+                    
+                    db.busDao().update(bus);
+                    
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Bus updated successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    });
+                }
+            } else {
+                // Create new bus
+                Bus bus = new Bus(
+                    busOwner.getId(),
+                    selectedDriver.getId(),
+                    registrationInput.getText().toString().trim(),
+                    modelInput.getText().toString().trim(),
+                    Integer.parseInt(seatsInput.getText().toString().trim()),
+                    "WiFi, AC",
+                    true,
+                    fromLocation.getName(),
+                    toLocation.getName(),
+                    fromLocation.getLatitude(),
+                    fromLocation.getLongitude(),
+                    System.currentTimeMillis(),
+                    System.currentTimeMillis() + 3600000,
+                    Integer.parseInt(basePointsInput.getText().toString().trim())
+                );
+                db.busDao().insert(bus);
+                
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Bus added successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            }
 
         } catch (Exception e) {
-            Log.e("AddBusActivity", "Error adding bus", e);
+            Log.e("AddBusActivity", "Error " + (isEditMode ? "updating" : "adding") + " bus", e);
             runOnUiThread(() -> {
-                Toast.makeText(this, "Failed to add bus: " + e.getMessage(), 
+                Toast.makeText(this, "Failed to " + (isEditMode ? "update" : "add") + " bus: " + e.getMessage(), 
                     Toast.LENGTH_SHORT).show();
             });
         }
@@ -257,5 +304,10 @@ public class AddBusActivity extends MainActivity {
             }
         }
         return -1;
+    }
+
+    private void createNotifications(BusDriver driver, Bus bus, BusOwner owner) {
+        NotificationHandler notificationHandler = new NotificationHandler(this);
+        notificationHandler.createBusAssignmentNotification(driver, bus, owner);
     }
 } 
