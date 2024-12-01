@@ -98,9 +98,14 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
                 
                 SessionManager sessionManager = new SessionManager(requireContext());
                 int currentUserId = sessionManager.getUserId();
+                long currentTime = System.currentTimeMillis();
                 
                 for (Ticket ticket : tickets) {
-                    if (ticket.getStatus().equalsIgnoreCase("booked")) {
+                    if ((ticket.getStatus().equalsIgnoreCase("booked") && 
+                         ticket.getJourneyDate() >= currentTime) || 
+                        (ticket.getStatus().equalsIgnoreCase("completed") && 
+                         ticket.getJourneyDate() >= currentTime)) {
+                        
                         bookedSeats.add(ticket.getSeatNumber());
                         if (ticket.getUserId() == currentUserId) {
                             myBookedSeats.add(ticket.getSeatNumber());
@@ -111,7 +116,7 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
                 requireActivity().runOnUiThread(() -> {
                     if (selectedBus != null) {
                         setupSeatAdapter();
-                        updateBottomSheet(); // Show initial bus details
+                        updateBottomSheet();
                     } else {
                         Toast.makeText(requireContext(), "Failed to load bus details", Toast.LENGTH_SHORT).show();
                     }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,7 +50,10 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         holder.endLocationText.setText(bus.getRouteTo());
         holder.busModelText.setText(bus.getModel());
         holder.amenitiesText.setText(bus.getAmenities());
-        holder.seatsText.setText(String.format("%d seats available", bus.getCapacity()));
+        holder.seatsText.setText(String.format("%d seats • %.1f (%d ratings)", 
+            bus.getTotalSeats(), 
+            bus.getRating(),
+            bus.getRatingCount()));
         holder.departureTimeText.setText(bus.getFormattedDepartureTime());
         holder.arrivalTimeText.setText(bus.getFormattedArrivalTime());
         
@@ -57,6 +61,8 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         holder.priceText.setText(points.getFormattedTotalFare());
         holder.baseFareText.setText(String.format("%s (%d Points)",
             points.basePoints, points.basePoints));
+
+        holder.ratingBar.setRating(bus.getRating());
 
         holder.itemView.setOnClickListener(v -> listener.onBusClick(bus));
         
@@ -87,6 +93,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         private final TextView baseFareText;
         private final View priceBreakdownLayout;
         private final Button bookButton;
+        private final RatingBar ratingBar;
 
         public BusViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -102,6 +109,7 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
             baseFareText = itemView.findViewById(R.id.baseFareText);
             priceBreakdownLayout = itemView.findViewById(R.id.priceBreakdownLayout);
             bookButton = itemView.findViewById(R.id.bookButton);
+            ratingBar = itemView.findViewById(R.id.busRating);
         }
     }
 }

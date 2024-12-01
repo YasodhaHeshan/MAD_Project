@@ -63,6 +63,9 @@ public class Ticket {
     @ColumnInfo(name = "updated_at")
     private long updatedAt;
 
+    @ColumnInfo(name = "is_rated")
+    private boolean isRated = false;
+
     public Ticket(int userId, int busId, int seatNumber, 
                  long journeyDate, String source, String destination, String status) {
         this.userId = userId;
@@ -172,5 +175,13 @@ public class Ticket {
 
     public void setUpdatedAt(long updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isRated() {
+        return isRated;
+    }
+
+    public void setRated(boolean rated) {
+        isRated = rated;
     }
 }

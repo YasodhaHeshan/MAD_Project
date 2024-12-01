@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class BusController {
-
+    private final AppDatabase db;
     private final BusDao busDao;
     private final ExecutorService executorService;
 
     public BusController(Context context) {
-        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "mad_project_db")
+        db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "mad_project_db")
                 .fallbackToDestructiveMigration()
                 .build();
         busDao = db.busDao();
@@ -61,5 +61,20 @@ public class BusController {
     public boolean hasActiveFilters(String fromLocation, String toLocation) {
         return fromLocation != null && !fromLocation.isEmpty() 
             && toLocation != null && !toLocation.isEmpty();
+    }
+
+    public void updateBusRating(Bus bus, float newRating) {
+        executorService.execute(() -> {
+            float currentRating = bus.getRating();
+            int currentCount = bus.getRatingCount();
+            
+            // Calculate new average rating
+            float updatedRating = ((currentRating * currentCount) + newRating) / (currentCount + 1);
+            
+            bus.setRating(updatedRating);
+            bus.setRatingCount(currentCount + 1);
+            
+            db.busDao().update(bus);
+        });
     }
 }

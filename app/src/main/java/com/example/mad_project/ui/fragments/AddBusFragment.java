@@ -130,16 +130,26 @@ public class AddBusFragment extends Fragment {
     }
 
     private boolean validateInputs() {
-        String registration = registrationInput.getText().toString().trim();
         String model = modelInput.getText().toString().trim();
         String seats = seatsInput.getText().toString().trim();
         String driver = driverInput.getText().toString().trim();
         String from = fromLocationInput.getText().toString().trim();
         String to = toLocationInput.getText().toString().trim();
         String basePoints = basePointsInput.getText().toString().trim();
+        
+        // Only check registration in add mode
+        if (!isEditMode) {
+            String registration = registrationInput.getText().toString().trim();
+            if (registration.isEmpty()) {
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), "Registration number is required", Toast.LENGTH_SHORT).show();
+                });
+                return false;
+            }
+        }
 
-        if (registration.isEmpty() || model.isEmpty() || seats.isEmpty() || 
-            driver.isEmpty() || from.isEmpty() || to.isEmpty() || basePoints.isEmpty()) {
+        if (model.isEmpty() || seats.isEmpty() || driver.isEmpty() || 
+            from.isEmpty() || to.isEmpty() || basePoints.isEmpty()) {
             requireActivity().runOnUiThread(() -> {
                 Toast.makeText(requireContext(), "All fields are required", Toast.LENGTH_SHORT).show();
             });
@@ -172,7 +182,9 @@ public class AddBusFragment extends Fragment {
         return -1;
     }
 
-    private void addBus() {
+    private void saveBus() {
+        if (!validateInputs()) return;
+
         SessionManager sessionManager = new SessionManager(requireContext());
         int userId = sessionManager.getUserId();
 
@@ -187,87 +199,90 @@ public class AddBusFragment extends Fragment {
 
         BusDriver selectedDriver = availableDrivers.get(selectedPosition);
 
-        try {
-            // First get the bus owner ID using user ID
-            BusOwner busOwner = db.busOwnerDao().getBusOwnerByUserId(userId);
-            
-            if (busOwner == null) {
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "You are not registered as a bus owner", Toast.LENGTH_SHORT).show();
-                });
-                return;
-            }
-
-            // Check if registration number is unique
-            Bus existingBus = db.busDao().getBusByRegistration(
-                registrationInput.getText().toString().trim()
-            );
-            
-            if (existingBus != null) {
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "Registration number already exists", Toast.LENGTH_SHORT).show();
-                });
-                return;
-            }
-
-            // Get location objects
-            Location fromLocation = db.locationDao().getLocationByName(
-                fromLocationInput.getText().toString().trim()
-            );
-            Location toLocation = db.locationDao().getLocationByName(
-                toLocationInput.getText().toString().trim()
-            );
-
-            if (fromLocation == null || toLocation == null) {
-                requireActivity().runOnUiThread(() -> {
-                    Toast.makeText(requireContext(), "Invalid locations selected", Toast.LENGTH_SHORT).show();
-                });
-                return;
-            }
-
-            // Create new bus with proper owner ID but set isActive to false initially
-            Bus newBus = new Bus(
-                busOwner.getId(),
-                selectedDriver.getId(),
-                registrationInput.getText().toString().trim(),
-                modelInput.getText().toString().trim(),
-                Integer.parseInt(seatsInput.getText().toString().trim()),
-                "WiFi, AC",
-                true,  // Set to active
-                fromLocation.getName(),
-                toLocation.getName(),
-                fromLocation.getLatitude(),
-                fromLocation.getLongitude(),
-                System.currentTimeMillis(),
-                System.currentTimeMillis() + 3600000,
-                Integer.parseInt(basePointsInput.getText().toString().trim())
-            );
-
-            // Use transaction to ensure data consistency
-            db.runInTransaction(() -> {
-                // Insert the bus first
-                long busId = db.busDao().insert(newBus);
+        executor.execute(() -> {
+            try {
+                BusOwner busOwner = db.busOwnerDao().getBusOwnerByUserId(userId);
                 
-                // Create notifications for both driver and owner
-                createDriverNotification(selectedDriver, newBus, busOwner);
-                createOwnerNotification(busOwner.getUserId(), selectedDriver, newBus);
-            });
+                if (busOwner == null) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "You are not registered as a bus owner", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
 
-            requireActivity().runOnUiThread(() -> {
-                Toast.makeText(requireContext(), 
-                    "Bus assignment request sent to driver", Toast.LENGTH_SHORT).show();
-                clearInputs();
-                ((ManageBusesActivity) requireActivity()).refreshMyBuses();
-            });
+                Location fromLocation = db.locationDao().getLocationByName(
+                    fromLocationInput.getText().toString().trim()
+                );
+                Location toLocation = db.locationDao().getLocationByName(
+                    toLocationInput.getText().toString().trim()
+                );
 
-        } catch (Exception e) {
-            Log.e("AddBusFragment", "Error adding bus", e);
-            requireActivity().runOnUiThread(() -> {
-                Toast.makeText(requireContext(), 
-                    "Failed to add bus: " + e.getMessage(), 
-                    Toast.LENGTH_SHORT).show();
-            });
-        }
+                if (fromLocation == null || toLocation == null) {
+                    requireActivity().runOnUiThread(() -> {
+                        Toast.makeText(requireContext(), "Invalid locations selected", Toast.LENGTH_SHORT).show();
+                    });
+                    return;
+                }
+
+                Bus bus;
+                if (isEditMode) {
+                    // Update existing bus
+                    bus = db.busDao().getBusById(busId);
+                    bus.setModel(modelInput.getText().toString().trim());
+                    bus.setTotalSeats(Integer.parseInt(seatsInput.getText().toString().trim()));
+                    bus.setDriverId(selectedDriver.getId());
+                    bus.setRouteFrom(fromLocation.getName());
+                    bus.setRouteTo(toLocation.getName());
+                    bus.setLatitude(fromLocation.getLatitude());
+                    bus.setLongitude(fromLocation.getLongitude());
+                    bus.setDepartureTime(selectedDepartureTime);
+                    bus.setArrivalTime(selectedArrivalTime);
+                    bus.setBasePoints(Integer.parseInt(basePointsInput.getText().toString().trim()));
+                    
+                    db.runInTransaction(() -> {
+                        db.busDao().update(bus);
+                        createDriverNotification(selectedDriver, bus, busOwner);
+                    });
+                } else {
+                    // Create new bus
+                    bus = new Bus(
+                        busOwner.getId(),
+                        selectedDriver.getId(),
+                        registrationInput.getText().toString().trim(),
+                        modelInput.getText().toString().trim(),
+                        Integer.parseInt(seatsInput.getText().toString().trim()),
+                        "WiFi, AC",
+                        true,
+                        fromLocation.getName(),
+                        toLocation.getName(),
+                        fromLocation.getLatitude(),
+                        fromLocation.getLongitude(),
+                        selectedDepartureTime,
+                        selectedArrivalTime,
+                        Integer.parseInt(basePointsInput.getText().toString().trim())
+                    );
+
+                    db.runInTransaction(() -> {
+                        long busId = db.busDao().insert(bus);
+                        createDriverNotification(selectedDriver, bus, busOwner);
+                        createOwnerNotification(busOwner.getUserId(), selectedDriver, bus);
+                    });
+                }
+
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), 
+                        isEditMode ? "Bus updated successfully" : "Bus assignment request sent to driver", 
+                        Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
+                });
+
+            } catch (Exception e) {
+                requireActivity().runOnUiThread(() -> {
+                    Toast.makeText(requireContext(), 
+                        "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void createDriverNotification(BusDriver driver, Bus bus, BusOwner owner) {
@@ -314,7 +329,7 @@ public class AddBusFragment extends Fragment {
         addBusButton.setOnClickListener(v -> {
             executor.execute(() -> {
                 if (validateInputs()) {
-                    addBus();
+                    saveBus();
                 }
             });
         });
@@ -378,7 +393,7 @@ public class AddBusFragment extends Fragment {
             Bus bus = db.busDao().getBusById(busId);
             if (bus != null) {
                 requireActivity().runOnUiThread(() -> {
-                    registrationInput.setText(bus.getRegistrationNumber());
+                    registrationInput.setVisibility(View.GONE);
                     modelInput.setText(bus.getModel());
                     seatsInput.setText(String.valueOf(bus.getTotalSeats()));
                     fromLocationInput.setText(bus.getRouteFrom());
@@ -390,7 +405,6 @@ public class AddBusFragment extends Fragment {
                     departureTimeInput.setText(formatTime(selectedDepartureTime));
                     arrivalTimeInput.setText(formatTime(selectedArrivalTime));
                     
-                    registrationInput.setEnabled(false);
                     addBusButton.setText("Update Bus");
                 });
             }

@@ -197,6 +197,8 @@ public class RebuildDatabase {
                 System.currentTimeMillis() + 18000000,
                 2500
             );
+            bus1.setRating(4.5f);
+            bus1.setRatingCount(12);
 
             Bus bus2 = new Bus(
                 (int)busOwner1Id,
@@ -214,6 +216,8 @@ public class RebuildDatabase {
                 System.currentTimeMillis() + 14400000,
                 3500
             );
+            bus2.setRating(4.2f);
+            bus2.setRatingCount(8);
 
             Bus bus3 = new Bus(
                 (int)busOwner2Id,
@@ -231,6 +235,8 @@ public class RebuildDatabase {
                 System.currentTimeMillis() + 28800000,
                 5000
             );
+            bus3.setRating(4.8f);
+            bus3.setRatingCount(15);
 
             long bus1Id = db.busDao().insert(bus1);
             long bus2Id = db.busDao().insert(bus2);
@@ -238,16 +244,16 @@ public class RebuildDatabase {
 
             // 6. Create Tickets and Payments for various scenarios
             // Completed bookings for Passenger 1
-            createTicketAndPayment(db, (int)p1Id, (int)bus1Id, 1, 2625, "booked");
-            createTicketAndPayment(db, (int)p1Id, (int)bus2Id, 7, 2100, "booked");
+            createTicketAndPayment(db, (int)p1Id, (int)bus1Id, 1, 2625, "completed", true);
+            createTicketAndPayment(db, (int)p1Id, (int)bus2Id, 7, 2100, "booked", false);
 
             // Completed bookings for Passenger 2
-            createTicketAndPayment(db, (int)p2Id, (int)bus2Id, 10, 2100, "booked");
-            createTicketAndPayment(db, (int)p2Id, (int)bus3Id, 16, 3675, "cancelled");
+            createTicketAndPayment(db, (int)p2Id, (int)bus2Id, 10, 2100, "completed", true);
+            createTicketAndPayment(db, (int)p2Id, (int)bus3Id, 16, 3675, "cancelled", false);
 
             // Completed bookings for Passenger 3
-            createTicketAndPayment(db, (int)p3Id, (int)bus1Id, 6, 2625, "booked");
-            createTicketAndPayment(db, (int)p3Id, (int)bus3Id, 3, 3675, "booked");
+            createTicketAndPayment(db, (int)p3Id, (int)bus1Id, 6, 2625, "completed", true);
+            createTicketAndPayment(db, (int)p3Id, (int)bus3Id, 3, 3675, "booked", false);
 
             // 7. Create Notifications for various scenarios
             createNotifications(db, (int)driver1Id, (int)driver2Id, (int)p1Id, (int)p2Id, (int)p3Id);
@@ -255,11 +261,12 @@ public class RebuildDatabase {
     }
 
     private static void createTicketAndPayment(AppDatabase db, int userId, int busId, 
-        int seatNumber, int points, String status) {
+        int seatNumber, int points, String status, boolean isRated) {
         
         Ticket ticket = new Ticket(userId, busId, seatNumber,
             System.currentTimeMillis() + 86400000, // Journey tomorrow
             "Colombo", "Kandy", status);
+        ticket.setRated(isRated);
         long ticketId = db.ticketDao().insert(ticket);
 
         Payment payment = new Payment(0, userId, (int)ticketId, points);

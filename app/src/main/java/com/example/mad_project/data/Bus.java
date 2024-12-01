@@ -77,6 +77,12 @@ public class Bus {
     @ColumnInfo(name = "base_points")
     private int basePoints;
 
+    @ColumnInfo(name = "rating")
+    private float rating = 0.0f;
+
+    @ColumnInfo(name = "rating_count")
+    private int ratingCount = 0;
+
     public Bus(int ownerId, Integer driverId, String registrationNumber, String model, int totalSeats, String amenities, boolean isActive, String routeFrom, String routeTo, double latitude, double longitude, long departureTime, long arrivalTime, int basePoints) {
         this.ownerId = ownerId;
         this.driverId = driverId;
@@ -249,5 +255,21 @@ public class Bus {
 
     public void setBasePoints(int basePoints) {
         this.basePoints = basePoints;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public void setRating(float rating) {
+        this.rating = rating;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(int count) {
+        this.ratingCount = count;
     }
 }

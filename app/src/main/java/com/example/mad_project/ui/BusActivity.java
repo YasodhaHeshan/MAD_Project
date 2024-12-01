@@ -164,12 +164,14 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
                 // Update title
                 TextView titleText = findViewById(R.id.availableBusesTitle);
                 if (busController.hasActiveFilters(fromLocation, toLocation)) {
-                    titleText.setText(String.format("Buses from %s to %s", fromLocation, toLocation));
-                    clearFiltersButton.setVisibility(View.VISIBLE);
+                    titleText.setText(String.format("Buses from %s to %s (%d available)", 
+                        fromLocation, toLocation, buses.size()));
                 } else {
-                    titleText.setText("Available Buses");
-                    clearFiltersButton.setVisibility(View.GONE);
+                    titleText.setText(String.format("Available Buses (%d)", buses.size()));
                 }
+                clearFiltersButton.setVisibility(
+                    busController.hasActiveFilters(fromLocation, toLocation) ? View.VISIBLE : View.GONE
+                );
                 
                 // Update map markers
                 if (mMap != null) {
