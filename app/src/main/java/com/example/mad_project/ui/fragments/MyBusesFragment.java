@@ -13,10 +13,9 @@ import com.example.mad_project.R;
 import com.example.mad_project.adapter.BusAdapter;
 import com.example.mad_project.data.AppDatabase;
 import com.example.mad_project.data.Bus;
-import com.example.mad_project.ui.AddBusActivity;
+import com.example.mad_project.ui.ManageBusActivity;
 import com.example.mad_project.utils.SessionManager;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import android.util.Log;
@@ -84,7 +83,7 @@ public class MyBusesFragment extends Fragment implements BusAdapter.OnBusClickLi
     @Override
     public void onBusClick(Bus bus) {
         // Launch AddBusActivity in edit mode
-        Intent intent = new Intent(requireContext(), AddBusActivity.class);
+        Intent intent = new Intent(requireContext(), ManageBusActivity.class);
         intent.putExtra("EDIT_MODE", true);
         intent.putExtra("BUS_ID", bus.getId());
         intent.putExtra("BUS_REGISTRATION", bus.getRegistrationNumber());
@@ -93,6 +92,8 @@ public class MyBusesFragment extends Fragment implements BusAdapter.OnBusClickLi
         intent.putExtra("BUS_FROM", bus.getRouteFrom());
         intent.putExtra("BUS_TO", bus.getRouteTo());
         intent.putExtra("BUS_BASE_POINTS", bus.getBasePoints());
+        intent.putExtra("BUS_DEPARTURE_TIME", bus.getDepartureTime());
+        intent.putExtra("BUS_ARRIVAL_TIME", bus.getArrivalTime());
         startActivity(intent);
     }
 

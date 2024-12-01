@@ -1,5 +1,6 @@
 package com.example.mad_project.ui.fragments;
 
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import com.example.mad_project.R;
 import com.example.mad_project.controller.LocationController;
@@ -16,8 +19,12 @@ import com.example.mad_project.ui.ManageBusesActivity;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -33,6 +40,21 @@ public class AddBusFragment extends Fragment {
     private AppDatabase db;
     private final Executor executor = Executors.newSingleThreadExecutor();
     private List<BusDriver> availableDrivers = new ArrayList<>();
+    private TextInputEditText departureTimeInput;
+    private TextInputEditText arrivalTimeInput;
+    private long selectedDepartureTime;
+    private long selectedArrivalTime;
+    private boolean isEditMode = false;
+    private int busId = -1;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            isEditMode = getArguments().getBoolean("EDIT_MODE", false);
+            busId = getArguments().getInt("BUS_ID", -1);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,9 +62,16 @@ public class AddBusFragment extends Fragment {
         
         db = AppDatabase.getDatabase(requireContext());
         initializeViews(view);
+        setupTimeInputs();
         loadDrivers();
         setupLocationAdapters();
         setupAddBusButton();
+        
+        if (isEditMode && busId != -1) {
+            loadExistingBusData();
+        } else {
+            setupDefaultTimes();
+        }
         
         return view;
     }
@@ -56,6 +85,8 @@ public class AddBusFragment extends Fragment {
         toLocationInput = view.findViewById(R.id.toLocationInput);
         basePointsInput = view.findViewById(R.id.basePointsInput);
         addBusButton = view.findViewById(R.id.addBusButton);
+        departureTimeInput = view.findViewById(R.id.departureTimeInput);
+        arrivalTimeInput = view.findViewById(R.id.arrivalTimeInput);
     }
 
     private void loadDrivers() {
@@ -94,16 +125,6 @@ public class AddBusFragment extends Fragment {
                 );
                 fromLocationInput.setAdapter(adapter);
                 toLocationInput.setAdapter(adapter);
-            });
-        });
-    }
-
-    private void setupAddBusButton() {
-        addBusButton.setOnClickListener(v -> {
-            executor.execute(() -> {
-                if (validateInputs()) {
-                    addBus();
-                }
             });
         });
     }
@@ -287,5 +308,92 @@ public class AddBusFragment extends Fragment {
         fromLocationInput.setText("");
         toLocationInput.setText("");
         basePointsInput.setText("");
+    }
+
+    private void setupAddBusButton() {
+        addBusButton.setOnClickListener(v -> {
+            executor.execute(() -> {
+                if (validateInputs()) {
+                    addBus();
+                }
+            });
+        });
+    }
+
+    public void onBookClick(Bus bus) {
+        // Not needed for owner view
+    }
+
+    private void setupTimeInputs() {
+        departureTimeInput.setOnClickListener(v -> showTimePickerDialog(true));
+        arrivalTimeInput.setOnClickListener(v -> showTimePickerDialog(false));
+    }
+
+    private void showTimePickerDialog(boolean isDeparture) {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(
+            requireContext(),
+            (view, hourOfDay, selectedMinute) -> {
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, selectedMinute);
+                
+                long selectedTime = calendar.getTimeInMillis();
+                
+                if (isDeparture) {
+                    selectedDepartureTime = selectedTime;
+                    departureTimeInput.setText(formatTime(selectedTime));
+                } else {
+                    selectedArrivalTime = selectedTime;
+                    arrivalTimeInput.setText(formatTime(selectedTime));
+                }
+            },
+            hour,
+            minute,
+            true
+        );
+        
+        timePickerDialog.show();
+    }
+
+    private String formatTime(long timeInMillis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return sdf.format(new Date(timeInMillis));
+    }
+
+    private void setupDefaultTimes() {
+        Calendar calendar = Calendar.getInstance();
+        selectedDepartureTime = calendar.getTimeInMillis();
+        calendar.add(Calendar.HOUR_OF_DAY, 1);
+        selectedArrivalTime = calendar.getTimeInMillis();
+        
+        departureTimeInput.setText(formatTime(selectedDepartureTime));
+        arrivalTimeInput.setText(formatTime(selectedArrivalTime));
+    }
+
+    private void loadExistingBusData() {
+        executor.execute(() -> {
+            Bus bus = db.busDao().getBusById(busId);
+            if (bus != null) {
+                requireActivity().runOnUiThread(() -> {
+                    registrationInput.setText(bus.getRegistrationNumber());
+                    modelInput.setText(bus.getModel());
+                    seatsInput.setText(String.valueOf(bus.getTotalSeats()));
+                    fromLocationInput.setText(bus.getRouteFrom());
+                    toLocationInput.setText(bus.getRouteTo());
+                    basePointsInput.setText(String.valueOf(bus.getBasePoints()));
+                    selectedDepartureTime = bus.getDepartureTime();
+                    selectedArrivalTime = bus.getArrivalTime();
+                    
+                    departureTimeInput.setText(formatTime(selectedDepartureTime));
+                    arrivalTimeInput.setText(formatTime(selectedArrivalTime));
+                    
+                    registrationInput.setEnabled(false);
+                    addBusButton.setText("Update Bus");
+                });
+            }
+        });
     }
 } 

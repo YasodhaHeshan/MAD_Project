@@ -48,7 +48,7 @@
         <activity android:name=".ui.WelcomeActivity" android:exported="true" />
         <activity android:name=".ui.NotificationActivity" android:exported="true" />
         <activity android:name=".ui.ManageBusesActivity" android:exported="true" />
-        <activity android:name=".ui.AddBusActivity" android:exported="false" android:parentActivityName=".ui.ManageBusesActivity">
+        <activity android:name=".ui.ManageBusActivity" android:exported="false" android:parentActivityName=".ui.ManageBusesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ui.ManageBusesActivity" />
