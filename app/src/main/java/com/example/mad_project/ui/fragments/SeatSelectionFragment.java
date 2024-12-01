@@ -116,6 +116,7 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
                 requireActivity().runOnUiThread(() -> {
                     if (selectedBus != null) {
                         setupSeatAdapter();
+                        initializeSeatStates();
                         updateBottomSheet();
                     } else {
                         Toast.makeText(requireContext(), "Failed to load bus details", Toast.LENGTH_SHORT).show();
@@ -249,22 +250,20 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
     private void handleSeatClick(MaterialButton button, String seatNumber) {
         int seatNum = Integer.parseInt(seatNumber);
         
+        // First check if seat is booked
         if (bookedSeats.contains(seatNum)) {
             // Check if it's not user's own booked seat
             if (!myBookedSeats.contains(seatNum)) {
                 showSwapRequestDialog(seatNum);
             }
-            return;
+            return;  // Exit early for booked seats
         }
         
+        // Handle selection for available seats
         if (selectedSeats.contains(seatNum)) {
             selectedSeats.remove(Integer.valueOf(seatNum));
-            button.setBackgroundTintList(ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.green_light)));
         } else {
             selectedSeats.add(seatNum);
-            button.setBackgroundTintList(ColorStateList.valueOf(
-                ContextCompat.getColor(requireContext(), R.color.accent_blue)));
         }
         
         // Notify activity of selection change
@@ -272,6 +271,7 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
             selectionListener.onSeatsSelected(selectedSeats);
         }
         
+        // Update appearance after selection change
         updateSeatAppearance(button, seatNumber);
         updateBottomSheet();
     }
@@ -436,5 +436,44 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
 
     public interface OnSeatSelectionListener {
         void onSeatsSelected(List<Integer> seats);
+    }
+
+    private void initializeSeatStates() {
+        if (selectedBus != null) {
+            int totalSeats = selectedBus.getTotalSeats();
+            for (int i = 1; i <= totalSeats; i++) {
+                if (!bookedSeats.contains(i)) {
+                    // Find buttons in both grids
+                    MaterialButton button = null;
+                    for (int j = 0; j < leftSeatGrid.getChildCount(); j++) {
+                        View child = leftSeatGrid.getChildAt(j);
+                        if (child instanceof LinearLayout) {
+                            View buttonView = ((LinearLayout) child).getChildAt(0);
+                            if (buttonView instanceof MaterialButton && 
+                                ((MaterialButton) buttonView).getText().toString().equals(String.valueOf(i))) {
+                                button = (MaterialButton) buttonView;
+                                break;
+                            }
+                        }
+                    }
+                    if (button == null) {
+                        for (int j = 0; j < rightSeatGrid.getChildCount(); j++) {
+                            View child = rightSeatGrid.getChildAt(j);
+                            if (child instanceof LinearLayout) {
+                                View buttonView = ((LinearLayout) child).getChildAt(0);
+                                if (buttonView instanceof MaterialButton && 
+                                    ((MaterialButton) buttonView).getText().toString().equals(String.valueOf(i))) {
+                                    button = (MaterialButton) buttonView;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (button != null) {
+                        updateSeatAppearance(button, String.valueOf(i));
+                    }
+                }
+            }
+        }
     }
 } 
