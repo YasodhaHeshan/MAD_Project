@@ -21,7 +21,7 @@ public class DriverBusesActivity extends MainActivity {
     private RecyclerView busRecyclerView;
     private TextView emptyView;
     private AppDatabase db;
-    private Executor executor = Executors.newSingleThreadExecutor();
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,9 +30,8 @@ public class DriverBusesActivity extends MainActivity {
         setupNavigation(true, false, "My Assigned Buses");
 
         initializeViews();
-        loadAssignedBuses();
-
         db = AppDatabase.getDatabase(this);
+        loadAssignedBuses();
     }
 
     private void initializeViews() {
@@ -43,9 +42,12 @@ public class DriverBusesActivity extends MainActivity {
 
     private void loadAssignedBuses() {
         SessionManager sessionManager = new SessionManager(this);
-        int driverId = sessionManager.getUserId();
+        int userId = sessionManager.getUserId();
 
         executor.execute(() -> {
+            // Get driver ID from user ID
+            int driverId = db.busDriverDao().getBusDriverByUserId(userId).getId();
+            // Get assigned buses
             List<Bus> assignedBuses = db.busDao().getBusesByDriverId(driverId);
             
             runOnUiThread(() -> {
@@ -75,7 +77,7 @@ public class DriverBusesActivity extends MainActivity {
     }
 
     private void showBusDetails(Bus bus) {
-        // Show bus details in a bottom sheet or new activity
-        // You can reuse existing detail view logic
+        // Show bus details in a dialog or new activity
+        // You can implement this based on your requirements
     }
 } 
