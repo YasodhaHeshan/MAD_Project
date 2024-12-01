@@ -73,6 +73,13 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
         
+        busController = new BusController(this);
+        clearFiltersButton = findViewById(R.id.clearFiltersButton);
+        clearFiltersButton.setOnClickListener(v -> clearFilters());
+        
+        // Update clear filters button visibility based on intent extras
+        updateClearFiltersVisibility();
+        
         // Load buses
         setupBusList();
     }
@@ -107,51 +114,8 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         mapView.onSaveInstanceState(outState);
     }
 
-    private void initializeViews() {
-        busRecyclerView = findViewById(R.id.busRecyclerView);
-        busRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        
-        NestedScrollView bottomSheet = findViewById(R.id.bottomSheet);
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet);
-        
-        // Configure bottom sheet behavior
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        bottomSheetBehavior.setHideable(false);
-        bottomSheetBehavior.setPeekHeight(300); // Adjust this value as needed
-        
-        // Add callback to handle state changes
-        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                // Optional: Handle state changes
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                // Optional: Handle sliding
-            }
-        });
-        
-        TextView titleText = findViewById(R.id.availableBusesTitle);
-        if (fromLocation != null && toLocation != null) {
-            titleText.setText(String.format("Buses from %s to %s", fromLocation, toLocation));
-        }
-        
-        clearFiltersButton = findViewById(R.id.clearFiltersButton);
-        
-        // Show FAB only if filters are applied
-        clearFiltersButton.setVisibility(
-            fromLocation != null && toLocation != null ? View.VISIBLE : View.GONE
-        );
-        
-        // Setup click listener
-        clearFiltersButton.setOnClickListener(v -> clearFilters());
-    }
-
     private void setupBusList() {
-        Executor executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            List<Bus> buses = db.busDao().getAllBuses();
+        busController.searchBuses(fromLocation, toLocation, buses -> {
             runOnUiThread(() -> {
                 BusAdapter adapter = new BusAdapter(buses, new BusAdapter.OnBusClickListener() {
                     @Override
@@ -196,6 +160,16 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
                     }
                 }, false);  // false for passenger view
                 busRecyclerView.setAdapter(adapter);
+                
+                // Update title
+                TextView titleText = findViewById(R.id.availableBusesTitle);
+                if (busController.hasActiveFilters(fromLocation, toLocation)) {
+                    titleText.setText(String.format("Buses from %s to %s", fromLocation, toLocation));
+                    clearFiltersButton.setVisibility(View.VISIBLE);
+                } else {
+                    titleText.setText("Available Buses");
+                    clearFiltersButton.setVisibility(View.GONE);
+                }
                 
                 // Update map markers
                 if (mMap != null) {
@@ -273,14 +247,19 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
         fromLocation = null;
         toLocation = null;
         
-        // Update title and count
-        TextView titleText = findViewById(R.id.availableBusesTitle);
-        titleText.setText("Available Buses");
-        
-        // Hide clear filters button
-        clearFiltersButton.setVisibility(View.GONE);
-        
         // Reload buses without filters
         setupBusList();
+        
+        // Clear any existing routes on the map
+        if (mMap != null) {
+            mMap.clear();
+        }
+    }
+
+    private void updateClearFiltersVisibility() {
+        clearFiltersButton.setVisibility(
+            busController.hasActiveFilters(fromLocation, toLocation) ? 
+            View.VISIBLE : View.GONE
+        );
     }
 }

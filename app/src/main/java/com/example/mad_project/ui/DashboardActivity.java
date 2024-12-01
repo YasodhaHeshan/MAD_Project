@@ -77,8 +77,8 @@ public class DashboardActivity extends MainActivity {
             }
 
             Intent intent = new Intent(this, BusActivity.class);
-            intent.putExtra("from", from);
-            intent.putExtra("to", to);
+            intent.putExtra("from_location", from);
+            intent.putExtra("to_location", to);
             startActivity(intent);
         });
 

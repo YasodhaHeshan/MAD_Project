@@ -26,31 +26,6 @@ public class BusController {
         executorService = Executors.newSingleThreadExecutor();
     }
 
-    public void getAllBuses(Consumer<List<Bus>> callback) {
-        executorService.execute(() -> {
-            List<Bus> busList = busDao.getAllBuses();
-            callback.accept(busList);
-        });
-    }
-
-    public void getBusesByRoute(String from, String to, Consumer<List<Bus>> callback) {
-        executorService.execute(() -> {
-            List<Bus> busList = busDao.getBusesByRoute(from, to);
-            callback.accept(busList);
-        });
-    }
-
-    public void createBus(Bus bus, Consumer<Boolean> callback) {
-        executorService.execute(() -> {
-            try {
-                busDao.insert(bus);
-                callback.accept(true);
-            } catch (Exception e) {
-                callback.accept(false);
-            }
-        });
-    }
-
     public void getRouteSuggestions(String query, Consumer<List<String>> callback) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.execute(() -> {
@@ -69,5 +44,22 @@ public class BusController {
             callback.accept(suggestions);
         });
         executor.shutdown();
+    }
+
+    public void searchBuses(String fromLocation, String toLocation, Consumer<List<Bus>> callback) {
+        executorService.execute(() -> {
+            List<Bus> buses;
+            if (hasActiveFilters(fromLocation, toLocation)) {
+                buses = busDao.getBusesByRoute(fromLocation, toLocation);
+            } else {
+                buses = busDao.getAllBuses();
+            }
+            callback.accept(buses);
+        });
+    }
+
+    public boolean hasActiveFilters(String fromLocation, String toLocation) {
+        return fromLocation != null && !fromLocation.isEmpty() 
+            && toLocation != null && !toLocation.isEmpty();
     }
 }
