@@ -36,6 +36,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:animateLayoutChanges="true"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -66,6 +67,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@color/gray"/>
+
+        <RatingBar
+            android:id="@+id/busRating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:isIndicator="true"/>
 
         <TextView
             android:id="@+id/amenitiesText"

@@ -1,152 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimaryBackground">
+        android:background="@color/colorPrimaryBackground"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:paddingBottom="200dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:gravity="center_horizontal">
+            android:orientation="vertical">  <!-- Increased bottom padding -->
 
-            <!-- Bus Info Section -->
-            <TextView
-                android:id="@+id/busInfoText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:gravity="center"/>
-
-            <!-- Bus Layout Container -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
+                android:id="@+id/seatSelectionContainer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardBackgroundColor="@color/colorSecondaryBackground">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <!-- Driver Section -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Driver"
-                        android:textColor="@color/white"
-                        android:gravity="center"
-                        android:padding="8dp"
-                        android:background="@drawable/rounded_corner_background"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- Seat Grid Layout -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center">
-
-                        <GridLayout
-                            android:id="@+id/leftSeatGrid"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:columnCount="2"
-                            android:rowCount="10"
-                            android:layout_marginEnd="16dp"/>
-
-                        <GridLayout
-                            android:id="@+id/rightSeatGrid"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:columnCount="2"
-                            android:rowCount="10"
-                            android:layout_marginStart="16dp"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Legend -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="16dp"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Available"
-                    android:textColor="@color/white"
-                    android:drawableStart="@drawable/seat_available"
-                    android:drawablePadding="4dp"
-                    android:layout_marginEnd="16dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Selected"
-                    android:textColor="@color/white"
-                    android:drawableStart="@drawable/seat_selected"
-                    android:drawablePadding="4dp"
-                    android:layout_marginEnd="16dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Booked"
-                    android:textColor="@color/white"
-                    android:drawableStart="@drawable/seat_booked"
-                    android:drawablePadding="4dp"/>
-
-            </LinearLayout>
-
-            <!-- Selected Seats and Fare -->
-            <TextView
-                android:id="@+id/selectedSeatText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/white"
-                android:textSize="16sp"/>
-
-            <TextView
-                android:id="@+id/fareText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textColor="@color/accent_blue"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
-
-            <!-- Confirm Button -->
-            <Button
-                android:id="@+id/confirmButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="@string/confirm_booking"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/green_light"/>
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-    </ScrollView>
+    <include
+        android:id="@+id/bottomSheet"
+        layout="@layout/booking_bottom_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

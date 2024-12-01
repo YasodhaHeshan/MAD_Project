@@ -126,4 +126,60 @@ public class EmailSender {
             """,
             name, id, registrationNumber, source, destination, date);
     }
+
+    public static void sendSeatSwapConfirmation(String toEmail, String userName, 
+            int ticketId, String busNumber, String departure, String destination, 
+            String date, String oldSeat, String newSeat) {
+        
+        new Thread(() -> {
+            try {
+                Properties props = new Properties();
+                props.put("mail.smtp.auth", "true");
+                props.put("mail.smtp.starttls.enable", "true");
+                props.put("mail.smtp.host", EmailConfig.HOST);
+                props.put("mail.smtp.port", EmailConfig.PORT);
+
+                Session session = Session.getInstance(props, new Authenticator() {
+                    @Override
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(
+                            EmailConfig.USERNAME, 
+                            EmailConfig.PASSWORD
+                        );
+                    }
+                });
+
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(EmailConfig.FROM_EMAIL, EmailConfig.FROM_NAME));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
+                message.setSubject("Seat Swap Confirmation - Ticket #" + ticketId);
+                
+                String htmlContent = String.format("""
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <h1 style="color: #1976D2;">Seat Swap Confirmation</h1>
+                        <p>Dear %s,</p>
+                        <p>Your seat has been successfully swapped. Here are your updated ticket details:</p>
+                        <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                            <p><strong>Ticket ID:</strong> %d</p>
+                            <p><strong>Bus Number:</strong> %s</p>
+                            <p><strong>From:</strong> %s</p>
+                            <p><strong>To:</strong> %s</p>
+                            <p><strong>Date:</strong> %s</p>
+                            <p><strong>Previous Seat:</strong> %s</p>
+                            <p><strong>New Seat:</strong> %s</p>
+                        </div>
+                        <p>Thank you for using our service!</p>
+                        <p>Best regards,<br>Bus Book Team</p>
+                    </div>
+                    """,
+                    userName, ticketId, busNumber, departure, destination, date, oldSeat, newSeat);
+                
+                message.setContent(htmlContent, "text/html; charset=utf-8");
+                Transport.send(message);
+                Log.d("EmailSender", "Seat swap confirmation email sent successfully to " + toEmail);
+            } catch (Exception e) {
+                Log.e("EmailSender", "Failed to send seat swap confirmation email", e);
+            }
+        }).start();
+    }
 }

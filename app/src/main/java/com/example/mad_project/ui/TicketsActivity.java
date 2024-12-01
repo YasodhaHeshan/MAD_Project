@@ -3,7 +3,9 @@ package com.example.mad_project.ui;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Button;
 
@@ -13,10 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mad_project.R;
 import com.example.mad_project.MainActivity;
 import com.example.mad_project.adapter.TicketAdapter;
+import com.example.mad_project.controller.BusController;
 import com.example.mad_project.data.AppDatabase;
-import com.example.mad_project.data.PaymentDao;
 import com.example.mad_project.data.Ticket;
-import com.example.mad_project.data.TicketDao;
 import com.example.mad_project.data.Bus;
 import com.example.mad_project.data.Payment;
 import com.example.mad_project.utils.DialogManager;
@@ -24,7 +25,6 @@ import com.example.mad_project.utils.TicketManager;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.graphics.drawable.GradientDrawable;
 import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
@@ -45,6 +44,8 @@ public class TicketsActivity extends MainActivity {
     private final Executor executor = Executors.newSingleThreadExecutor();
     private final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("en", "LK"));
     private ProgressDialog loadingDialog;
+    private BusController busController;
+    private Bus bus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,7 @@ public class TicketsActivity extends MainActivity {
 
         // Initialize database
         db = AppDatabase.getDatabase(this);
+        busController = new BusController(this);
         initializeViews();
         loadTickets();
     }
@@ -73,16 +75,32 @@ public class TicketsActivity extends MainActivity {
 
     private void loadTickets() {
         executor.execute(() -> {
-            int currentUserId = sessionManager.getUserId();
-            List<Ticket> tickets = db.ticketDao().getTicketsByUserId(currentUserId);
-            
-            runOnUiThread(() -> {
+            try {
+                List<Ticket> tickets = db.ticketDao().getTicketsByUserId(sessionManager.getUserId());
+                
+                // Update status of tickets that have passed their arrival time
+                for (Ticket ticket : tickets) {
+                    if (ticket.getStatus().equalsIgnoreCase("booked")) {
+                        Bus bus = db.busDao().getBusById(ticket.getBusId());
+                        if (bus != null && System.currentTimeMillis() > bus.getArrivalTime()) {
+                            ticket.setStatus("completed");
+                            db.ticketDao().update(ticket);
+                        }
+                    }
+                }
+                
+                // Reload updated tickets
+                tickets = db.ticketDao().getTicketsByUserId(sessionManager.getUserId());
+                
                 if (tickets.isEmpty()) {
                     showEmptyState();
                 } else {
-                    displayTickets(tickets);
+                    List<Ticket> finalTickets = tickets;
+                    runOnUiThread(() -> displayTickets(finalTickets));
                 }
-            });
+            } catch (Exception e) {
+                Log.e("TicketsActivity", "Failed to load tickets", e);
+            }
         });
     }
 
@@ -113,6 +131,7 @@ public class TicketsActivity extends MainActivity {
         TextView busDetailsText = bottomSheetView.findViewById(R.id.busDetailsText);
         Button swapSeatButton = bottomSheetView.findViewById(R.id.swapSeatButton);
         Button cancelTicketButton = bottomSheetView.findViewById(R.id.cancelTicketButton);
+        Button markCompletedButton = bottomSheetView.findViewById(R.id.markCompletedButton);
         
         // Format date
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault());
@@ -127,8 +146,11 @@ public class TicketsActivity extends MainActivity {
         
         // Show/hide action buttons based on ticket status
         boolean isBooked = ticket.getStatus().equalsIgnoreCase("booked");
+        boolean isCompleted = ticket.getStatus().equalsIgnoreCase("completed");
+        
         swapSeatButton.setVisibility(isBooked ? View.VISIBLE : View.GONE);
         cancelTicketButton.setVisibility(isBooked ? View.VISIBLE : View.GONE);
+        markCompletedButton.setVisibility(isBooked ? View.VISIBLE : View.GONE);
         
         // Add status indicator
         TextView statusText = bottomSheetView.findViewById(R.id.statusText);
@@ -140,23 +162,47 @@ public class TicketsActivity extends MainActivity {
         
         // Load bus details and payment info asynchronously
         executor.execute(() -> {
-            Bus bus = db.busDao().getBusById(ticket.getBusId());
+            final Bus loadedBus = db.busDao().getBusById(ticket.getBusId());
             Payment payment = ticket.getPaymentId() != null ? 
                 db.paymentDao().getPaymentById(ticket.getPaymentId()) : null;
             
             runOnUiThread(() -> {
-                // Set bus details
-                if (bus != null) {
+                if (loadedBus != null) {
                     busDetailsText.setText(String.format("%s (%s)", 
-                        bus.getRegistrationNumber(),
-                        bus.getModel()));
+                        loadedBus.getRegistrationNumber(),
+                        loadedBus.getModel()));
+
+                    if (isCompleted && !ticket.isRated()) {
+                        showRatingDialog(loadedBus, ticket);
+                    }
                 }
+            });
+
+            // Handle mark as completed button
+            markCompletedButton.setOnClickListener(v -> {
+                new MaterialAlertDialogBuilder(this)
+                    .setTitle("Mark Journey Complete")
+                    .setMessage("Are you sure you want to mark this journey as completed?")
+                    .setPositiveButton("Yes", (dialog, which) -> {
+                        executor.execute(() -> {
+                            ticket.setStatus("completed");
+                            db.ticketDao().update(ticket);
+                            
+                            runOnUiThread(() -> {
+                                bottomSheet.dismiss();
+                                loadTickets();
+                                showRatingDialog(loadedBus, ticket);
+                            });
+                        });
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
             });
         });
         
         // Handle swap seat button
         swapSeatButton.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SeatSelectionActivity.class);
+            Intent intent = new Intent(this, SeatBookActivity.class);
             intent.putExtra("bus_id", ticket.getBusId());
             intent.putExtra("is_swap", true);
             intent.putExtra("current_seat", ticket.getSeatNumber());
@@ -206,5 +252,30 @@ public class TicketsActivity extends MainActivity {
         
         bottomSheet.setContentView(bottomSheetView);
         bottomSheet.show();
+    }
+
+    public void showRatingDialog(Bus bus, Ticket ticket) {
+        View ratingView = getLayoutInflater().inflate(R.layout.dialog_rate_bus, null);
+        RatingBar ratingBar = ratingView.findViewById(R.id.ratingBar);
+        
+        new MaterialAlertDialogBuilder(this)
+            .setTitle("Rate Your Journey")
+            .setView(ratingView)
+            .setPositiveButton("Submit", (dialog, which) -> {
+                float newRating = ratingBar.getRating();
+                if (newRating > 0) {
+                    busController.updateBusRating(bus, newRating);
+                    // Mark ticket as rated only after successful rating
+                    executor.execute(() -> {
+                        ticket.setRated(true);
+                        db.ticketDao().update(ticket);
+                    });
+                } else {
+                    Toast.makeText(this, "Please select a rating", Toast.LENGTH_SHORT).show();
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .setCancelable(false)  // Force user to rate or cancel
+            .show();
     }
 }

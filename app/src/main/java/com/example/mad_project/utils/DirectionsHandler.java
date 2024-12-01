@@ -37,6 +37,7 @@ public class DirectionsHandler {
     private final FragmentActivity context;
     private final String apiKey;
     private final ExecutorService executorService;
+    private List<LatLng> currentRoutePoints;
 
     public DirectionsHandler(GoogleMap map, FragmentActivity context, String apiKey) {
         this.mMap = map;
@@ -65,29 +66,50 @@ public class DirectionsHandler {
 
     private void onPostExecute(List<LatLng> routePoints) {
         if (!routePoints.isEmpty()) {
-            PolylineOptions polylineOptions = new PolylineOptions()
-                    .addAll(routePoints)
-                    .color(0xFF0A84FF)
-                    .width(10);
-            mMap.addPolyline(polylineOptions);
+            drawRoute(routePoints);
 
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (LatLng point : routePoints) {
-                builder.include(point);
-            }
-            LatLngBounds bounds = builder.build();
+            LatLngBounds bounds = getRouteBounds();
             int padding = 100; // Padding around the route
             mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
-
-            // Add markers for origin and destination with unique identifiers
-            LatLng originLatLng = routePoints.get(0);
-            LatLng destinationLatLng = routePoints.get(routePoints.size() - 1);
-            mMap.addMarker(new MarkerOptions().position(originLatLng).title("Origin").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-            mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("Destination").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
             Toast.makeText(context, "Route displayed", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(context, "No route found", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public LatLngBounds getRouteBounds() {
+        if (currentRoutePoints == null || currentRoutePoints.isEmpty()) {
+            return null;
+        }
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (LatLng point : currentRoutePoints) {
+            builder.include(point);
+        }
+        return builder.build();
+    }
+
+    private void drawRoute(List<LatLng> routePoints) {
+        if (routePoints != null && !routePoints.isEmpty()) {
+            this.currentRoutePoints = routePoints;  // Store the route points
+            
+            // Draw polyline
+            PolylineOptions polylineOptions = new PolylineOptions();
+            polylineOptions.addAll(routePoints);
+            mMap.addPolyline(polylineOptions);
+
+            // Add markers for origin and destination
+            LatLng originLatLng = routePoints.get(0);
+            LatLng destinationLatLng = routePoints.get(routePoints.size() - 1);
+            mMap.addMarker(new MarkerOptions()
+                .position(originLatLng)
+                .title("Origin")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            mMap.addMarker(new MarkerOptions()
+                .position(destinationLatLng)
+                .title("Destination")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
         }
     }
 

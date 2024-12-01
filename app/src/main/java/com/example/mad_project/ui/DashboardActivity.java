@@ -77,8 +77,8 @@ public class DashboardActivity extends MainActivity {
             }
 
             Intent intent = new Intent(this, BusActivity.class);
-            intent.putExtra("from", from);
-            intent.putExtra("to", to);
+            intent.putExtra("from_location", from);
+            intent.putExtra("to_location", to);
             startActivity(intent);
         });
 
@@ -229,14 +229,14 @@ public class DashboardActivity extends MainActivity {
             roleSpecificButton.setText("Manage Buses");
             roleSpecificButton.setVisibility(View.VISIBLE);
             roleSpecificButton.setOnClickListener(v -> {
-                Intent intent = new Intent(this, AddBusActivity.class);
+                Intent intent = new Intent(this, ManageBusesActivity.class);
                 startActivity(intent);
             });
         } else if (userRole.equalsIgnoreCase("driver")) {
             roleSpecificButton.setText("My Assignments");
             roleSpecificButton.setVisibility(View.VISIBLE);
             roleSpecificButton.setOnClickListener(v -> {
-                startActivity(new Intent(this, BusActivity.class));
+                startActivity(new Intent(this, DriverBusesActivity.class));
             });
         } else {
             roleSpecificButton.setVisibility(View.GONE);

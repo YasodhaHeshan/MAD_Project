@@ -14,41 +14,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
 public class BusController {
-
+    private final AppDatabase db;
     private final BusDao busDao;
     private final ExecutorService executorService;
 
     public BusController(Context context) {
-        AppDatabase db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "mad_project_db")
+        db = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, "mad_project_db")
                 .fallbackToDestructiveMigration()
                 .build();
         busDao = db.busDao();
         executorService = Executors.newSingleThreadExecutor();
-    }
-
-    public void getAllBuses(Consumer<List<Bus>> callback) {
-        executorService.execute(() -> {
-            List<Bus> busList = busDao.getAllBuses();
-            callback.accept(busList);
-        });
-    }
-
-    public void getBusesByRoute(String from, String to, Consumer<List<Bus>> callback) {
-        executorService.execute(() -> {
-            List<Bus> busList = busDao.getBusesByRoute(from, to);
-            callback.accept(busList);
-        });
-    }
-
-    public void createBus(Bus bus, Consumer<Boolean> callback) {
-        executorService.execute(() -> {
-            try {
-                busDao.insert(bus);
-                callback.accept(true);
-            } catch (Exception e) {
-                callback.accept(false);
-            }
-        });
     }
 
     public void getRouteSuggestions(String query, Consumer<List<String>> callback) {
@@ -69,5 +44,37 @@ public class BusController {
             callback.accept(suggestions);
         });
         executor.shutdown();
+    }
+
+    public void searchBuses(String fromLocation, String toLocation, Consumer<List<Bus>> callback) {
+        executorService.execute(() -> {
+            List<Bus> buses;
+            if (hasActiveFilters(fromLocation, toLocation)) {
+                buses = busDao.getBusesByRoute(fromLocation, toLocation);
+            } else {
+                buses = busDao.getAllBuses();
+            }
+            callback.accept(buses);
+        });
+    }
+
+    public boolean hasActiveFilters(String fromLocation, String toLocation) {
+        return fromLocation != null && !fromLocation.isEmpty() 
+            && toLocation != null && !toLocation.isEmpty();
+    }
+
+    public void updateBusRating(Bus bus, float newRating) {
+        executorService.execute(() -> {
+            float currentRating = bus.getRating();
+            int currentCount = bus.getRatingCount();
+            
+            // Calculate new average rating
+            float updatedRating = ((currentRating * currentCount) + newRating) / (currentCount + 1);
+            
+            bus.setRating(updatedRating);
+            bus.setRatingCount(currentCount + 1);
+            
+            db.busDao().update(bus);
+        });
     }
 }

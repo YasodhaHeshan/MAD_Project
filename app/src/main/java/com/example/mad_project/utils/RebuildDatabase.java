@@ -137,14 +137,14 @@ public class RebuildDatabase {
             long busOwner1Id = db.busOwnerDao().insert(busOwner1);
             long busOwner2Id = db.busOwnerDao().insert(busOwner2);
 
-            // 3. Create Bus Drivers with different experience levels
+            // 3. Create Bus Drivers and wait for successful insertion
             BusDriver driver1 = new BusDriver((int)driver1Id, "DL123456", 
                 System.currentTimeMillis() + 31536000000L, 5);
             BusDriver driver2 = new BusDriver((int)driver2Id, "DL789012", 
                 System.currentTimeMillis() + 63072000000L, 8);
             
-            db.busDriverDao().insert(driver1);
-            db.busDriverDao().insert(driver2);
+            long driver1DbId = db.busDriverDao().insert(driver1);
+            long driver2DbId = db.busDriverDao().insert(driver2);
 
             // 4. Create Locations
             Location colombo = new Location("Colombo", 6.927079, 79.861243);
@@ -180,29 +180,63 @@ public class RebuildDatabase {
             db.locationDao().insert(hambantota);
             db.locationDao().insert(dambulla);
 
-            // 5. Create Buses with various routes and amenities
-            // Owner 1's buses
-            Bus bus1 = new Bus((int)busOwner1Id, "NB-1234", "Volvo 9400", 40, 
-                "WiFi, AC, USB Charging", true, "Colombo", "Kandy",
-                colombo.getLatitude(), colombo.getLongitude(),
+            // 5. Now create Buses with confirmed driver IDs
+            Bus bus1 = new Bus(
+                (int)busOwner1Id,
+                (int)driver1DbId,  // Use the actual database ID
+                "NB-1234",
+                "Volvo 9400",
+                40,
+                "WiFi, AC, USB Charging",
+                true,
+                "Colombo",
+                "Kandy",
+                colombo.getLatitude(),
+                colombo.getLongitude(),
                 System.currentTimeMillis() + 3600000,
                 System.currentTimeMillis() + 18000000,
-                2500);
+                2500
+            );
+            bus1.setRating(4.5f);
+            bus1.setRatingCount(12);
 
-            Bus bus2 = new Bus((int)busOwner1Id, "NB-5678", "Volvo 9400", 40,
-                "WiFi, AC, USB Charging, Entertainment", true, "Colombo", "Galle",
-                colombo.getLatitude(), colombo.getLongitude(),
+            Bus bus2 = new Bus(
+                (int)busOwner1Id,
+                (int)driver1DbId,
+                "NB-5678",
+                "Volvo 9400",
+                40,
+                "WiFi, AC, USB Charging, Entertainment",
+                true,
+                "Colombo",
+                "Galle",
+                colombo.getLatitude(),
+                colombo.getLongitude(),
                 System.currentTimeMillis() + 7200000,
                 System.currentTimeMillis() + 14400000,
-                2000);
+                3500
+            );
+            bus2.setRating(4.2f);
+            bus2.setRatingCount(8);
 
-            // Owner 2's buses
-            Bus bus3 = new Bus((int)busOwner2Id, "NB-9012", "Mercedes-Benz O303", 45,
-                "WiFi, AC, USB Charging, Refreshments", true, "Colombo", "Jaffna",
-                colombo.getLatitude(), colombo.getLongitude(),
+            Bus bus3 = new Bus(
+                (int)busOwner2Id,
+                (int)driver2DbId,
+                "NB-9012",
+                "Mercedes-Benz O303",
+                45,
+                "WiFi, AC, USB Charging, Entertainment, Refreshments",
+                true,
+                "Colombo",
+                "Jaffna",
+                colombo.getLatitude(),
+                colombo.getLongitude(),
                 System.currentTimeMillis() + 10800000,
-                System.currentTimeMillis() + 36000000,
-                3500);
+                System.currentTimeMillis() + 28800000,
+                5000
+            );
+            bus3.setRating(4.8f);
+            bus3.setRatingCount(15);
 
             long bus1Id = db.busDao().insert(bus1);
             long bus2Id = db.busDao().insert(bus2);
@@ -210,16 +244,16 @@ public class RebuildDatabase {
 
             // 6. Create Tickets and Payments for various scenarios
             // Completed bookings for Passenger 1
-            createTicketAndPayment(db, (int)p1Id, (int)bus1Id, "A1", 2625, "booked");
-            createTicketAndPayment(db, (int)p1Id, (int)bus2Id, "B3", 2100, "booked");
+            createTicketAndPayment(db, (int)p1Id, (int)bus1Id, 1, 2625, "completed", true);
+            createTicketAndPayment(db, (int)p1Id, (int)bus2Id, 7, 2100, "booked", false);
 
             // Completed bookings for Passenger 2
-            createTicketAndPayment(db, (int)p2Id, (int)bus2Id, "C2", 2100, "booked");
-            createTicketAndPayment(db, (int)p2Id, (int)bus3Id, "D4", 3675, "cancelled");
+            createTicketAndPayment(db, (int)p2Id, (int)bus2Id, 10, 2100, "completed", true);
+            createTicketAndPayment(db, (int)p2Id, (int)bus3Id, 16, 3675, "cancelled", false);
 
             // Completed bookings for Passenger 3
-            createTicketAndPayment(db, (int)p3Id, (int)bus1Id, "B2", 2625, "booked");
-            createTicketAndPayment(db, (int)p3Id, (int)bus3Id, "A3", 3675, "booked");
+            createTicketAndPayment(db, (int)p3Id, (int)bus1Id, 6, 2625, "completed", true);
+            createTicketAndPayment(db, (int)p3Id, (int)bus3Id, 3, 3675, "booked", false);
 
             // 7. Create Notifications for various scenarios
             createNotifications(db, (int)driver1Id, (int)driver2Id, (int)p1Id, (int)p2Id, (int)p3Id);
@@ -227,11 +261,12 @@ public class RebuildDatabase {
     }
 
     private static void createTicketAndPayment(AppDatabase db, int userId, int busId, 
-        String seatNumber, int points, String status) {
+        int seatNumber, int points, String status, boolean isRated) {
         
         Ticket ticket = new Ticket(userId, busId, seatNumber,
             System.currentTimeMillis() + 86400000, // Journey tomorrow
             "Colombo", "Kandy", status);
+        ticket.setRated(isRated);
         long ticketId = db.ticketDao().insert(ticket);
 
         Payment payment = new Payment(0, userId, (int)ticketId, points);
@@ -243,91 +278,6 @@ public class RebuildDatabase {
 
     private static void createNotifications(AppDatabase db, int driver1Id, int driver2Id, 
         int passenger1Id, int passenger2Id, int passenger3Id) {
-        
-        // 1. Bus Assignment Notifications
-        Bus bus1 = db.busDao().getBusByRegistration("NB-1234");
-        Bus bus2 = db.busDao().getBusByRegistration("NB-5678");
-        Bus bus3 = db.busDao().getBusByRegistration("NB-9012");
-        BusOwner owner1 = db.busOwnerDao().getBusOwnerById(bus1.getOwnerId());
-        BusOwner owner2 = db.busOwnerDao().getBusOwnerById(bus3.getOwnerId());
-
-        // Driver 1 assignments
-        createBusAssignmentNotification(db, driver1Id, bus1, owner1);
-        createBusAssignmentNotification(db, driver1Id, bus2, owner1);
-
-        // Driver 2 assignments
-        createBusAssignmentNotification(db, driver2Id, bus3, owner2);
-
-        // 2. Seat Swap Notifications
-        // Get existing tickets for swaps
-        List<Ticket> bus1Tickets = db.ticketDao().getTicketsByBusId(bus1.getId());
-        List<Ticket> bus2Tickets = db.ticketDao().getTicketsByBusId(bus2.getId());
-        List<Ticket> bus3Tickets = db.ticketDao().getTicketsByBusId(bus3.getId());
-
-        // Create seat swap requests between passengers
-        createSeatSwapNotifications(db, bus1Tickets, passenger1Id, passenger3Id);
-        createSeatSwapNotifications(db, bus2Tickets, passenger1Id, passenger2Id);
-        createSeatSwapNotifications(db, bus3Tickets, passenger2Id, passenger3Id);
-    }
-
-    private static void createBusAssignmentNotification(AppDatabase db, int driverId, 
-        Bus bus, BusOwner owner) {
-        
-        Notification notification = new Notification(driverId, "BUS_ASSIGNMENT",
-            "Bus Assignment Request",
-            String.format("Owner %s wants to assign you to bus %s on route %s to %s", 
-                owner.getCompanyName(), 
-                bus.getRegistrationNumber(),
-                bus.getRouteFrom(),
-                bus.getRouteTo()));
-        notification.setAdditionalData(bus.getRegistrationNumber());
-        notification.setStatus("PENDING");
-        db.notificationDao().insert(notification);
-    }
-
-    private static void createSeatSwapNotifications(AppDatabase db, List<Ticket> tickets, 
-        int requesterId, int targetId) {
-        
-        // Find valid tickets belonging to these users
-        Ticket requesterTicket = null;
-        Ticket targetTicket = null;
-        
-        for (Ticket ticket : tickets) {
-            if (ticket.getUserId() == requesterId && ticket.getStatus().equals("booked")) {
-                requesterTicket = ticket;
-            } else if (ticket.getUserId() == targetId && ticket.getStatus().equals("booked")) {
-                targetTicket = ticket;
-            }
-            
-            // Break if we found both tickets
-            if (requesterTicket != null && targetTicket != null) {
-                break;
-            }
-        }
-
-        if (requesterTicket != null && targetTicket != null) {
-            User requester = db.userDao().getUserById(requesterId);
-            
-            // Create notification for the target user
-            Notification notification = new Notification(targetId, "SEAT_SWAP",
-                "Seat Swap Request",
-                String.format("%s would like to swap their seat %s with your seat %s", 
-                    requester.getName(), 
-                    requesterTicket.getSeatNumber(), 
-                    targetTicket.getSeatNumber()));
-            notification.setAdditionalData(requesterTicket.getId() + ":" + targetTicket.getId());
-            notification.setStatus("PENDING");
-            db.notificationDao().insert(notification);
-            
-            // Also create a notification for the requester to track their request
-            Notification requesterNotification = new Notification(requesterId, "SEAT_SWAP",
-                "Seat Swap Request Sent",
-                String.format("You have requested to swap your seat %s with seat %s", 
-                    requesterTicket.getSeatNumber(), 
-                    targetTicket.getSeatNumber()));
-            requesterNotification.setAdditionalData(requesterTicket.getId() + ":" + targetTicket.getId());
-            requesterNotification.setStatus("PENDING");
-            db.notificationDao().insert(requesterNotification);
-        }
+        // Method left empty as all test notifications are removed
     }
 }

@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.example.mad_project.ui.SeatSelectionActivity;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class DialogManager {
