@@ -25,6 +25,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 
+import android.os.Build;
+import androidx.annotation.NonNull;
+
 public class EditProfileActivity extends MainActivity {
     
     private TextInputEditText nameInput;
@@ -40,7 +43,10 @@ public class EditProfileActivity extends MainActivity {
         new ActivityResultContracts.StartActivityForResult(),
         result -> {
             if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                handleImageResult(result.getData().getData());
+                Uri selectedImage = result.getData().getData();
+                if (selectedImage != null) {
+                    handleImageResult(selectedImage);
+                }
             }
         }
     );
@@ -113,13 +119,26 @@ public class EditProfileActivity extends MainActivity {
     }
 
     private void checkGalleryPermissionAndLaunch() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                101);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            // For Android 13 and above
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_MEDIA_IMAGES},
+                    101);
+            } else {
+                launchGallery();
+            }
         } else {
-            launchGallery();
+            // For Android 12 and below
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                    101);
+            } else {
+                launchGallery();
+            }
         }
     }
 
@@ -239,5 +258,17 @@ public class EditProfileActivity extends MainActivity {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 101) {  // Gallery permission
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                launchGallery();
+            } else {
+                Toast.makeText(this, "Storage permission is required to select photos", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 } 
