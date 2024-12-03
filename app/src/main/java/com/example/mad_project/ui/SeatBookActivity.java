@@ -40,7 +40,14 @@ public class SeatBookActivity extends MainActivity implements SeatSelectionFragm
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getLayoutInflater().inflate(R.layout.activity_seat_selection, contentFrame);
-        setupNavigation(true, false, "Select Seats");
+        
+        boolean isDriverView = getIntent().getBooleanExtra("is_driver_view", false);
+        if (isDriverView) {
+            setupNavigation(true, false, "Bus Seat Layout");
+            findViewById(R.id.bottomSheet).setVisibility(View.GONE);
+        } else {
+            setupNavigation(true, false, "Select Seats");
+        }
         
         setupBottomSheet();
         initializeViews();

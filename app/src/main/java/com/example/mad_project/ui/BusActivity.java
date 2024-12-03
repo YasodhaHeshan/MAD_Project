@@ -126,7 +126,7 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
                         // Clear previous routes
                         mMap.clear();
                         
-                        // Add bus marker
+                        // Add bus marker and display route
                         LatLng busLocation = new LatLng(bus.getLatitude(), bus.getLongitude());
                         mMap.addMarker(new MarkerOptions()
                                 .position(busLocation)
@@ -134,22 +134,16 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
                                 .snippet(String.format("%s to %s", bus.getRouteFrom(), bus.getRouteTo()))
                                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                         
-                        // Display route for selected bus
                         directionsHandler.displayRoute(bus.getRouteFrom(), bus.getRouteTo());
                         
                         try {
-                            // Get route bounds from DirectionsHandler
                             LatLngBounds routeBounds = directionsHandler.getRouteBounds();
                             if (routeBounds != null) {
-                                int padding = 100;
-                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(routeBounds, padding);
-                                mMap.animateCamera(cu);
+                                mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(routeBounds, 100));
                             } else {
-                                // Fallback to just showing the bus location
                                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(busLocation, 12f));
                             }
                         } catch (Exception e) {
-                            // Fallback to just showing the bus location
                             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(busLocation, 12f));
                         }
                     }
@@ -158,7 +152,7 @@ public class BusActivity extends MainActivity implements OnMapReadyCallback {
                     public void onBookClick(Bus bus) {
                         startBookingProcess(bus);
                     }
-                }, false);  // false for passenger view
+                }, false, false);  // false for passenger view, false for driver view
                 busRecyclerView.setAdapter(adapter);
                 
                 // Update title
