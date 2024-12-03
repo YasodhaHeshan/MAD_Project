@@ -21,16 +21,18 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
     private final List<Bus> buses;
     private final OnBusClickListener listener;
     private final boolean isOwnerView;
+    private final boolean isDriverView;
 
     public interface OnBusClickListener {
         void onBusClick(Bus bus);
         void onBookClick(Bus bus);
     }
 
-    public BusAdapter(List<Bus> buses, OnBusClickListener listener, boolean isOwnerView) {
+    public BusAdapter(List<Bus> buses, OnBusClickListener listener, boolean isOwnerView, boolean isDriverView) {
         this.buses = buses;
         this.listener = listener;
         this.isOwnerView = isOwnerView;
+        this.isDriverView = isDriverView;
     }
 
     @NonNull
@@ -69,9 +71,12 @@ public class BusAdapter extends RecyclerView.Adapter<BusAdapter.BusViewHolder> {
         if (isOwnerView) {
             holder.bookButton.setText("Edit Bus");
             holder.bookButton.setOnClickListener(v -> listener.onBusClick(bus));
-        } else {
+        } else if (!isOwnerView && !isDriverView) {
             holder.bookButton.setText("Book Now");
             holder.bookButton.setOnClickListener(v -> listener.onBookClick(bus));
+        } else {
+            holder.bookButton.setText("View Details");
+            holder.bookButton.setOnClickListener(v -> listener.onBusClick(bus));
         }
     }
 

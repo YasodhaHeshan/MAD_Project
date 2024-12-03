@@ -1,5 +1,6 @@
 package com.example.mad_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -62,14 +63,18 @@ public class DriverBusesActivity extends MainActivity {
                         new BusAdapter.OnBusClickListener() {
                             @Override
                             public void onBusClick(Bus bus) {
-                                showBusDetails(bus);
+                                // Launch SeatBookActivity in view-only mode for drivers
+                                Intent intent = new Intent(DriverBusesActivity.this, SeatBookActivity.class);
+                                intent.putExtra("bus_id", bus.getId());
+                                intent.putExtra("is_driver_view", true);  // Add this flag
+                                startActivity(intent);
                             }
 
                             @Override
                             public void onBookClick(Bus bus) {
                                 // Not needed for driver view
                             }
-                        }, false);  // false for non-owner view
+                        }, false, true);  // Add isDriverView parameter
                     busRecyclerView.setAdapter(adapter);
                 }
             });

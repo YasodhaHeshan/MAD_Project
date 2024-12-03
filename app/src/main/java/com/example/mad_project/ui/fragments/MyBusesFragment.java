@@ -75,7 +75,7 @@ public class MyBusesFragment extends Fragment implements BusAdapter.OnBusClickLi
     }
 
     private void setupRecyclerView(List<Bus> buses) {
-        BusAdapter adapter = new BusAdapter(buses, this, true);  // true for owner view
+        BusAdapter adapter = new BusAdapter(buses, this, true, false);  // true for owner view
         busRecyclerView.setAdapter(adapter);
         busRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
     }
