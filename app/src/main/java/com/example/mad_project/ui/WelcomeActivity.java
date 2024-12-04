@@ -6,7 +6,6 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mad_project.R;
-import com.example.mad_project.utils.RebuildDatabase;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.button.MaterialButton;
 
@@ -26,21 +25,7 @@ public class WelcomeActivity extends AppCompatActivity {
             finish();
         });
 
-        RebuildDatabase.clearAndRebuildDatabase(this, true, new RebuildDatabase.RebuildCallback() {
-            @Override
-            public void onSuccess(String message) {
-                sessionManager.setFirstLaunchComplete();
-            }
-
-            @Override
-            public void onError(String error) {
-                // Handle error if database rebuild fails
-                runOnUiThread(() -> {
-                    Toast.makeText(WelcomeActivity.this, 
-                        "Error initializing app: " + error, 
-                        Toast.LENGTH_LONG).show();
-                });
-            }
-        });
+        // Mark first launch as complete
+        sessionManager.setFirstLaunchComplete();
     }
 } 

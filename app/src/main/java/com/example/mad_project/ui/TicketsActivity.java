@@ -78,25 +78,10 @@ public class TicketsActivity extends MainActivity {
             try {
                 List<Ticket> tickets = db.ticketDao().getTicketsByUserId(sessionManager.getUserId());
                 
-                // Update status of tickets that have passed their arrival time
-                for (Ticket ticket : tickets) {
-                    if (ticket.getStatus().equalsIgnoreCase("booked")) {
-                        Bus bus = db.busDao().getBusById(ticket.getBusId());
-                        if (bus != null && System.currentTimeMillis() > bus.getArrivalTime()) {
-                            ticket.setStatus("completed");
-                            db.ticketDao().update(ticket);
-                        }
-                    }
-                }
-                
-                // Reload updated tickets
-                tickets = db.ticketDao().getTicketsByUserId(sessionManager.getUserId());
-                
                 if (tickets.isEmpty()) {
                     showEmptyState();
                 } else {
-                    List<Ticket> finalTickets = tickets;
-                    runOnUiThread(() -> displayTickets(finalTickets));
+                    runOnUiThread(() -> displayTickets(tickets));
                 }
             } catch (Exception e) {
                 Log.e("TicketsActivity", "Failed to load tickets", e);

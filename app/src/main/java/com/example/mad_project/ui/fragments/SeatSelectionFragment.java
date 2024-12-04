@@ -101,11 +101,7 @@ public class SeatSelectionFragment extends Fragment implements SeatAdapter.OnSea
                 long currentTime = System.currentTimeMillis();
                 
                 for (Ticket ticket : tickets) {
-                    if ((ticket.getStatus().equalsIgnoreCase("booked") && 
-                         ticket.getJourneyDate() >= currentTime) || 
-                        (ticket.getStatus().equalsIgnoreCase("completed") && 
-                         ticket.getJourneyDate() >= currentTime)) {
-                        
+                    if (ticket.getStatus().equalsIgnoreCase("booked")) {
                         bookedSeats.add(ticket.getSeatNumber());
                         if (ticket.getUserId() == currentUserId) {
                             myBookedSeats.add(ticket.getSeatNumber());

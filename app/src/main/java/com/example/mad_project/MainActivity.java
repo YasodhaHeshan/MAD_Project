@@ -17,6 +17,7 @@ import com.example.mad_project.ui.NotificationActivity;
 import com.example.mad_project.ui.ProfileActivity;
 import com.example.mad_project.ui.RegisterActivity;
 import com.example.mad_project.ui.TicketsActivity;
+import com.example.mad_project.ui.SettingsActivity;
 import com.example.mad_project.ui.WelcomeActivity;
 import com.example.mad_project.utils.SessionManager;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -149,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, NotificationActivity.class));
             return true;
         } else if (id == R.id.action_settings) {
-            startActivity(new Intent(this, ProfileActivity.class));
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         
