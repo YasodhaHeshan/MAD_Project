@@ -25,4 +25,7 @@ public interface LocationDao {
 
     @Query("SELECT * FROM locations WHERE name = :name")
     Location getLocationByName(String name);
+
+    @Query("DELETE FROM locations")
+    void deleteAllLocations();
 }

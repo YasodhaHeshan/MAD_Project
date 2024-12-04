@@ -4,26 +4,22 @@
 
     <item
         android:id="@+id/navigation_home"
-        android:title="Home"
         android:icon="@drawable/baseline_home_24"
-        app:showAsAction="ifRoom" />
+        android:title="Home" />
 
     <item
         android:id="@+id/navigation_tickets"
-        android:title="My Tickets"
         android:icon="@drawable/my_tickets"
-        app:showAsAction="ifRoom" />
+        android:title="My Tickets" />
 
     <item
         android:id="@+id/navigation_buses"
-        android:title="Buses"
         android:icon="@drawable/baseline_directions_bus_24"
-        app:showAsAction="ifRoom" />
+        android:title="Buses" />
 
     <item
         android:id="@+id/navigation_profile"
-        android:title="Profile"
         android:icon="@drawable/baseline_person_24"
-        app:showAsAction="ifRoom" />
+        android:title="Profile" />
 
 </menu>
