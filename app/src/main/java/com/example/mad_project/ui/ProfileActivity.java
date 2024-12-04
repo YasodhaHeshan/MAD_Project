@@ -138,14 +138,16 @@ public class ProfileActivity extends MainActivity {
     private void showTopUpDialog() {
         TopUpDialog.show(this, currentPoints, points -> {
             userController.addPoints(sessionManager.getUserId(), points, success -> {
-                if (success) {
-                    loadUserPoints(); // Refresh points display
-                    Toast.makeText(this, "Points added successfully", 
-                        Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Failed to add points", 
-                        Toast.LENGTH_SHORT).show();
-                }
+                runOnUiThread(() -> {
+                    if (success) {
+                        loadUserPoints(); // Refresh points display
+                        Toast.makeText(this, "Points added successfully", 
+                            Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Failed to add points", 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
             });
         });
     }
