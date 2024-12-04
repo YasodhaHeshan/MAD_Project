@@ -6,9 +6,16 @@
     android:padding="16dp">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/fillDatabaseButton"
+        android:id="@+id/addUsersButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fill Database" />
+        android:layout_marginBottom="8dp"
+        android:text="Add Sample Users" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addLocationsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Highway Locations" />
 
 </LinearLayout> 
