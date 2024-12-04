@@ -29,14 +29,20 @@ public class TicketManager {
         executor.execute(() -> {
             try {
                 db.runInTransaction(() -> {
-                    // Get payment info
-                    Payment payment = db.paymentDao().getPaymentById(ticket.getPaymentId());
-                    if (payment != null) {
-                        // Refund points to user
-                        db.userDao().addPoints(ticket.getUserId(), payment.getPointsUsed());
+                    // Get bus details for fare calculation
+                    Bus bus = db.busDao().getBusById(ticket.getBusId());
+                    if (bus == null) {
+                        throw new IllegalStateException("Bus not found");
                     }
+
+                    // Calculate refund amount using FareCalculator
+                    FareCalculator.PointsBreakdown breakdown = FareCalculator.calculatePoints(bus);
+                    int refundPoints = breakdown.totalPoints; // Full refund
+
+                    // Refund points to user
+                    db.userDao().addPoints(ticket.getUserId(), refundPoints);
                     
-                    // Update ticket status to cancelled instead of deleting
+                    // Update ticket status to cancelled
                     ticket.setStatus("cancelled");
                     ticket.setUpdatedAt(System.currentTimeMillis());
                     db.ticketDao().update(ticket);
