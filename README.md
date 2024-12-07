@@ -50,4 +50,4 @@ A comprehensive mobile application for booking highway bus seats, developed as p
 
 1. Clone the repository
 ```bash
-git clone https://github.com/adithyasean/highway-bus-booking.git
+https://github.com/YasodhaHeshan/MAD_Project.git
